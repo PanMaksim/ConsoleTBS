@@ -10,11 +10,9 @@ void Army::clear() {
 	army_.clear();
 }
 
-// test
-
 void Army::generate_random_army() { // for testing
 	if (army_.size() != 0) {
-		army_.clear();
+		this->clear();
 	}
 	army_.reserve(army_size_max_);
 
