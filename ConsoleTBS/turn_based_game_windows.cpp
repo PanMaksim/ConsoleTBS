@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <utility>
-
+#include <string_view>
 #include <algorithm>
 
 #include "turn_based_game.h"
@@ -651,6 +651,22 @@ char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::str
 }
 
 char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent = 0) {
+    char* frame_coordinate_x_ptr = { frame_[coordinate.y].data() + coordinate.x + indent },
+        * frame_coordinate_x_ptr_end{ frame_[coordinate.y].data() + ui_window_width_end_ };
+
+    for (std::string::const_pointer str_ptr{ str->data() }, str_ptr_end{ str->data() + str->size() };
+        str_ptr != str_ptr_end && frame_coordinate_x_ptr != frame_coordinate_x_ptr_end;
+        ++frame_coordinate_x_ptr, ++str_ptr) {
+
+        *frame_coordinate_x_ptr = *str_ptr;
+    }
+    if (*frame_coordinate_x_ptr != ' ') {
+        frame_clear_string(frame_coordinate_x_ptr, frame_coordinate_x_ptr_end);
+    }
+    return frame_coordinate_x_ptr;
+}
+
+char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent = 0) {
     char* frame_coordinate_x_ptr = { frame_[coordinate.y].data() + coordinate.x + indent },
         * frame_coordinate_x_ptr_end{ frame_[coordinate.y].data() + ui_window_width_end_ };
 

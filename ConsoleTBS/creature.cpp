@@ -2,6 +2,7 @@
 #include "creature.h"
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "random.h"
@@ -19,7 +20,7 @@ const Creature* creature_database_get_templates(CreatureTemplate creature_templa
 }
 
 // possibly not const array, but only const strings inside array, must be checked
-const std::string creature_database_first_name[]{
+const std::string_view creature_database_first_name[]{
 	"Alfons",
 	"Adner",
 	"Maksim",
@@ -32,7 +33,7 @@ const std::string creature_database_first_name[]{
 	"Ranald"
 };
 
-const std::string creature_database_second_name[]{
+const std::string_view creature_database_second_name[]{
 	"White",
 	"Black",
 	"Folknir",
@@ -52,8 +53,8 @@ int Creature::roll_stat_with_bonus(CreatureStatId creature_stat) const {
 }
 
 const std::string Creature::generate_name() {
-	return creature_database_first_name[get_random_number(0, static_cast<int>(creature_database_first_name->size()))] + ' ' +
-		creature_database_second_name[get_random_number(0, static_cast<int>(creature_database_second_name->size()))]; // maube should not calculate size every time
+	return static_cast<std::string>(creature_database_first_name[get_random_number(0, static_cast<int>(creature_database_first_name->size()))]) + ' ' +
+		creature_database_second_name[get_random_number(0, static_cast<int>(creature_database_second_name->size()))].data(); // maube should not calculate size every time
 }
 
 // should add multipliers for different ATK chances (Critical, Success, Small hit)
