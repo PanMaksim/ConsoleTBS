@@ -2,6 +2,7 @@
 #include "army.h"
 
 #include <vector>
+#include <algorithm>
 
 #include "random.h"
 #include "creature.h"
@@ -14,11 +15,9 @@ void Army::generate_random_army() { // for testing
 	if (army_.size() != 0) {
 		this->clear();
 	}
-	army_.reserve(army_size_max_);
 
-	for (int army_size_current{}; army_size_current != army_size_max_; ++army_size_current) {
-		army_.push_back(creature_database_get_templates(static_cast<CreatureTemplate>((
-			get_random_number(static_cast<int>(CreatureTemplate::kCreatureTemplateMin), static_cast<int>(CreatureTemplate::kCreatureTemplateMax) - 1)))));
-		army_.back().join_army(army_id_);
-	}
+	std::generate_n(std::back_inserter(army_), army_size_max_, []() { return creature_database_get_templates(static_cast<CreatureTemplate>((
+		get_random_number(static_cast<int>(CreatureTemplate::kCreatureTemplateMin), static_cast<int>(CreatureTemplate::kCreatureTemplateMax) - 1))));});
+
+	std::for_each(army_.begin(), army_.end(), [army_id{army_id_}](Creature& creature) {creature.join_army(army_id);});
 }

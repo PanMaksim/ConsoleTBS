@@ -15,6 +15,8 @@ class Army {
 public:
 
 	Army() {
+		army_.reserve(army_size_max_);
+
 		static int army_id_counter_{};
 		army_id_ = army_id_counter_++;
 	}
@@ -32,5 +34,4 @@ public:
 private:
 	int army_id_;
 	std::vector<Creature> army_;
-
 };
