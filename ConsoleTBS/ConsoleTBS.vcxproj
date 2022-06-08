@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="army.cpp" />
     <ClCompile Include="battle_tile.cpp" />
     <ClCompile Include="creature.cpp" />
     <ClCompile Include="creature_actions.cpp" />
     <ClCompile Include="creature_stats.cpp" />
     <ClCompile Include="files_initialization.cpp" />
-    <ClCompile Include="I:\Programming\C++\TurnBasedGame\TurnBasedGame\army.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="rolls.cpp" />
     <ClCompile Include="terrain.cpp" />
@@ -34,6 +34,7 @@
     <ClCompile Include="user_input.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="army.h" />
     <ClInclude Include="battle_map_coordinate.h" />
     <ClInclude Include="battle_tile.h" />
     <ClInclude Include="creature.h" />
@@ -41,7 +42,6 @@
     <ClInclude Include="creature_stats.h" />
     <ClInclude Include="files_initialization.h" />
     <ClInclude Include="frame_coordinate.h" />
-    <ClInclude Include="I:\Programming\C++\TurnBasedGame\TurnBasedGame\army.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="rolls.h" />
     <ClInclude Include="terrain.h" />

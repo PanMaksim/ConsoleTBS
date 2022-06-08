@@ -6,7 +6,6 @@
 #include "random.h"
 #include "creature.h"
 
-
 void Army::clear() {
 	army_.clear();
 }
