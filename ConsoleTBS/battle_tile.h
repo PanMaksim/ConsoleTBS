@@ -67,4 +67,4 @@ struct BattleTile {
 };
 
 const std::string* battle_tile_database_get_parameter_name(BattleTileParameters battle_tile_parameter);
-void creature_update_battle_tile_effects(Creature* creature, const BattleTile* old_battle_tile, const BattleTile* new_battle_tile);
+//void creature_update_battle_tile_effects(Creature* creature, const BattleTile* old_battle_tile, const BattleTile* new_battle_tile);
