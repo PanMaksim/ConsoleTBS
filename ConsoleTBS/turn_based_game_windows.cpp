@@ -67,8 +67,7 @@ void TurnBasedGame::create_new_main_game_window() {
 }
 
 void TurnBasedGame::create_new_ui_window() {
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr, 
-                                            frame_coordinate_x_ptr_end;
+    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr;
 
     std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() + ui_window_height_start_ };
     for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr_end{ frame_.data() + ui_window_height_end_ };
@@ -77,42 +76,27 @@ void TurnBasedGame::create_new_ui_window() {
         frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + ui_window_width_start_;
         *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
          
-        for (frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + ui_window_width_end_;
-            frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++frame_coordinate_x_ptr) {
-
-            *frame_coordinate_x_ptr = ' ';
-        }
+        std::for_each(frame_coordinate_x_ptr, frame_coordinate_y_ptr->data() + ui_window_width_end_, 
+            [](char& symbol) { symbol = ' ';});
     }
 
     *(frame_coordinate_y_ptr->data() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
 
     // border for log window
-    for (frame_coordinate_y_ptr = frame_.data() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_,
-        frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + ui_window_width_start_ + 1,
-        frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + ui_window_width_end_;
-
-        frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++frame_coordinate_x_ptr) {
-
-        *frame_coordinate_x_ptr = kGameWindowHorizontalSymbol_;
-    }
+    frame_coordinate_y_ptr = frame_.data() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
+    std::for_each(frame_coordinate_y_ptr->data() + ui_window_width_start_ + 1, frame_coordinate_y_ptr->data() + ui_window_width_end_,
+        [](char& symbol) {symbol = kGameWindowHorizontalSymbol_;});
 
     ui_status[UI_Status::kUI_Window] = true;
 }
 
 void TurnBasedGame::create_new_pv_window() {
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr,
-        frame_coordinate_x_ptr_end;
-
     for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() + pv_window_height_start_ },
         frame_coordinate_y_ptr_end{ frame_.data() + pv_window_height_end_ };
         frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
 
-        for (frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_,
-            frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + pv_window_width_end_;
-            frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++frame_coordinate_x_ptr) {
-
-            *frame_coordinate_x_ptr = ' ';
-        }
+        std::for_each(frame_coordinate_y_ptr->data() + pv_window_width_start_, frame_coordinate_y_ptr->data() + pv_window_width_end_,
+            [](char& symbol) { symbol = ' ';});
     }
 
     ui_status[UI_Status::kPlayerViewWindow] = true;
@@ -155,8 +139,7 @@ void TurnBasedGame::print_frame() {
 }
 
 void TurnBasedGame::clear_ui_log() {
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr,
-                                             frame_coordinate_x_ptr_end;
+    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr;
 
     for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{
         frame_.data() + ui_log_window_height_start_ + 1 },
@@ -164,16 +147,11 @@ void TurnBasedGame::clear_ui_log() {
         frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
 
         frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + ui_window_width_start_ + ui_visual_indent_width;
-        frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + ui_window_width_end_ - (ui_visual_indent_width - 1);
 
-        while(true){
-            if (*frame_coordinate_x_ptr == ' ') {
-                if (*(frame_coordinate_x_ptr + 1) == ' ') {
-                    break;
-                }
-            }
-
-            *frame_coordinate_x_ptr++ = ' ';
+        if (*frame_coordinate_x_ptr != ' ' && *(frame_coordinate_x_ptr + 1) != ' ') {
+            std::for_each(frame_coordinate_x_ptr,
+                frame_coordinate_y_ptr->data() + ui_window_width_end_ - 1,
+                [](char& symbol) { symbol = ' ';}); // not checking if it is already clear, because in this small log string will be faster just clear it all
         }
     }
 
