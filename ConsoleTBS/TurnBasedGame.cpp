@@ -1,7 +1,7 @@
 ﻿
 #include <iostream>
 #include "turn_based_game.h"
-#include "files_initialization.h"
+#include "turn_based_game_global.h"
 
 int main()
 {

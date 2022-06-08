@@ -85,8 +85,8 @@ public:
         } while (true);
     }
 
-    void add_string_to_ui_log(const std::string* str);
-    void add_string_to_ui_log(const std::string str);
+    friend void add_string_to_ui_log(const std::string* str);
+    friend void add_string_to_ui_log(const std::string str);
 
 private:
     void create_new_main_game_window();

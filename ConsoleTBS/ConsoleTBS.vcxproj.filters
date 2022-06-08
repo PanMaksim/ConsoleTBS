@@ -33,7 +33,7 @@
     <ClCompile Include="creature_stats.cpp">
       <Filter>Файлы ресурсов</Filter>
     </ClCompile>
-    <ClCompile Include="files_initialization.cpp">
+    <ClCompile Include="turn_based_game_global.cpp">
       <Filter>Файлы ресурсов</Filter>
     </ClCompile>
     <ClCompile Include="random.cpp">
@@ -74,7 +74,7 @@
     <ClInclude Include="creature_stats.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="files_initialization.h">
+    <ClInclude Include="turn_based_game_global.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="frame_coordinate.h">

@@ -1,6 +1,6 @@
 #include "creature_actions.h"
 
-#include "files_initialization.h"
+#include "turn_based_game_global.h"
 #include "creature.h"
 #include "creature_stats.h"
 #include "rolls.h"
@@ -20,14 +20,14 @@
 //}
 
 void log_creature_action_result(const CreatureActionResult* action_result, const Creature* action_dealer, const Creature* action_target) {
-	game_ptr->add_string_to_ui_log("Ability Result: " + *creature_database_get_roll_result_naming(action_result->ability_result));
+	add_string_to_ui_log("Ability Result: " + *creature_database_get_roll_result_naming(action_result->ability_result));
 
 	// should be changed in future
 	if (action_result->ability_result >= RollResult::kSmallSuccess) {
-		game_ptr->add_string_to_ui_log(*action_target->get_name() + " received " + std::to_string(action_result->damage_dealed) + " damage.");
+		add_string_to_ui_log(*action_target->get_name() + " received " + std::to_string(action_result->damage_dealed) + " damage.");
 	}
 	else if (action_result->ability_result <= RollResult::kSmallFail) {
-		game_ptr->add_string_to_ui_log(*action_dealer->get_name() + " received " + std::to_string(action_result->damage_received) + " damage.");
+		add_string_to_ui_log(*action_dealer->get_name() + " received " + std::to_string(action_result->damage_received) + " damage.");
 	}
 }
 

@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include "turn_based_game.h"
+#include "turn_based_game_global.h"
 #include "random.h"
 #include "army.h"
 #include "terrain.h"
@@ -177,68 +178,6 @@ void TurnBasedGame::clear_ui_log() {
     }
 
     ui_log_window_height_current_ = 1;
-}
-
-void TurnBasedGame::add_string_to_ui_log(const std::string* str) {
-    if (ui_log_window_height_current_ == kUserInterfaceLogWindowHeight_) {
-        std::cerr << "ERROR, log is too big.\n"; // lazy check
-    } // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! but when log message take more than 1 string - UB !!!!!!!!!!!!!!!!!!! needs fix
-
-    std::string::const_pointer str_ptr{ str->data() },
-        str_ptr_end{ str_ptr + str->size() };
-
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr,
-                                             frame_coordinate_x_ptr_end;
-
-    for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{
-        frame_.data() + ui_log_window_height_start_ + ui_log_window_height_current_ };
-
-        str_ptr != str_ptr_end && ui_log_window_height_current_ != kUserInterfaceLogWindowHeight_;
-        ++ui_log_window_height_current_, ++frame_coordinate_y_ptr) {
-
-        frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + ui_window_width_start_ + ui_visual_indent_width;
-        frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + ui_window_width_end_ - (ui_visual_indent_width - 1);
-         
-        for (; str_ptr != str_ptr_end && frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++str_ptr, ++frame_coordinate_x_ptr) {
-
-            *frame_coordinate_x_ptr = *str_ptr;
-        }
-
-        if (str_ptr != str_ptr_end) {
-            *frame_coordinate_x_ptr = '-';
-        }
-    }
-}
-
-void TurnBasedGame::add_string_to_ui_log(const std::string str) {
-    if (ui_log_window_height_current_ == kUserInterfaceLogWindowHeight_) {
-        std::cerr << "ERROR, log is too big.\n"; // lazy check
-    }
-
-    std::string::const_pointer str_ptr{ str.data() },
-        str_ptr_end{ str_ptr + str.size() };
-
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr,
-                                             frame_coordinate_x_ptr_end;
-
-    for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{
-        frame_.data() + ui_log_window_height_start_ + ui_log_window_height_current_ };
-
-        str_ptr != str_ptr_end && ui_log_window_height_current_ != kUserInterfaceLogWindowHeight_;
-        ++ui_log_window_height_current_, ++frame_coordinate_y_ptr) {
-
-        frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + ui_window_width_start_ + ui_visual_indent_width;
-        frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + ui_window_width_end_ - (ui_visual_indent_width - 1);
-
-        for (; str_ptr != str_ptr_end && frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++str_ptr, ++frame_coordinate_x_ptr) {
-
-            *frame_coordinate_x_ptr = *str_ptr;
-        }
-
-        if (str_ptr != str_ptr_end) {
-            *frame_coordinate_x_ptr = '-';
-        }
-    }
 }
 
 void TurnBasedGame::battle_map_clear() {

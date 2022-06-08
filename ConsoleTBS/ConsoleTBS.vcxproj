@@ -24,7 +24,7 @@
     <ClCompile Include="creature.cpp" />
     <ClCompile Include="creature_actions.cpp" />
     <ClCompile Include="creature_stats.cpp" />
-    <ClCompile Include="files_initialization.cpp" />
+    <ClCompile Include="turn_based_game_global.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="rolls.cpp" />
     <ClCompile Include="terrain.cpp" />
@@ -40,7 +40,7 @@
     <ClInclude Include="creature.h" />
     <ClInclude Include="creature_actions.h" />
     <ClInclude Include="creature_stats.h" />
-    <ClInclude Include="files_initialization.h" />
+    <ClInclude Include="turn_based_game_global.h" />
     <ClInclude Include="frame_coordinate.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="rolls.h" />

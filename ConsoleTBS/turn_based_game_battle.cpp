@@ -6,6 +6,7 @@
 #include <utility>
 #include <chrono>
 
+#include "turn_based_game_global.h"
 #include "user_input.h"
 #include "creature.h"
 #include "creature_actions.h"
