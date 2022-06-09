@@ -16,21 +16,18 @@
 
 void TurnBasedGame::create_new_main_game_window() {
     std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() };
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ frame_coordinate_y_ptr->data() },
-                                            frame_coordinate_x_ptr_end;
+    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ frame_coordinate_y_ptr->data() };
 
     //create upper border
     *frame_coordinate_x_ptr++ = ' ';
     *frame_coordinate_x_ptr++ = ' ';
 
-    for (frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
-        frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++frame_coordinate_x_ptr) {
-
-        *frame_coordinate_x_ptr = kGameWindowHorizontalSymbol_;
-    }
+    std::for_each(frame_coordinate_x_ptr, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2, 
+        [](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
     
+    frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
     *frame_coordinate_x_ptr++ = ' ';
-    *frame_coordinate_x_ptr = '\n'; // causing visual bugs on laptop
+    *frame_coordinate_x_ptr = '\n';
     ++frame_coordinate_y_ptr;
 
     //create left and right borders
@@ -42,12 +39,10 @@ void TurnBasedGame::create_new_main_game_window() {
         *frame_coordinate_x_ptr++ = ' ';
         *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
 
-        for (frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
-            frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++frame_coordinate_x_ptr) {
+        std::for_each(frame_coordinate_x_ptr, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
+            [](char& symbol) { symbol = ' ';});
 
-            *frame_coordinate_x_ptr = ' ';
-        }
-
+        frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
         *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
         *frame_coordinate_x_ptr = '\n';
     }
@@ -57,12 +52,10 @@ void TurnBasedGame::create_new_main_game_window() {
     *frame_coordinate_x_ptr++ = ' ';
     *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
 
-    for (frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
-        frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++frame_coordinate_x_ptr) {
+    std::for_each(frame_coordinate_x_ptr, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
+        [](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
 
-        *frame_coordinate_x_ptr = kGameWindowHorizontalSymbol_;
-    }
-
+    frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
     *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
     *frame_coordinate_x_ptr = '\n';
 }
