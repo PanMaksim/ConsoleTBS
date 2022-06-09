@@ -68,6 +68,7 @@ public:
                 start_new_battle();
                 battle_process();
                 battle_map_clear();
+                set_ui_status_flags_to_default();
                 create_new_ui_window();
                 create_new_pv_window();
                 break;
@@ -89,10 +90,25 @@ public:
     friend void add_string_to_ui_log(const std::string str);
 
 private:
+    enum UI_Status {
+        kWindowsAndInterfacesStatusMin,
+        kPlayerViewWindow = kWindowsAndInterfacesStatusMin,
+        kUI_Window,
+        kUI_WindowLog,
+        kUI_InputHelp,
+        kBattleMap,
+        kBattleMapTileNumeration,
+        kCreatureStats,
+        kCreatureSelected, // for situations when something will be shown over creature stats
+        // kCreatureInteracted, // for future, example when interaction creates new "windows"
+        kWindowsAndInterfacesStatusMax,
+    };
+
     void create_new_main_game_window();
     void create_new_ui_window();
     void create_new_pv_window();
 
+    void set_ui_status_flags_to_default();
     void calculate_window_borders();
     void frame_clear_string(char* frame_coordinate_x_ptr, char* frame_coordinate_x_ptr_end);
 
