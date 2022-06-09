@@ -15,8 +15,8 @@
 #include "battle_tile.h"
 
 void TurnBasedGame::create_new_main_game_window() {
-    std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() };
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ frame_coordinate_y_ptr->data() };
+    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() };
+    std::string::pointer frame_coordinate_x_ptr{ frame_coordinate_y_ptr->data() };
 
     //create upper border
     *frame_coordinate_x_ptr++ = ' ';
@@ -31,7 +31,7 @@ void TurnBasedGame::create_new_main_game_window() {
     ++frame_coordinate_y_ptr;
 
     //create left and right borders
-    for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr_end{ frame_.data() + kWindowHeight_ - 1 };
+    for (std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr_end{ frame_.data() + kWindowHeight_ - 1 };
         frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
 
         frame_coordinate_x_ptr = frame_coordinate_y_ptr->data();
@@ -65,7 +65,7 @@ void TurnBasedGame::create_new_ui_window() {
     ui_status[UI_Status::kUI_InputHelp] = false;
 
     std::for_each(frame_.data() + ui_window_height_start_, frame_.data() + ui_window_height_end_,
-        [=](std::array<char, kWindowWidth_>& str) {
+        [=](std::string& str) {
 
             std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ str.data() + ui_window_width_start_ };
             *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
@@ -77,7 +77,7 @@ void TurnBasedGame::create_new_ui_window() {
     //*((frame_.data() + ui_window_height_end_)->data() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
 
     // border for log window
-    std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr = frame_.data() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
+    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr = frame_.data() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
     std::for_each(frame_coordinate_y_ptr->data() + ui_window_width_start_ + 1, frame_coordinate_y_ptr->data() + ui_window_width_end_,
         [](char& symbol) {symbol = kGameWindowHorizontalSymbol_;});
 
@@ -87,7 +87,7 @@ void TurnBasedGame::create_new_ui_window() {
 
 void TurnBasedGame::create_new_pv_window() {
     std::for_each(frame_.data() + pv_window_height_start_, frame_.data() + pv_window_height_end_, 
-        [=](std::array<char, kWindowWidth_>& str) {
+        [=](std::string& str) {
             std::for_each(str.data() + pv_window_width_start_, str.data() + pv_window_width_end_,
                 [](char& symbol) { symbol = ' ';});
         });
@@ -119,10 +119,10 @@ void TurnBasedGame::calculate_window_borders() {
 }
 
 void TurnBasedGame::print_frame() {
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr,
+    std::string::pointer frame_coordinate_x_ptr,
         frame_coordinate_x_ptr_end;
 
-    for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() },
+    for (std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() },
         frame_coordinate_y_ptr_end{ frame_.data() + kWindowHeight_ };
         frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
 
@@ -137,8 +137,8 @@ void TurnBasedGame::print_frame() {
 
 void TurnBasedGame::clear_ui_log() {
     std::for_each(frame_.data() + ui_log_window_height_start_ + 1, frame_.data() + ui_log_window_height_start_ + ui_log_window_height_current_ + 1,
-        [=](std::array<char, kWindowWidth_>& str) {
-            std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ str.data() + ui_window_width_start_ + ui_visual_indent_width };
+        [=](std::string& str) {
+            std::string::pointer frame_coordinate_x_ptr{ str.data() + ui_window_width_start_ + ui_visual_indent_width };
             if (*frame_coordinate_x_ptr != ' ' && *(frame_coordinate_x_ptr + 1) != ' ') {
                 std::for_each(frame_coordinate_x_ptr, str.data() + ui_window_width_end_ - 1, [](char& symbol) { symbol = ' ';}); // not checking if it is already clear, because in this small log string will be faster just clear it all
             }
@@ -207,13 +207,13 @@ void TurnBasedGame::calculate_battle_map_visual() {
 
 void TurnBasedGame::show_battle_map() {
 
-    std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{
+    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{
         frame_.data() + pv_window_height_start_ + pv_visual_indent_height_ };
 
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{
+    std::string::pointer frame_coordinate_x_ptr{
         frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_ };
 
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr_end;
+    std::string::pointer frame_coordinate_x_ptr_end;
 
     int shown_tiles_width, 
         tile_border_visual_size_current;
@@ -266,10 +266,10 @@ void TurnBasedGame::show_battle_map() {
 }
 
 void TurnBasedGame::battle_map_show_landscape() {
-    std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{
+    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{
         frame_.data() + pv_window_height_start_ + kTileVisualHeight_ - 1 + pv_visual_indent_height_ };
 
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr;
+    std::string::pointer frame_coordinate_x_ptr;
 
     std::vector<std::vector<BattleTile>>::pointer battle_map_coordinate_y_ptr{ battle_map_info_ -> data() },
                                                 battle_map_coordinate_y_ptr_end{ battle_map_info_->data() + kBattleMapSizeHeight_ };
@@ -433,10 +433,10 @@ void TurnBasedGame::battle_map_update_player_selection() {
     int selection_visual_indent_height{ kPlayerSelectionVisualHeight_ / 2 },
         selection_visual_indent_width{ kPlayerSelectionVisualWidth_ / 2 };
 
-    std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() + tile_center_coordinates.y };
+    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() + tile_center_coordinates.y };
 
     //top
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ 
+    std::string::pointer frame_coordinate_x_ptr{
         (frame_coordinate_y_ptr - selection_visual_indent_height)->data() // frame_coordinate_y
         + tile_center_coordinates.x + selection_visual_indent_width * (-1) };
     
@@ -486,10 +486,10 @@ void TurnBasedGame::battle_map_clear_old_player_selection() {
     int selection_visual_indent_height{ kPlayerSelectionVisualHeight_ / 2 },
         selection_visual_indent_width{ kPlayerSelectionVisualWidth_ / 2 };
 
-    std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() + tile_center_coordinates.y };
+    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() + tile_center_coordinates.y };
 
     //top
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{
+    std::string::pointer frame_coordinate_x_ptr{
         (frame_coordinate_y_ptr - selection_visual_indent_height)->data() // frame_coordinate_y
         + tile_center_coordinates.x + selection_visual_indent_width * (-1) };
 
@@ -693,7 +693,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
         ++coordinate.y;
 
         if (ui_status[UI_Status::kCreatureStats]) {
-            for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr { frame_.data() + coordinate.y },
+            for (std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr { frame_.data() + coordinate.y },
                 frame_coordinate_y_ptr_end{ frame_.data() + ui_window_height_end_ };
                 (*frame_coordinate_y_ptr)[coordinate.x] != ' ' && frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
 
@@ -741,7 +741,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
 void TurnBasedGame::battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_coordinate) {
     FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(creature_coordinate) };
 
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ 
+    std::string::pointer frame_coordinate_x_ptr{
         frame_[tile_center_coordinate.y].data() + tile_center_coordinate.x };
 
     *(frame_coordinate_x_ptr - 1) = ' ';

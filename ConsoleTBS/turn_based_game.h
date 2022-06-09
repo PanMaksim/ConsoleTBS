@@ -31,6 +31,7 @@ class TurnBasedGame {
 public:
 
     TurnBasedGame() {
+        std::for_each(frame_.begin(), frame_.end(), [](std::string& str) { str = std::string(kWindowWidth_, ' '); });
         create_new_main_game_window();
         calculate_window_borders();
         create_new_ui_window();
@@ -161,7 +162,7 @@ private:
     static constexpr int kWindowWidth_{ 264 },  // tmp value for laptop
                          kWindowHeight_{ 66 };
 
-    std::array<std::array<char, kWindowWidth_>, kWindowHeight_> frame_{};
+    std::array<std::string, kWindowHeight_> frame_;
     // when accessing it frame[y][x]  x              y
 
     static constexpr char kGameWindowVerticalSymbol_{ '|' },

@@ -17,10 +17,10 @@ void add_string_to_ui_log(const std::string* str) {
     std::string::const_pointer str_ptr{ str->data() },
         str_ptr_end{ str_ptr + str->size() };
 
-    std::array<char, game_ptr->kWindowWidth_>::pointer frame_coordinate_x_ptr,
+    std::string::pointer frame_coordinate_x_ptr,
         frame_coordinate_x_ptr_end;
 
-    for (std::array<std::array<char, game_ptr->kWindowWidth_>, game_ptr->kWindowHeight_>::pointer frame_coordinate_y_ptr{
+    for (std::array<std::string, game_ptr->kWindowHeight_>::pointer frame_coordinate_y_ptr{
         game_ptr->frame_.data() + game_ptr->ui_log_window_height_start_ + game_ptr->ui_log_window_height_current_ };
 
         str_ptr != str_ptr_end && game_ptr->ui_log_window_height_current_ != game_ptr->kUserInterfaceLogWindowHeight_;
@@ -48,10 +48,10 @@ void add_string_to_ui_log(const std::string str) {
     std::string::const_pointer str_ptr{ str.data() },
         str_ptr_end{ str_ptr + str.size() };
 
-    std::array<char, game_ptr->kWindowWidth_>::pointer frame_coordinate_x_ptr,
+    std::string::pointer frame_coordinate_x_ptr,
         frame_coordinate_x_ptr_end;
 
-    for (std::array<std::array<char, game_ptr->kWindowWidth_>, game_ptr->kWindowHeight_>::pointer frame_coordinate_y_ptr{
+    for (std::array<std::string, game_ptr->kWindowHeight_>::pointer frame_coordinate_y_ptr{
         game_ptr->frame_.data() + game_ptr->ui_log_window_height_start_ + game_ptr->ui_log_window_height_current_ };
 
         str_ptr != str_ptr_end && game_ptr->ui_log_window_height_current_ != game_ptr->kUserInterfaceLogWindowHeight_;
