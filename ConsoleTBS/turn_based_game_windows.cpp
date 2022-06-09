@@ -29,7 +29,8 @@ void TurnBasedGame::create_new_main_game_window() {
         *frame_coordinate_x_ptr = kGameWindowHorizontalSymbol_;
     }
     
-    //*frame_coordinate_x_ptr = '\n'; // causing visual bugs on laptop
+    *frame_coordinate_x_ptr++ = ' ';
+    *frame_coordinate_x_ptr = '\n'; // causing visual bugs on laptop
     ++frame_coordinate_y_ptr;
 
     //create left and right borders
@@ -140,7 +141,7 @@ void TurnBasedGame::print_frame() {
 
 void TurnBasedGame::clear_ui_log() {
     std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr;
-
+    
     for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{
         frame_.data() + ui_log_window_height_start_ + 1 },
         frame_coordinate_y_ptr_end{ frame_.data() + ui_log_window_height_start_ + ui_log_window_height_current_ + 1};
@@ -178,21 +179,13 @@ void TurnBasedGame::generate_new_battle_map() {
     battle_map_info_ = std::make_unique<std::vector<std::vector<BattleTile>>>(kBattleMapSizeHeight_, std::vector<BattleTile>(kBattleMapSizeWidth_));
 
     //set random Terrain
-    std::vector<BattleTile>::pointer battle_map_coordinate_x_ptr,
-        battle_map_coordinate_x_ptr_end;
-
-    for (std::vector<std::vector<BattleTile>>::pointer battle_map_coordinate_y_ptr{ battle_map_info_->data() }, 
-        battle_map_coordinate_y_end{ battle_map_info_->data() + kBattleMapSizeHeight_ };
-        battle_map_coordinate_y_ptr != battle_map_coordinate_y_end; ++battle_map_coordinate_y_ptr) {
-
-        for (battle_map_coordinate_x_ptr = battle_map_coordinate_y_ptr->data(), 
-            battle_map_coordinate_x_ptr_end = battle_map_coordinate_y_ptr->data() + kBattleMapSizeWidth_;
-            battle_map_coordinate_x_ptr != battle_map_coordinate_x_ptr_end; ++battle_map_coordinate_x_ptr) {
-
-            battle_map_coordinate_x_ptr->terrain_type_ = static_cast<TerrainType>
+    std::for_each(battle_map_info_->data(), battle_map_info_->data() + kBattleMapSizeHeight_,
+        [](std::vector<BattleTile>& battle_tile_line) {
+            std::for_each(battle_tile_line.data(), battle_tile_line.data() + kBattleMapSizeWidth_,
+                [](BattleTile& battle_tile) { battle_tile.terrain_type_ = static_cast<TerrainType>
                 (get_random_number(static_cast<int>(TerrainType::kPlain), static_cast<int>(TerrainType::kTerrainTypeMax) - 1));
-        }
-    }
+                });
+        });
 }
 
 void TurnBasedGame::calculate_battle_map_visual() {
