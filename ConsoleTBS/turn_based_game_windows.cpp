@@ -39,6 +39,8 @@ void TurnBasedGame::create_new_main_game_window() {
 
     //create lower border
     *(frame_coordinate_y_ptr->data() + 1) = kGameWindowVerticalSymbol_;
+    *frame_coordinate_x_ptr++ = ' ';
+    *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
 
     std::for_each(frame_coordinate_y_ptr->data() + 1, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
         [](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
