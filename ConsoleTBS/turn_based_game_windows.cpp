@@ -15,44 +15,32 @@
 #include "battle_tile.h"
 
 void TurnBasedGame::create_new_main_game_window() {
+    std::for_each(frame_.begin(), frame_.end(), [](std::string& str) { str = std::string(kWindowWidth_, ' '); });
+
     std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() };
     std::string::pointer frame_coordinate_x_ptr{ frame_coordinate_y_ptr->data() };
 
     //create upper border
-    *frame_coordinate_x_ptr++ = ' ';
-    *frame_coordinate_x_ptr++ = ' ';
-
-    std::for_each(frame_coordinate_x_ptr, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2, 
+    std::for_each(frame_coordinate_y_ptr->data() + 2, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
         [](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
-    
-    frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
-    *frame_coordinate_x_ptr++ = ' ';
-    *frame_coordinate_x_ptr = '\n';
+
+    *(frame_coordinate_y_ptr->data() + kWindowWidth_ - 1) = '\n';
     ++frame_coordinate_y_ptr;
 
     //create left and right borders
     for (std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr_end{ frame_.data() + kWindowHeight_ - 1 };
         frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
 
-        frame_coordinate_x_ptr = frame_coordinate_y_ptr->data();
-
-        *frame_coordinate_x_ptr++ = ' ';
-        *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
-
-        std::for_each(frame_coordinate_x_ptr, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
-            [](char& symbol) { symbol = ' ';});
-
+        *(frame_coordinate_y_ptr->data() + 1) = kGameWindowVerticalSymbol_;
         frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
         *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
         *frame_coordinate_x_ptr = '\n';
     }
 
     //create lower border
-    frame_coordinate_x_ptr = frame_coordinate_y_ptr->data();
-    *frame_coordinate_x_ptr++ = ' ';
-    *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
+    *(frame_coordinate_y_ptr->data() + 1) = kGameWindowVerticalSymbol_;
 
-    std::for_each(frame_coordinate_x_ptr, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
+    std::for_each(frame_coordinate_y_ptr->data() + 1, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
         [](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
 
     frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
@@ -74,7 +62,7 @@ void TurnBasedGame::create_new_ui_window() {
                 [](char& symbol) { symbol = ' ';});
         });
 
-    //*((frame_.data() + ui_window_height_end_)->data() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
+    *((frame_.data() + ui_window_height_end_)->data() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
 
     // border for log window
     std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr = frame_.data() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
@@ -96,7 +84,7 @@ void TurnBasedGame::create_new_pv_window() {
 }
 
 void TurnBasedGame::set_ui_status_flags_to_default(){
-    std::for_each(ui_status.begin() + 1, ui_status.end(), [](bool& status) { status = false; });
+    std::for_each(ui_status.begin(), ui_status.end(), [](bool& status) { status = false; });
 }
 
 void TurnBasedGame::calculate_window_borders() {

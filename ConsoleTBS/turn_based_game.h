@@ -31,11 +31,11 @@ class TurnBasedGame {
 public:
 
     TurnBasedGame() {
-        std::for_each(frame_.begin(), frame_.end(), [](std::string& str) { str = std::string(kWindowWidth_, ' '); });
         create_new_main_game_window();
         calculate_window_borders();
-        create_new_ui_window();
-        create_new_pv_window();
+        create_new_ui_window(); // currently at first launch doing only unneeded clearing
+        //create_new_pv_window(); // currently at first launch doing only unneeded clearing
+        ui_status[UI_Status::kPlayerViewWindow] = true;
     }
 
     ~TurnBasedGame() {
