@@ -136,22 +136,15 @@ void TurnBasedGame::print_frame() {
 }
 
 void TurnBasedGame::clear_ui_log() {
-    std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr;
+    std::for_each(frame_.data() + ui_log_window_height_start_ + 1, frame_.data() + ui_log_window_height_start_ + ui_log_window_height_current_ + 1,
+        [=](std::array<char, kWindowWidth_>& str) {
+            std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ str.data() + ui_window_width_start_ + ui_visual_indent_width };
+            if (*frame_coordinate_x_ptr != ' ' && *(frame_coordinate_x_ptr + 1) != ' ') {
+                std::for_each(frame_coordinate_x_ptr, str.data() + ui_window_width_end_ - 1,
+                    [](char& symbol) { symbol = ' ';}); // not checking if it is already clear, because in this small log string will be faster just clear it all
+            }
+        });
     
-    for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{
-        frame_.data() + ui_log_window_height_start_ + 1 },
-        frame_coordinate_y_ptr_end{ frame_.data() + ui_log_window_height_start_ + ui_log_window_height_current_ + 1};
-        frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
-
-        frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + ui_window_width_start_ + ui_visual_indent_width;
-
-        if (*frame_coordinate_x_ptr != ' ' && *(frame_coordinate_x_ptr + 1) != ' ') {
-            std::for_each(frame_coordinate_x_ptr,
-                frame_coordinate_y_ptr->data() + ui_window_width_end_ - 1,
-                [](char& symbol) { symbol = ' ';}); // not checking if it is already clear, because in this small log string will be faster just clear it all
-        }
-    }
-
     ui_log_window_height_current_ = 1;
 }
 
