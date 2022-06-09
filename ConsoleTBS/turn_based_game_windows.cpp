@@ -61,9 +61,9 @@ void TurnBasedGame::create_new_main_game_window() {
 }
 
 void TurnBasedGame::create_new_ui_window() {
+    std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() + ui_window_height_start_ };
     std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr;
 
-    std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() + ui_window_height_start_ };
     for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr_end{ frame_.data() + ui_window_height_end_ };
         frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
 
