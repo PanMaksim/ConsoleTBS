@@ -85,13 +85,11 @@ void TurnBasedGame::create_new_ui_window() {
 }
 
 void TurnBasedGame::create_new_pv_window() {
-    for (std::array<std::array<char, kWindowWidth_>, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() + pv_window_height_start_ },
-        frame_coordinate_y_ptr_end{ frame_.data() + pv_window_height_end_ };
-        frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
-
-        std::for_each(frame_coordinate_y_ptr->data() + pv_window_width_start_, frame_coordinate_y_ptr->data() + pv_window_width_end_,
-            [](char& symbol) { symbol = ' ';});
-    }
+    std::for_each(frame_.data() + pv_window_height_start_, frame_.data() + pv_window_height_end_, 
+        [=](std::array<char, kWindowWidth_>& str) {
+            std::for_each(str.data() + pv_window_width_start_, str.data() + pv_window_width_end_,
+                [](char& symbol) { symbol = ' ';});
+        });
 
     ui_status[UI_Status::kPlayerViewWindow] = true;
 }
