@@ -49,19 +49,19 @@ void TurnBasedGame::create_new_ui_window() {
     ui_status[UI_Status::kCreatureStats] = false;
     ui_status[UI_Status::kUI_InputHelp] = false;
 
-    std::for_each(frame_.data() + ui_window_height_start_, frame_.data() + ui_window_height_end_,
+    std::for_each(std::execution::par_unseq, frame_.begin() + ui_window_height_start_, frame_.begin() + ui_window_height_end_,
         [=](std::string& str) {
-            std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ str.data() + ui_window_width_start_ };
+            std::string::iterator frame_coordinate_x_ptr{ str.begin() + ui_window_width_start_ };
             *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
 
-            std::for_each(std::execution::par_unseq, frame_coordinate_x_ptr, str.data() + ui_window_width_end_,
+            std::for_each(std::execution::par_unseq, frame_coordinate_x_ptr, str.begin() + ui_window_width_end_,
                 [](char& symbol) { symbol = ' ';});
         });
 
-    *((frame_.data() + ui_window_height_end_)->data() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
+    *((frame_.begin() + ui_window_height_end_)->begin() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
 
     // border for log window
-    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr = frame_.data() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
+    std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr = frame_.begin() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
     std::for_each(std::execution::par_unseq, frame_coordinate_y_ptr->data() + ui_window_width_start_ + 1, frame_coordinate_y_ptr->data() + ui_window_width_end_,
         [](char& symbol) {symbol = kGameWindowHorizontalSymbol_;});
 
