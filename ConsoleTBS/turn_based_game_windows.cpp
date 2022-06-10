@@ -6,7 +6,6 @@
 #include <utility>
 #include <string_view>
 #include <algorithm>
-
 #include <execution>
 
 #include "turn_based_game.h"
@@ -17,37 +16,33 @@
 #include "battle_tile.h"
 
 void TurnBasedGame::create_new_main_game_window() {
-    std::for_each(std::execution::par_unseq, frame_.begin(), frame_.end(), [](std::string& str) { str = std::string(kWindowWidth_, ' '); });
-
-    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() };
-    std::string::pointer frame_coordinate_x_ptr{ frame_coordinate_y_ptr->data() }; 
+    // initializing strings (at first launch) and cleaning in other situations
+    std::for_each(std::execution::par_unseq, frame_.begin(), frame_.end(), 
+        [=](std::string& str) {
+            str = std::string(kWindowWidth_, ' ');
+            str[kWindowWidth_ - 1] = '\n';
+        });
 
     //create upper border
-    std::for_each(std::execution::par_unseq, frame_coordinate_y_ptr->data() + 2, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
-        [](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
+    std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr{ frame_.begin() };
 
-    *(frame_coordinate_y_ptr->data() + kWindowWidth_ - 1) = '\n';
-    ++frame_coordinate_y_ptr;
+    std::for_each(std::execution::par_unseq, frame_coordinate_y_ptr->begin() + 2, frame_coordinate_y_ptr->end() - 2,
+        [=](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
 
     //create left and right borders
-    for (std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr_end{ frame_.data() + kWindowHeight_ - 1 };
-        frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
-
-        *(frame_coordinate_y_ptr->data() + 1) = kGameWindowVerticalSymbol_;
-        frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
-        *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
-        *frame_coordinate_x_ptr = '\n';
-    }
+    std::for_each(std::execution::par_unseq, frame_.begin() + 1, frame_.end() - 1, 
+        [=](std::string& str) {
+            str[1] = kGameWindowVerticalSymbol_;
+            str[kWindowWidth_ - 2] = kGameWindowVerticalSymbol_;
+        });
 
     //create lower border
-    *(frame_coordinate_y_ptr->data() + 1) = kGameWindowVerticalSymbol_;
+    frame_coordinate_y_ptr = frame_.end() - 1;
+    (*frame_coordinate_y_ptr)[1] = kGameWindowVerticalSymbol_;
+    (*frame_coordinate_y_ptr)[kWindowWidth_ - 2] = kGameWindowVerticalSymbol_;
 
-    std::for_each(std::execution::par_unseq, frame_coordinate_y_ptr->data() + 2, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
+    std::for_each(std::execution::par_unseq, frame_coordinate_y_ptr->begin() + 2, frame_coordinate_y_ptr->end() - 2,
         [](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
-
-    frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
-    *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
-    *frame_coordinate_x_ptr = '\n';
 }
 
 void TurnBasedGame::create_new_ui_window() {
