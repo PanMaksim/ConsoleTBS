@@ -18,7 +18,7 @@ void TurnBasedGame::create_new_main_game_window() {
     std::for_each(frame_.begin(), frame_.end(), [](std::string& str) { str = std::string(kWindowWidth_, ' '); });
 
     std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() };
-    std::string::pointer frame_coordinate_x_ptr{ frame_coordinate_y_ptr->data() };
+    std::string::pointer frame_coordinate_x_ptr{ frame_coordinate_y_ptr->data() }; 
 
     //create upper border
     std::for_each(frame_coordinate_y_ptr->data() + 2, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
@@ -40,7 +40,7 @@ void TurnBasedGame::create_new_main_game_window() {
     //create lower border
     *(frame_coordinate_y_ptr->data() + 1) = kGameWindowVerticalSymbol_;
 
-    std::for_each(frame_coordinate_y_ptr->data() + 1, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
+    std::for_each(frame_coordinate_y_ptr->data() + 2, frame_coordinate_y_ptr->data() + kWindowWidth_ - 2,
         [](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
 
     frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + kWindowWidth_ - 2;
@@ -54,7 +54,6 @@ void TurnBasedGame::create_new_ui_window() {
 
     std::for_each(frame_.data() + ui_window_height_start_, frame_.data() + ui_window_height_end_,
         [=](std::string& str) {
-
             std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr{ str.data() + ui_window_width_start_ };
             *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
 
@@ -158,7 +157,7 @@ void TurnBasedGame::generate_new_battle_map() {
     //set random Terrain
     std::for_each(battle_map_info_->data(), battle_map_info_->data() + kBattleMapSizeHeight_,
         [](std::vector<BattleTile>& battle_tile_line) {
-            std::for_each(battle_tile_line.data(), battle_tile_line.data() + kBattleMapSizeWidth_,
+            std::for_each(battle_tile_line.data(), battle_tile_line.data() + kBattleMapSizeWidth_, // not generate because we need to change only terrain
                 [](BattleTile& battle_tile) { battle_tile.terrain_type_ = static_cast<TerrainType>
                 (get_random_number(static_cast<int>(TerrainType::kPlain), static_cast<int>(TerrainType::kTerrainTypeMax) - 1));
                 });
@@ -199,22 +198,14 @@ void TurnBasedGame::show_battle_map() {
         frame_.data() + pv_window_height_start_ + pv_visual_indent_height_ };
 
     std::string::pointer frame_coordinate_x_ptr{
-        frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_ };
-
-    std::string::pointer frame_coordinate_x_ptr_end;
+        frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_ + 1 };
 
     int shown_tiles_width, 
         tile_border_visual_size_current;
 
     // create upper edge (different visual from others)
-    for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_; ++shown_tiles_width) {
-        *frame_coordinate_x_ptr++ = ' '; // for visual
-
-        for (tile_border_visual_size_current = 1 ; tile_border_visual_size_current != kTileVisualWidth_;
-            ++tile_border_visual_size_current, ++frame_coordinate_x_ptr) {
-
-            *frame_coordinate_x_ptr = kTileHorizontalSymbol_;
-        }
+    for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_; ++shown_tiles_width, frame_coordinate_x_ptr += kTileVisualWidth_) {
+        std::for_each_n(frame_coordinate_x_ptr, kTileVisualWidth_ - 1, [](char& symbol) { symbol = kTileHorizontalSymbol_;});
     }
 
     ++frame_coordinate_y_ptr;
@@ -236,16 +227,12 @@ void TurnBasedGame::show_battle_map() {
 
         // create bottom edges
         frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_;
-        *frame_coordinate_x_ptr++ = kTileVerticalSymbol_;
 
-        for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_; ++shown_tiles_width, ++frame_coordinate_x_ptr) {
-            for (frame_coordinate_x_ptr_end = frame_coordinate_x_ptr + kTileVisualWidth_ - 1;
-                frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++frame_coordinate_x_ptr) {
-
-                *frame_coordinate_x_ptr = kTileHorizontalSymbol_;
-            }
-            *frame_coordinate_x_ptr = kTileVerticalSymbol_;
+        for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_; ++shown_tiles_width, frame_coordinate_x_ptr += kTileVisualWidth_ - 1) {
+            *frame_coordinate_x_ptr++ = kTileVerticalSymbol_;
+            std::for_each_n(frame_coordinate_x_ptr, kTileVisualWidth_ - 1, [](char& symbol) { symbol = kTileHorizontalSymbol_;});
         }
+        *frame_coordinate_x_ptr = kTileVerticalSymbol_;
 
         ++frame_coordinate_y_ptr;
     }
