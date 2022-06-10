@@ -200,7 +200,7 @@ bool TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() {
     
     // try to build fastest way to given tile // Pathfinding AI AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 
 
-    player_coordinate_selection_ = { coordinate_y - 1, coordinate_x - 1 }; // -1 cause of battle_map_info_ array numeration starts from 0
+    player_coordinate_selection_ = { coordinate_x - 1, coordinate_y - 1 }; // -1 cause of battle_map_info_ array numeration starts from 0
     return true;
 }
 

@@ -253,7 +253,7 @@ void TurnBasedGame::battle_map_show_landscape() {
                                      battle_map_coordinate_x_ptr_end;
 
     for (; battle_map_coordinate_y_ptr != battle_map_coordinate_y_ptr_end; frame_coordinate_y_ptr += kTileVisualHeight_, ++battle_map_coordinate_y_ptr) {
-        
+
         for (frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_ + kTileVisualWidth_ - 2 + pv_visual_indent_width_,
             battle_map_coordinate_x_ptr = battle_map_coordinate_y_ptr->data(),
             battle_map_coordinate_x_ptr_end = battle_map_coordinate_y_ptr->data() + kBattleMapSizeWidth_;
