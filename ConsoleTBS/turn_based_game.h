@@ -6,6 +6,8 @@
 #include <vector>
 #include <utility>
 
+#include <chrono>
+
 #include "user_input.h"
 #include "battle_map_coordinate.h"
 #include "frame_coordinate.h"
@@ -152,7 +154,7 @@ private:
 
     bool interact_with_creature();
     bool creature_move_by_input(UserInput input_method);
-    bool creature_move_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate);
+    bool move_creature_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate);
 
     void check_possible_kill(BattleMapCoordinate creature_coordinate);
 

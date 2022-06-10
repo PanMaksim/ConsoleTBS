@@ -17,6 +17,7 @@ void TurnBasedGame::battle_process() {
     std::chrono::time_point time_start{ std::chrono::high_resolution_clock::now() };
     std::chrono::time_point time_end{ std::chrono::high_resolution_clock::now() };
     std::chrono::milliseconds duration;
+    // duration = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start);
     // std::cout << "Execution time: " << duration.count() << "ms.\n";
 
     bool new_frame{ true };
@@ -301,7 +302,7 @@ void TurnBasedGame::check_possible_kill(BattleMapCoordinate creature_coordinate)
     }
 }
 
-bool TurnBasedGame::creature_move_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate) {
+bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate) {
     std::vector<BattleTile>::pointer old_coordinate_ptr{ (*battle_map_info_)[old_coordinate.y].data() + old_coordinate.x },
                                         new_coordinate_ptr{ (*battle_map_info_)[new_coordinate.y].data() + new_coordinate.x };
 
@@ -433,7 +434,7 @@ bool TurnBasedGame::creature_move_by_input(UserInput input_method) {
 
         // move on empty battle_tile
         if (player_coordinate_selection_ptr->creature_ == nullptr) {
-            creature_move_by_coordinate(player_coordinate_selection_old_, player_coordinate_selection_);
+            move_creature_by_coordinate(player_coordinate_selection_old_, player_coordinate_selection_);
         }
         // macro - attack or main buff on target
         else if (player_coordinate_selection_ptr->creature_ != nullptr) {
