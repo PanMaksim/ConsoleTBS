@@ -287,6 +287,20 @@ std::unique_ptr<std::vector<UserInput>> TurnBasedGame::player_coordinate_selecti
     return direction_log;
 }
 
+void TurnBasedGame::battle_map_kill_creature(BattleMapCoordinate killed_creature_coordinate) {
+    battle_map_clear_tile_from_creature_image(killed_creature_coordinate);
+    (*battle_map_info_)[killed_creature_coordinate.y][killed_creature_coordinate.x].creature_ = nullptr;
+}
+
+void TurnBasedGame::check_possible_kill(BattleMapCoordinate creature_coordinate) {
+    std::vector<BattleTile>::pointer creature_coordinate_ptr{ (*battle_map_info_)[creature_coordinate.y].data() + creature_coordinate.x };
+    if (creature_coordinate_ptr->creature_->get_certain_stat_current_value(CreatureStatId::kHP) <= 0) {
+        add_string_to_ui_log(*creature_coordinate_ptr->creature_->get_name() +
+            ' ' + '(' + std::to_string(creature_coordinate.y + 1) + ',' + ' ' + std::to_string(creature_coordinate.x + 1) + ") died.");
+        battle_map_kill_creature(creature_coordinate);
+    }
+}
+
 bool TurnBasedGame::creature_move_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate) {
     std::vector<BattleTile>::pointer old_coordinate_ptr{ (*battle_map_info_)[old_coordinate.y].data() + old_coordinate.x },
                                         new_coordinate_ptr{ (*battle_map_info_)[new_coordinate.y].data() + new_coordinate.x };
@@ -337,20 +351,6 @@ bool TurnBasedGame::creature_move_by_coordinate(BattleMapCoordinate old_coordina
     }
 
     return true;
-}
-
-void TurnBasedGame::battle_map_kill_creature(BattleMapCoordinate killed_creature_coordinate) {
-    battle_map_clear_tile_from_creature_image(killed_creature_coordinate);
-    (*battle_map_info_)[killed_creature_coordinate.y][killed_creature_coordinate.x].creature_ = nullptr;
-}
-
-void TurnBasedGame::check_possible_kill(BattleMapCoordinate creature_coordinate) {
-    std::vector<BattleTile>::pointer creature_coordinate_ptr{ (*battle_map_info_)[creature_coordinate.y].data() + creature_coordinate.x };
-    if (creature_coordinate_ptr->creature_->get_certain_stat_current_value(CreatureStatId::kHP) <= 0) {
-        add_string_to_ui_log(*creature_coordinate_ptr->creature_->get_name() + 
-            ' ' + '(' + std::to_string(creature_coordinate.y + 1) + ',' + ' ' + std::to_string(creature_coordinate.x + 1) + ") died.");
-        battle_map_kill_creature(creature_coordinate);
-    }
 }
 
 bool TurnBasedGame::creature_move_by_input(UserInput input_method) {
