@@ -236,28 +236,21 @@ void TurnBasedGame::show_battle_map() {
 }
 
 void TurnBasedGame::battle_map_show_landscape() {
-    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{
-        frame_.data() + pv_window_height_start_ + kTileVisualHeight_ - 1 + pv_visual_indent_height_ };
+    std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr{
+        frame_.begin() + pv_window_height_start_ - 1 + pv_visual_indent_height_ };
 
-    std::string::pointer frame_coordinate_x_ptr;
+    std::string::iterator frame_coordinate_x_ptr;
+    int coordinate_x_start{ pv_window_width_start_ + pv_visual_indent_width_ - 2 };
 
-    std::vector<std::vector<BattleTile>>::pointer battle_map_coordinate_y_ptr{ battle_map_info_ -> data() },
-                                                battle_map_coordinate_y_ptr_end{ battle_map_info_->data() + kBattleMapSizeHeight_ };
-
-    std::vector<BattleTile>::pointer battle_map_coordinate_x_ptr,
-                                     battle_map_coordinate_x_ptr_end;
-
-    for (; battle_map_coordinate_y_ptr != battle_map_coordinate_y_ptr_end; frame_coordinate_y_ptr += kTileVisualHeight_, ++battle_map_coordinate_y_ptr) {
-
-        for (frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_ + kTileVisualWidth_ - 2 + pv_visual_indent_width_,
-            battle_map_coordinate_x_ptr = battle_map_coordinate_y_ptr->data(),
-            battle_map_coordinate_x_ptr_end = battle_map_coordinate_y_ptr->data() + kBattleMapSizeWidth_;
-
-            battle_map_coordinate_x_ptr != battle_map_coordinate_x_ptr_end; frame_coordinate_x_ptr += kTileVisualWidth_, ++battle_map_coordinate_x_ptr) {
-
-            *frame_coordinate_x_ptr = terrain_database_get_full_info(battle_map_coordinate_x_ptr->terrain_type_)->symbol_;
-        }
-    }
+    std::for_each(std::execution::seq, battle_map_info_->begin(), battle_map_info_->end(), 
+        [=, &frame_coordinate_y_ptr, &frame_coordinate_x_ptr](std::vector<BattleTile>& battle_tile_line) {
+            frame_coordinate_y_ptr += kTileVisualHeight_;
+            frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + coordinate_x_start;
+            std::for_each(std::execution::seq, battle_tile_line.begin(), battle_tile_line.end(), [=, &frame_coordinate_x_ptr](BattleTile& battle_tile) {
+                frame_coordinate_x_ptr += kTileVisualWidth_;
+                *frame_coordinate_x_ptr = terrain_database_get_full_info(battle_tile.terrain_type_)->symbol_;
+                });
+        });
 }
 
 bool TurnBasedGame::battle_map_tile_numeration_turn_on() {
