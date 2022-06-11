@@ -113,12 +113,12 @@ private:
 
     void set_ui_status_flags_to_default();
     void calculate_window_borders();
-    void frame_clear_string(char* frame_coordinate_x_ptr, char* frame_coordinate_x_ptr_end);
+    void frame_clear_string(std::string::iterator frame_coordinate_x_ptr, std::string::iterator frame_coordinate_x_ptr_end);
 
     void update_ui();
-    char* add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent);
-    char* add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent);
-    char* add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent);
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, char symbol, char separator, const std::string_view* str_right_part, int indent);
     void add_creature_stat_string_to_ui(FrameCoordinate coordinate, CreatureStatId creature_stat, int stat_value_current, int stat_value_max);
     void ui_input_help_switch();

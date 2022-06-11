@@ -26,8 +26,7 @@ void TurnBasedGame::create_new_main_game_window() {
     //create upper border
     std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr{ frame_.begin() };
 
-    std::for_each(std::execution::par_unseq, frame_coordinate_y_ptr->begin() + 2, frame_coordinate_y_ptr->end() - 2,
-        [=](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
+    std::fill(std::execution::par_unseq, frame_coordinate_y_ptr->begin() + 2, frame_coordinate_y_ptr->end() - 2, kGameWindowHorizontalSymbol_);
 
     //create left and right borders
     std::for_each(std::execution::par_unseq, frame_.begin() + 1, frame_.end() - 1, 
@@ -41,8 +40,7 @@ void TurnBasedGame::create_new_main_game_window() {
     (*frame_coordinate_y_ptr)[1] = kGameWindowVerticalSymbol_;
     (*frame_coordinate_y_ptr)[kWindowWidth_ - 2] = kGameWindowVerticalSymbol_;
 
-    std::for_each(std::execution::par_unseq, frame_coordinate_y_ptr->begin() + 2, frame_coordinate_y_ptr->end() - 2,
-        [](char& symbol) { symbol = kGameWindowHorizontalSymbol_;});
+    std::fill(std::execution::par_unseq, frame_coordinate_y_ptr->begin() + 2, frame_coordinate_y_ptr->end() - 2, kGameWindowHorizontalSymbol_);
 }
 
 void TurnBasedGame::create_new_ui_window() {
@@ -54,16 +52,14 @@ void TurnBasedGame::create_new_ui_window() {
             std::string::iterator frame_coordinate_x_ptr{ str.begin() + ui_window_width_start_ };
             *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
 
-            std::for_each(std::execution::par_unseq, frame_coordinate_x_ptr, str.begin() + ui_window_width_end_,
-                [](char& symbol) { symbol = ' ';});
+            std::fill(std::execution::par_unseq, frame_coordinate_x_ptr, str.begin() + ui_window_width_end_, ' ');
         });
 
     *((frame_.begin() + ui_window_height_end_)->begin() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
 
     // border for log window
     std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr = frame_.begin() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
-    std::for_each(std::execution::par_unseq, frame_coordinate_y_ptr->data() + ui_window_width_start_ + 1, frame_coordinate_y_ptr->data() + ui_window_width_end_,
-        [](char& symbol) {symbol = kGameWindowHorizontalSymbol_;});
+    std::fill(std::execution::par_unseq, frame_coordinate_y_ptr->data() + ui_window_width_start_ + 1, frame_coordinate_y_ptr->data() + ui_window_width_end_, kGameWindowHorizontalSymbol_);
 
     ui_status[UI_Status::kUI_Window] = true;
     ui_status[UI_Status::kUI_WindowLog] = true;
@@ -72,15 +68,14 @@ void TurnBasedGame::create_new_ui_window() {
 void TurnBasedGame::create_new_pv_window() {
     std::for_each(std::execution::par_unseq, frame_.data() + pv_window_height_start_, frame_.data() + pv_window_height_end_,
         [=](std::string& str) {
-            std::for_each(std::execution::par_unseq, str.data() + pv_window_width_start_, str.data() + pv_window_width_end_,
-                [](char& symbol) { symbol = ' ';});
+            std::fill(std::execution::par_unseq, str.data() + pv_window_width_start_, str.data() + pv_window_width_end_, ' ');
         });
 
     ui_status[UI_Status::kPlayerViewWindow] = true;
 }
 
 void TurnBasedGame::set_ui_status_flags_to_default(){
-    std::for_each(ui_status.begin(), ui_status.end(), [](bool& status) { status = false; });
+    std::fill(std::execution::par_unseq, ui_status.begin(), ui_status.end(), false);
 }
 
 void TurnBasedGame::calculate_window_borders() {
@@ -124,7 +119,7 @@ void TurnBasedGame::clear_ui_log() {
         [=](std::string& str) {
             std::string::pointer frame_coordinate_x_ptr{ str.data() + ui_window_width_start_ + ui_visual_indent_width };
             if (*frame_coordinate_x_ptr != ' ' && *(frame_coordinate_x_ptr + 1) != ' ') {
-                std::for_each(std::execution::par_unseq, frame_coordinate_x_ptr, str.data() + ui_window_width_end_ - 1, [](char& symbol) { symbol = ' ';}); // not checking if it is already clear, because in this small log string will be faster just clear it all
+                std::fill(std::execution::par_unseq, frame_coordinate_x_ptr, str.data() + ui_window_width_end_ - 1, ' '); // not checking if it is already clear, because in this small log string will be faster just clear it all
             }
         });
     
@@ -154,7 +149,7 @@ void TurnBasedGame::generate_new_battle_map() {
         [](std::vector<BattleTile>& battle_tile_line) {
             std::for_each(std::execution::par_unseq, battle_tile_line.data(), battle_tile_line.data() + kBattleMapSizeWidth_, // not generate because we need to change only terrain
                 [](BattleTile& battle_tile) { battle_tile.terrain_type_ = static_cast<TerrainType>
-                (get_random_number(static_cast<int>(TerrainType::kPlain), static_cast<int>(TerrainType::kTerrainTypeMax) - 1));
+                    (get_random_number(static_cast<int>(TerrainType::kPlain), static_cast<int>(TerrainType::kTerrainTypeMax) - 1));
                 });
         });
 }
@@ -199,7 +194,7 @@ void TurnBasedGame::show_battle_map() {
 
     // create upper edge (different visual from others)
     for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_; ++shown_tiles_width, frame_coordinate_x_ptr += kTileVisualWidth_) {
-        std::for_each_n(std::execution::par_unseq, frame_coordinate_x_ptr, kTileVisualWidth_ - 1, [](char& symbol) { symbol = kTileHorizontalSymbol_;});
+        std::fill_n(std::execution::par_unseq, frame_coordinate_x_ptr, kTileVisualWidth_ - 1, kTileHorizontalSymbol_);
     }
 
     ++frame_coordinate_y_ptr;
@@ -224,7 +219,7 @@ void TurnBasedGame::show_battle_map() {
 
         for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_; ++shown_tiles_width, frame_coordinate_x_ptr += kTileVisualWidth_ - 1) {
             *frame_coordinate_x_ptr++ = kTileVerticalSymbol_;
-            std::for_each_n(std::execution::par_unseq, frame_coordinate_x_ptr, kTileVisualWidth_ - 1, [](char& symbol) { symbol = kTileHorizontalSymbol_;});
+            std::fill_n(std::execution::par_unseq, frame_coordinate_x_ptr, kTileVisualWidth_ - 1, kTileHorizontalSymbol_);
         }
         *frame_coordinate_x_ptr = kTileVerticalSymbol_;
 
@@ -483,18 +478,12 @@ void TurnBasedGame::battle_map_clear_old_player_selection() {
     }
 }
 
-void TurnBasedGame::frame_clear_string(char* frame_coordinate_x_ptr, char* frame_coordinate_x_ptr_end) {
-    while (true) {
-        if (frame_coordinate_x_ptr == frame_coordinate_x_ptr_end ||
-            (*frame_coordinate_x_ptr == ' ' && *(frame_coordinate_x_ptr + 1) == ' ')) {
-            return;
-        }
-        *(frame_coordinate_x_ptr++) = ' ';
-    }
+void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_ptr, std::string::iterator frame_coordinate_x_ptr_end) {
+    std::fill(std::execution::par_unseq, frame_coordinate_x_ptr, frame_coordinate_x_ptr_end, ' ');
 }
 
 // needs better system for transporting words from UI's right end
-char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent = 0) {
+std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent = 0) {
     //std::string::iterator frame_coordinate_x_ptr { frame_[coordinate.y].begin() + coordinate.x + indent },
     //                        frame_coordinate_x_ptr_end{ frame_[coordinate.y].begin() + ui_window_width_end_ };
 
@@ -509,8 +498,8 @@ char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::str
     //}
     //return frame_coordinate_x_ptr;
 
-    char* frame_coordinate_x_ptr = { frame_[coordinate.y].data() + coordinate.x + indent },
-        * frame_coordinate_x_ptr_end{ frame_[coordinate.y].data() + ui_window_width_end_ };
+    std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x + indent },
+                            frame_coordinate_x_ptr_end{ frame_[coordinate.y].begin() + ui_window_width_end_ };
 
     for (std::string::const_pointer str_ptr{ str.data() }, str_ptr_end{ str.data() + str.size() };
         str_ptr != str_ptr_end && frame_coordinate_x_ptr != frame_coordinate_x_ptr_end;
@@ -524,9 +513,9 @@ char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::str
     return frame_coordinate_x_ptr;
 }
 
-char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent = 0) {
-    char* frame_coordinate_x_ptr = { frame_[coordinate.y].data() + coordinate.x + indent },
-        * frame_coordinate_x_ptr_end{ frame_[coordinate.y].data() + ui_window_width_end_ };
+std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent = 0) {
+    std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x + indent },
+                            frame_coordinate_x_ptr_end{ frame_[coordinate.y].begin() + ui_window_width_end_ };
 
     for (std::string::const_pointer str_ptr{ str->data() }, str_ptr_end{ str->data() + str->size() };
         str_ptr != str_ptr_end && frame_coordinate_x_ptr != frame_coordinate_x_ptr_end;
@@ -540,9 +529,9 @@ char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::str
     return frame_coordinate_x_ptr;
 }
 
-char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent = 0) {
-    char* frame_coordinate_x_ptr = { frame_[coordinate.y].data() + coordinate.x + indent },
-        * frame_coordinate_x_ptr_end{ frame_[coordinate.y].data() + ui_window_width_end_ };
+std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent = 0) {
+    std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x + indent },
+                             frame_coordinate_x_ptr_end{ frame_[coordinate.y].begin() + ui_window_width_end_ };
 
     for (std::string::const_pointer str_ptr{ str->data() }, str_ptr_end{ str->data() + str->size() };
         str_ptr != str_ptr_end && frame_coordinate_x_ptr != frame_coordinate_x_ptr_end;
@@ -607,9 +596,10 @@ void TurnBasedGame::ui_input_help_switch() {
 void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate coordinate, 
         CreatureStatId creature_stat, int stat_value_current, int stat_value_max = 0) {
 
-    char* frame_coordinate_x_ptr = { frame_[coordinate.y].data() + coordinate.x
-        + static_cast<int>(creature_database_get_stat_naming(creature_stat)->size()) + 2 }, // +2 for indent from stat naming to stat numeric values
-        * frame_coordinate_x_ptr_end{ frame_[coordinate.y].data() + ui_window_width_end_ };
+    std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x
+        + static_cast<int>(creature_database_get_stat_naming(creature_stat)->size()) + 2 }; // +2 for indent from stat naming to stat numeric values
+    
+    std::string::iterator frame_coordinate_x_ptr_end{ frame_[coordinate.y].begin() + ui_window_width_end_ };
 
     std::string::const_pointer str_ptr, str_ptr_end;
 
@@ -681,12 +671,12 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
         ++coordinate.y;
 
         if (ui_status[UI_Status::kCreatureStats]) {
-            for (std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr { frame_.data() + coordinate.y },
-                frame_coordinate_y_ptr_end{ frame_.data() + ui_window_height_end_ };
+            for (std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr { frame_.begin() + coordinate.y },
+                frame_coordinate_y_ptr_end{ frame_.begin() + ui_window_height_end_ };
                 (*frame_coordinate_y_ptr)[coordinate.x] != ' ' && frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
 
-                frame_clear_string(frame_coordinate_y_ptr->data() + coordinate.x,
-                    frame_coordinate_y_ptr->data() + ui_window_width_end_);
+                frame_clear_string(frame_coordinate_y_ptr->begin() + coordinate.x,
+                    frame_coordinate_y_ptr->begin() + ui_window_width_end_);
             }
             ui_status[UI_Status::kCreatureStats] = false;
         }
