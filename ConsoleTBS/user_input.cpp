@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <vector>
-#include <string>
+#include <string_view>
 
 int get_user_input(int min, int max) {
 	int value{};
@@ -17,7 +17,7 @@ int get_user_input(int min, int max) {
 
 const int user_input_max{ 11 };
 
-const std::vector<std::pair<char, std::string>> user_input_database_description{
+const std::vector<std::pair<char, std::string_view>> user_input_database_description{
 	{UserInput::kExit, "return"},
 	{UserInput::kShowInputHelp, "show input help"}, // not key binding, because it shows only available input
 	{UserInput::kMoveUp, "move up"},
@@ -32,7 +32,7 @@ const std::vector<std::pair<char, std::string>> user_input_database_description{
 };
 
 // not best variant, but enum char is better for input reading, description will be called only by player question
-const std::pair<char, std::string>* user_input_database_get_main_description(UserInput user_input_symbol) {
+const std::pair<char, std::string_view>* user_input_database_get_main_description(UserInput user_input_symbol) {
 	switch (user_input_symbol) {
 	case UserInput::kExit:
 		return &user_input_database_description[0];
@@ -61,6 +61,6 @@ const std::pair<char, std::string>* user_input_database_get_main_description(Use
 	return &user_input_database_description[0];
 }
 
-const std::vector<std::pair<char, std::string>>* user_input_database_get_all_description() {
+const std::vector<std::pair<char, std::string_view>>* user_input_database_get_all_description() {
 	return &user_input_database_description;
 }

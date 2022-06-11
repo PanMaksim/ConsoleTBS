@@ -377,7 +377,6 @@ bool TurnBasedGame::battle_map_tile_numeration_switch() {
                                                                 : battle_map_tile_numeration_turn_off();
 }
 
-// returns [y,x] where creature_middle_symbol would be
 FrameCoordinate TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
     int first_tile_coordinate_x{ pv_window_width_start_ + pv_visual_indent_width_ + (kTileVisualWidth_ / 2) },
         first_tile_coordinate_y{ pv_window_height_start_ + pv_visual_indent_height_ + 2 };
@@ -400,7 +399,7 @@ void TurnBasedGame::battle_map_update_player_selection() {
 
     //top
     std::string::pointer frame_coordinate_x_ptr{
-        (frame_coordinate_y_ptr - selection_visual_indent_height)->data() // frame_coordinate_y
+        (frame_coordinate_y_ptr - selection_visual_indent_height)->data()
         + tile_center_coordinates.x + selection_visual_indent_width * (-1) };
     
     int player_selection_width_current{};
@@ -411,7 +410,7 @@ void TurnBasedGame::battle_map_update_player_selection() {
     }
 
     // left & right
-    frame_coordinate_x_ptr = (frame_coordinate_y_ptr + selection_visual_indent_height)->data() // frame_coordinate_y
+    frame_coordinate_x_ptr = (frame_coordinate_y_ptr + selection_visual_indent_height)->data()
         + tile_center_coordinates.x + selection_visual_indent_width * (-1);
 
     for (player_selection_width_current = 0; player_selection_width_current != kPlayerSelectionVisualWidth_;
@@ -432,8 +431,7 @@ void TurnBasedGame::battle_map_update_player_selection() {
     }
     update_ui();
     ui_status[UI_Status::kCreatureSelected] =
-        ((*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ != nullptr)
-        ? true : false;
+        ((*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ != nullptr) ? true : false;
 }
 
 void TurnBasedGame::battle_map_clear_old_player_selection() {
@@ -497,6 +495,20 @@ void TurnBasedGame::frame_clear_string(char* frame_coordinate_x_ptr, char* frame
 
 // needs better system for transporting words from UI's right end
 char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent = 0) {
+    //std::string::iterator frame_coordinate_x_ptr { frame_[coordinate.y].begin() + coordinate.x + indent },
+    //                        frame_coordinate_x_ptr_end{ frame_[coordinate.y].begin() + ui_window_width_end_ };
+
+    //for (std::string::const_pointer str_ptr{ str_left_part.data() }, str_ptr_end{ str_left_part.data() + str_left_part.size() };
+    //    str_ptr != str_ptr_end && frame_coordinate_x_ptr != frame_coordinate_x_ptr_end;
+    //    ++frame_coordinate_x_ptr, ++str_ptr) {
+
+    //    *frame_coordinate_x_ptr = *str_ptr;
+    //}
+    //if (*frame_coordinate_x_ptr != ' ') {
+    //    frame_clear_string(frame_coordinate_x_ptr, frame_coordinate_x_ptr_end);
+    //}
+    //return frame_coordinate_x_ptr;
+
     char* frame_coordinate_x_ptr = { frame_[coordinate.y].data() + coordinate.x + indent },
         * frame_coordinate_x_ptr_end{ frame_[coordinate.y].data() + ui_window_width_end_ };
 
@@ -544,18 +556,31 @@ char* TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::str
     return frame_coordinate_x_ptr;
 }
 
+// no check for going beyond UI
+std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, char symbol, char separator, const std::string_view* str, int indent = 0) {
+    std::string::iterator frame_coordinate_x_ptr{ frame_[coordinate.y].begin() + coordinate.x + indent };
+
+    *frame_coordinate_x_ptr++ = symbol;
+    *frame_coordinate_x_ptr++ = ' ';
+    *frame_coordinate_x_ptr++ = separator;
+    *frame_coordinate_x_ptr++ = ' ';
+
+    std::copy(std::execution::par_unseq, str->cbegin(), str->cend(), frame_coordinate_x_ptr);
+
+    return frame_coordinate_x_ptr + str->size();
+}
+
 void TurnBasedGame::ui_input_help_turn_on() {
     if (ui_status[UI_Status::kCreatureStats]) { create_new_ui_window(); } // clear from ui stats, should be changed to more optimized variant
 
-    const std::vector<std::pair<char, std::string>>* input_button_description{ user_input_database_get_all_description() };
-    const std::pair<char, std::string>* input_button_description_ptr_begin{ input_button_description->data() },
+    const std::vector<std::pair<char, std::string_view>>* input_button_description{ user_input_database_get_all_description() };
+    const std::pair<char, std::string_view>* input_button_description_ptr_begin{ input_button_description->data() },
         *input_button_description_ptr_end{ input_button_description_ptr_begin + input_button_description->size() };
 
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
     for (; input_button_description_ptr_begin != input_button_description_ptr_end; ++input_button_description_ptr_begin, ++coordinate.y) {
-        add_string_to_ui(coordinate, std::string{ input_button_description_ptr_begin->first } + " - " + input_button_description_ptr_begin->second);
-        // for unknown reason without manual conversion char to string throws away info before description.second
+        add_string_to_ui(coordinate, input_button_description_ptr_begin->first, '-', &(input_button_description_ptr_begin->second));
     }
 
     add_string_to_ui_log("Turn in input help");
