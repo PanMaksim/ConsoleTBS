@@ -174,7 +174,6 @@ void TurnBasedGame::calculate_battle_map_visual() {
         int battle_map_visual_size_height{ kBattleMapSizeHeight_ * kTileVisualHeight_ + 1 },
             battle_map_visual_size_width{ kBattleMapSizeWidth_ * kTileVisualWidth_ };
 
-        // +1 and +2 for visual
         pv_visual_indent_height_ = ((kWindowHeight_ - battle_map_visual_size_height) / 2);
         pv_visual_indent_width_ = ((pv_window_width_end_ - pv_window_width_start_ - battle_map_visual_size_width) / 2);
 
@@ -374,20 +373,21 @@ bool TurnBasedGame::battle_map_tile_numeration_turn_off() {
 }
 
 bool TurnBasedGame::battle_map_tile_numeration_switch() {
-    //if (!ui_status[UI_Status::kBattleMap]) {return false;}
     return (!ui_status[UI_Status::kBattleMapTileNumeration]) ? battle_map_tile_numeration_turn_on() 
                                                                 : battle_map_tile_numeration_turn_off();
 }
 
 // returns [y,x] where creature_middle_symbol would be
 FrameCoordinate TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
+    int first_tile_coordinate_x{ pv_window_width_start_ + pv_visual_indent_width_ + (kTileVisualWidth_ / 2) },
+        first_tile_coordinate_y{ pv_window_height_start_ + pv_visual_indent_height_ + 2 };
+
     if (coordinate.y > kBattleMapSizeHeight_ || coordinate.x > kBattleMapSizeWidth_) {
         std::cerr << "ERROR: battle_map_find_tile_center_coordinate out of range\n";
-        return { pv_window_width_start_ + pv_visual_indent_width_ + (kTileVisualWidth_ / 2), 
-                    pv_window_height_start_ + pv_visual_indent_height_ + 2 }; // return [0, 0] tile
+        return { first_tile_coordinate_x, first_tile_coordinate_y }; // return [0, 0] tile
     }
-    return { pv_window_width_start_ + pv_visual_indent_width_ + (kTileVisualWidth_ / 2) + kTileVisualWidth_ * coordinate.x,
-                pv_window_height_start_ + pv_visual_indent_height_ + 3 + kTileVisualHeight_ * coordinate.y};
+    return { first_tile_coordinate_x + kTileVisualWidth_ * coordinate.x,
+                first_tile_coordinate_y + 1 + kTileVisualHeight_ * coordinate.y};
 }
 
 void TurnBasedGame::battle_map_update_player_selection() {
