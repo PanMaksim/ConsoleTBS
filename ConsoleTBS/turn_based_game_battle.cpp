@@ -131,7 +131,7 @@ void TurnBasedGame::battle_map_add_creature(Creature* creature, BattleMapCoordin
     std::array<char, kWindowWidth_>::pointer frame_coordinate_ptr{ frame_[tile_center_coordinate.y].data() + tile_center_coordinate.x };
 
     // switch for possible another starting ways in future
-    switch (status) { // attacking from left
+    switch (status) {
     case BattleStartStatus::kAttaking: // attacking from left
         *(frame_coordinate_ptr - 1) = kCreatureBackSymbol_;
         *frame_coordinate_ptr = kCreatureMiddleSymbol_;
@@ -437,7 +437,7 @@ bool TurnBasedGame::creature_move_by_input(UserInput input_method) {
             move_creature_by_coordinate(player_coordinate_selection_old_, player_coordinate_selection_);
         }
         // macro - attack or main buff on target
-        else if (player_coordinate_selection_ptr->creature_ != nullptr) {
+        else if (player_coordinate_selection_ptr->creature_ != nullptr) { // in future should add check for non same army allies
             if (player_coordinate_selection_old_ptr->creature_->get_army_id()
                 != player_coordinate_selection_ptr->creature_->get_army_id()) {
 

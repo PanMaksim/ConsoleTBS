@@ -3,8 +3,9 @@
 #include <array>
 #include <vector>
 #include <string>
-#include <utility>
 #include <string_view>
+#include <sstream>
+#include <utility>
 #include <algorithm>
 #include <execution>
 
@@ -98,20 +99,9 @@ void TurnBasedGame::calculate_window_borders() {
 }
 
 void TurnBasedGame::print_frame() {
-    std::string::pointer frame_coordinate_x_ptr,
-        frame_coordinate_x_ptr_end;
-
-    for (std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{ frame_.data() },
-        frame_coordinate_y_ptr_end{ frame_.data() + kWindowHeight_ };
-        frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
-
-        for (frame_coordinate_x_ptr = frame_coordinate_y_ptr->data(),
-            frame_coordinate_x_ptr_end = frame_coordinate_y_ptr->data() + kWindowWidth_;
-            frame_coordinate_x_ptr != frame_coordinate_x_ptr_end; ++frame_coordinate_x_ptr) {
-
-            std::cout << *frame_coordinate_x_ptr;
-        }
-    }
+    std::stringstream frame_stream;
+    std::for_each(std::execution::seq, frame_.begin(), frame_.end(), [&](const std::string& str) { frame_stream << str; });
+    std::cout << frame_stream.str();
 }
 
 void TurnBasedGame::clear_ui_log() {
