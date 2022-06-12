@@ -468,7 +468,7 @@ void TurnBasedGame::battle_map_clear_old_player_selection() {
     }
 }
 
-void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_ptr, std::string::iterator frame_coordinate_x_ptr_end) {
+void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_ptr, std::string::iterator frame_coordinate_x_ptr_end) { // can be overhead but raises readability
     std::fill(std::execution::par_unseq, frame_coordinate_x_ptr, frame_coordinate_x_ptr_end, ' ');
 }
 
@@ -545,6 +545,11 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate
     *frame_coordinate_x_ptr++ = ' ';
 
     std::copy(std::execution::par_unseq, str->cbegin(), str->cend(), frame_coordinate_x_ptr);
+
+    frame_coordinate_x_ptr += str->size();
+    if (*frame_coordinate_x_ptr != ' ') {
+        frame_clear_string(frame_coordinate_x_ptr, frame_[coordinate.y].begin() + ui_window_width_end_);
+    }
 
     return frame_coordinate_x_ptr + str->size();
 }
