@@ -518,22 +518,20 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate
     if (*frame_coordinate_x_ptr != ' ') {
         frame_clear_string(frame_coordinate_x_ptr, frame_[coordinate.y].begin() + ui_window_width_end_);
     }
-
-    return frame_coordinate_x_ptr + str->size();
+    return frame_coordinate_x_ptr;
 }
 
 void TurnBasedGame::ui_input_help_turn_on() {
     if (ui_status[UI_Status::kCreatureStats]) { create_new_ui_window(); } // clear from ui stats, can be changed to more optimized variant
 
-    const std::vector<std::pair<char, std::string_view>>* input_button_description{ user_input_database_get_all_description() };
-    const std::pair<char, std::string_view>* input_button_description_ptr_begin{ input_button_description->data() },
-        *input_button_description_ptr_end{ input_button_description_ptr_begin + input_button_description->size() };
-
+    const std::vector<std::pair<char, std::string_view>>* input_button_description_database_ptr{ user_input_database_get_all_description() };
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
-    for (; input_button_description_ptr_begin != input_button_description_ptr_end; ++input_button_description_ptr_begin, ++coordinate.y) {
-        add_string_to_ui(coordinate, input_button_description_ptr_begin->first, '-', &(input_button_description_ptr_begin->second));
-    }
+    std::for_each(std::execution::seq, input_button_description_database_ptr->begin(), input_button_description_database_ptr->end(), 
+        [=, &coordinate](const std::pair<char, std::string_view>& input_button_description_database) {
+            add_string_to_ui(coordinate, input_button_description_database.first, '-', &(input_button_description_database.second));
+            ++coordinate.y;
+        });
 
     add_string_to_ui_log("Turn in input help");
     ui_status[UI_Status::kUI_InputHelp] = true;
