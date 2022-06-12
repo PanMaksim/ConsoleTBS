@@ -543,10 +543,12 @@ void TurnBasedGame::ui_input_help_turn_off() {
     add_string_to_ui_log("Turn off input help");
     ui_status[UI_Status::kUI_InputHelp] = false;
 
-    battle_map_create_basic_ui();
-    if (ui_status[UI_Status::kCreatureSelected]) {
-        battle_map_create_basic_ui_with_creature();
-        update_ui();
+    if (ui_status[UI_Status::kBattleMap]) {
+        battle_map_create_basic_ui();
+        if (ui_status[UI_Status::kCreatureSelected]) {
+            battle_map_create_basic_ui_with_creature();
+            update_ui();
+        }
     }
 }
 
