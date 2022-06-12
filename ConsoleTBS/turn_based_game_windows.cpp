@@ -503,6 +503,7 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate
     return frame_coordinate_x_ptr;
 }
 
+// currently used for showing up user_input_help
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, char symbol, char separator, const std::string_view* str, int indent = 0) {
     std::string::iterator frame_coordinate_x_ptr{ frame_[coordinate.y].begin() + coordinate.x + indent };
 
