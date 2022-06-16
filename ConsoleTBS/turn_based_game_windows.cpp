@@ -226,7 +226,7 @@ void TurnBasedGame::battle_map_show_landscape() {
     std::string::iterator frame_coordinate_x_ptr;
     int coordinate_x_start{ pv_window_width_start_ + pv_visual_indent_width_ - 2 };
 
-    std::for_each(std::execution::seq, battle_map_info_->begin(), battle_map_info_->end(), 
+    std::for_each(std::execution::seq, battle_map_info_->begin(), battle_map_info_->end(),  // can be changed to unseq execution if there will be locks to prevent dataracing
         [=, &frame_coordinate_y_ptr, &frame_coordinate_x_ptr](std::vector<BattleTile>& battle_tile_line) {
             frame_coordinate_y_ptr += kTileVisualHeight_;
             frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + coordinate_x_start;
@@ -358,8 +358,7 @@ bool TurnBasedGame::battle_map_tile_numeration_turn_off() {
 }
 
 bool TurnBasedGame::battle_map_tile_numeration_switch() {
-    return (!ui_status[UI_Status::kBattleMapTileNumeration]) ? battle_map_tile_numeration_turn_on() 
-                                                                : battle_map_tile_numeration_turn_off();
+    return (!ui_status[UI_Status::kBattleMapTileNumeration]) ? battle_map_tile_numeration_turn_on() : battle_map_tile_numeration_turn_off();
 }
 
 FrameCoordinate TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
@@ -474,7 +473,7 @@ void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_
 
 // needs better system for transporting words from UI's right end
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent = 0) {
-    std::copy(std::execution::par_unseq, str.begin(), str.end(), frame_[coordinate.y].begin() + coordinate.x + indent);
+    std::move(std::execution::par_unseq, str.begin(), str.end(), frame_[coordinate.y].begin() + coordinate.x + indent);
 
     std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x + indent + str.size() };
     if (*frame_coordinate_x_ptr != ' ') {
