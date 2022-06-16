@@ -17,7 +17,7 @@ const Terrain* terrain_database_get_full_info(TerrainType terrain) {
 	return &terrain_database_types[static_cast<int>(terrain)];
 }
 
-const std::pair<float, float>* terrain_database_get_movement_cost(TerrainType terrain) {
+const TerrainMovementCost* terrain_database_get_movement_cost(TerrainType terrain) {
 	return &terrain_database_types[static_cast<int>(terrain)].movement_cost_;
 }
 

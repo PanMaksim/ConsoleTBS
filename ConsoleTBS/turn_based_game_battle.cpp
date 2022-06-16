@@ -383,13 +383,13 @@ bool TurnBasedGame::creature_move_by_input(UserInput input_method) {
         float AP_cost_for_movement{};
 
         std::vector<std::vector<BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
-        const std::pair<float, float>* movement_cost{ terrain_database_get_movement_cost(
+        const TerrainMovementCost* movement_cost{ terrain_database_get_movement_cost(
                                                     (battle_tile_y_ptr->data() + player_coordinate_selection_old_.x)->terrain_type_) };
 
         for (std::vector<UserInput>::pointer direction_begin{direction_log->data()}, direction_end{direction_log->data() + direction_log->size()};
             direction_begin < direction_end; ++direction_begin) {
 
-            AP_cost_for_movement += movement_cost->second; // AP for leaving tile
+            AP_cost_for_movement += movement_cost->leaving_value; // AP for leaving tile
 
             switch (*direction_begin) {
             case UserInput::kMoveUp:
@@ -412,7 +412,7 @@ bool TurnBasedGame::creature_move_by_input(UserInput input_method) {
             movement_cost = terrain_database_get_movement_cost(
                 ((*battle_map_info_)[player_coordinate_selection_old_.y + moved_distance_y])[player_coordinate_selection_old_.x + moved_distance_x].terrain_type_);
 
-            AP_cost_for_movement += movement_cost->first; // AP for going into tile
+            AP_cost_for_movement += movement_cost->entry_value; // AP for going into tile
         }
 
         if (AP_cost_for_movement > player_coordinate_selection_old_ptr->creature_->get_certain_stat_current_value(CreatureStatId::kMovementSpeed)) {
