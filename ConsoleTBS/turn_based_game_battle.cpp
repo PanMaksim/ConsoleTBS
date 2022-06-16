@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>
 #include <chrono>
+#include <execution>
 
 #include "turn_based_game_global.h"
 #include "user_input.h"
@@ -122,9 +123,8 @@ void TurnBasedGame::battle_map_add_creature(Creature* creature, BattleMapCoordin
     const std::vector<CreatureStatMultiplier>* new_terrain_effects{
         terrain_database_get_effects((*battle_map_info_)[coordinate.y][coordinate.x].terrain_type_) };
 
-    for (CreatureStatMultiplier effect : *new_terrain_effects) {
-        creature->apply_stat_multiplier(effect);
-    }
+    std::for_each(std::execution::par_unseq, new_terrain_effects->begin(), new_terrain_effects->end(), 
+        [&creature](CreatureStatMultiplier effect) { creature->apply_stat_multiplier(effect); });
 
     char creature_head_symbol = ((creature->get_army_id() == 0) ? kCreaturePlayerHeadSymbol_ : kCreatureEnemyHeadSymbol_);
     FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(coordinate) };
@@ -324,15 +324,13 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordina
     // update applied terrain effects
     if (old_coordinate_ptr->terrain_type_ != new_coordinate_ptr->terrain_type_) {
         Creature* creature{ new_coordinate_ptr->creature_ };
-        const std::vector<CreatureStatMultiplier>* old_terrain_effects{ terrain_database_get_effects(old_coordinate_ptr->terrain_type_) };
-        for (CreatureStatMultiplier effect : *old_terrain_effects) {
-            creature->delete_stat_multiplier(effect);
-        }
+        const std::vector<CreatureStatMultiplier>* terrain_effects{ terrain_database_get_effects(old_coordinate_ptr->terrain_type_) };
+        std::for_each(std::execution::par_unseq, terrain_effects->begin(), terrain_effects->end(),
+            [&creature](CreatureStatMultiplier effect) { creature->delete_stat_multiplier(effect); });
 
-        const std::vector<CreatureStatMultiplier>* new_terrain_effects{ terrain_database_get_effects(new_coordinate_ptr->terrain_type_) };
-        for (CreatureStatMultiplier effect : *new_terrain_effects) {
-            creature->apply_stat_multiplier(effect);
-        }
+        terrain_effects = terrain_database_get_effects(new_coordinate_ptr->terrain_type_);
+        std::for_each(std::execution::par_unseq, terrain_effects->begin(), terrain_effects->end(), 
+            [&creature](CreatureStatMultiplier effect) { creature->apply_stat_multiplier(effect); });
     }
 
     battle_map_clear_tile_from_creature_image(old_coordinate);
