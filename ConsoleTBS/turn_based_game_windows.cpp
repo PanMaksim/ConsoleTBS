@@ -669,6 +669,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
         CreatureStat creature_stat;
         for (int stat_iter{}, stat_iter_end{ static_cast<int>(CreatureStatId::kCreatureStatMax) };
             stat_iter != stat_iter_end; ++stat_iter, ++coordinate.y) {
+
             creature_stat = target->creature_->get_certain_stat_current_and_max(static_cast<CreatureStatId>(stat_iter));
 
             add_creature_stat_string_to_ui(coordinate,

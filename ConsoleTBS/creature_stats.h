@@ -25,5 +25,10 @@ struct CreatureStat {
 	int max;
 };
 
+struct CreatureStatMultiplier {
+	CreatureStatId stat_id;
+	float multiplier;
+};
+
 const std::string_view* creature_database_get_race_naming(CreatureRace race);
 const std::string_view* creature_database_get_stat_naming(CreatureStatId stat);

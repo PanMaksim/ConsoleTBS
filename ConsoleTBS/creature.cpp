@@ -63,10 +63,11 @@ int Creature::calculate_received_damage(const Creature* attacker, double multipl
 			- this->get_certain_stat_current_value(CreatureStatId::kArmor_PHS));
 }
 
-void Creature::apply_stat_multiplier(CreatureStatId effect_targeted_stat, float effect_size) {
-	creature_stats_[static_cast<int>(effect_targeted_stat)].current = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(effect_targeted_stat)].current) * effect_size);
+void Creature::apply_stat_multiplier(CreatureStatMultiplier stat_multiplier) {
+	creature_stats_[static_cast<int>(stat_multiplier.stat_id)].current = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_multiplier.stat_id)].current) * stat_multiplier.multiplier);
 }
 
-void Creature::delete_stat_multiplier(CreatureStatId effect_targeted_stat, float effect_size) {
-	creature_stats_[static_cast<int>(effect_targeted_stat)].current = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(effect_targeted_stat)].current) / effect_size);
+void Creature::delete_stat_multiplier(CreatureStatMultiplier stat_multiplier) {
+	creature_stats_[static_cast<int>(stat_multiplier.stat_id)].current = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_multiplier.stat_id)].current) / stat_multiplier.multiplier);
 }
+

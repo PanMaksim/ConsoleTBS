@@ -64,8 +64,8 @@ public:
 	int calculate_received_damage(const Creature* attacker, double multiplier);
 	
 	// in future should be created new class for effects and shoving active effects on screen
-	void apply_stat_multiplier(CreatureStatId effect_targeted_stat, float effect_size);
-	void delete_stat_multiplier(CreatureStatId effect_targeted_stat, float effect_size);
+	void apply_stat_multiplier(CreatureStatMultiplier stat_multiplier);
+	void delete_stat_multiplier(CreatureStatMultiplier stat_multiplier);
 
 private:
 	int army_id_{ 0 };

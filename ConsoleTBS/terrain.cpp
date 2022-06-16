@@ -21,6 +21,6 @@ const std::pair<float, float>* terrain_database_get_movement_cost(TerrainType te
 	return &terrain_database_types[static_cast<int>(terrain)].movement_cost_;
 }
 
-const std::vector<std::pair<CreatureStatId, float>>* terrain_database_get_effects(TerrainType terrain) {
+const std::vector<CreatureStatMultiplier>* terrain_database_get_effects(TerrainType terrain) {
 	return &terrain_database_types[static_cast<int>(terrain)].effects_;
 }

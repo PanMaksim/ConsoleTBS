@@ -119,11 +119,11 @@ void TurnBasedGame::start_new_battle() {
 
 void TurnBasedGame::battle_map_add_creature(Creature* creature, BattleMapCoordinate coordinate, BattleStartStatus status) {
     (*battle_map_info_)[coordinate.y][coordinate.x].creature_ = creature;
-    const std::vector<std::pair<CreatureStatId, float>>* new_terrain_effects{
+    const std::vector<CreatureStatMultiplier>* new_terrain_effects{
         terrain_database_get_effects((*battle_map_info_)[coordinate.y][coordinate.x].terrain_type_) };
 
-    for (std::pair<CreatureStatId, float> effect : *new_terrain_effects) {
-        creature->apply_stat_multiplier(effect.first, effect.second);
+    for (CreatureStatMultiplier effect : *new_terrain_effects) {
+        creature->apply_stat_multiplier(effect);
     }
 
     char creature_head_symbol = ((creature->get_army_id() == 0) ? kCreaturePlayerHeadSymbol_ : kCreatureEnemyHeadSymbol_);
@@ -324,14 +324,14 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordina
     // update applied terrain effects
     if (old_coordinate_ptr->terrain_type_ != new_coordinate_ptr->terrain_type_) {
         Creature* creature{ new_coordinate_ptr->creature_ };
-        const std::vector<std::pair<CreatureStatId, float>>* old_terrain_effects{ terrain_database_get_effects(old_coordinate_ptr->terrain_type_) };
-        for (std::pair<CreatureStatId, float> effect : *old_terrain_effects) {
-            creature->delete_stat_multiplier(effect.first, effect.second);
+        const std::vector<CreatureStatMultiplier>* old_terrain_effects{ terrain_database_get_effects(old_coordinate_ptr->terrain_type_) };
+        for (CreatureStatMultiplier effect : *old_terrain_effects) {
+            creature->delete_stat_multiplier(effect);
         }
 
-        const std::vector<std::pair<CreatureStatId, float>>* new_terrain_effects{ terrain_database_get_effects(new_coordinate_ptr->terrain_type_) };
-        for (std::pair<CreatureStatId, float> effect : *new_terrain_effects) {
-            creature->apply_stat_multiplier(effect.first, effect.second);
+        const std::vector<CreatureStatMultiplier>* new_terrain_effects{ terrain_database_get_effects(new_coordinate_ptr->terrain_type_) };
+        for (CreatureStatMultiplier effect : *new_terrain_effects) {
+            creature->apply_stat_multiplier(effect);
         }
     }
 
