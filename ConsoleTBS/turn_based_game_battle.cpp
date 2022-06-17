@@ -22,7 +22,6 @@ void TurnBasedGame::battle_process() {
     // std::cout << "Execution time: " << duration.count() << "ms.\n";
 
     const std::vector<UserInputButton> allowed_user_input{
-            UserInputButton::kShowInputHelp,
             UserInputButton::kExit,
             UserInputButton::kMoveSelectionByCoordinate,
             UserInputButton::kMoveSelectionByDirection,

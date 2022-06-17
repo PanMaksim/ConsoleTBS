@@ -48,7 +48,6 @@ public:
 
     void start() {
         const std::vector<UserInputButton> allowed_user_input { // unoptimized because will hold allowed input for main_menu when there is currently battle in proccess
-            UserInputButton::kShowInputHelp,
             UserInputButton::kExit
         };
 
@@ -124,7 +123,7 @@ private:
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent);
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent);
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent);
-    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, char symbol, char separator, const std::string_view* str_right_part, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const UserInputDescription* user_input_description);
     void add_creature_stat_string_to_ui(FrameCoordinate coordinate, CreatureStatId creature_stat, int stat_value_current, int stat_value_max);
     void ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input);
     void ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input);
