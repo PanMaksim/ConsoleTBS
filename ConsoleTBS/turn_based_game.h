@@ -47,6 +47,9 @@ public:
     void print_frame();
 
     void start() {
+        std::string ask_user_input_str((kWindowWidth_ / 2) - 6, ' ');
+        ask_user_input_str += " User input: ";
+
         bool new_frame{ true };
         char user_input{};
         do {
@@ -56,10 +59,7 @@ public:
             }
             else { new_frame = true; }
 
-            for (int iter{ 0 }; iter != (kWindowWidth_ / 2) - 6; ++iter) {
-                std::cout << ' ';
-            }
-            std::cout << "User Input: ";
+            std::cout << ask_user_input_str;
             std::cin >> user_input;
             player_coordinate_selection_old_ = player_coordinate_selection_;
             switch (user_input) {
