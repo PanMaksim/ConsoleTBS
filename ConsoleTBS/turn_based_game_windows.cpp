@@ -58,6 +58,10 @@ void TurnBasedGame::create_new_ui_window() {
 
     *((frame_.begin() + ui_window_height_end_)->begin() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
 
+    // there should be user_input_help
+
+    
+
     // border for log window
     std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr = frame_.begin() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
     std::fill(std::execution::par_unseq, frame_coordinate_y_ptr->data() + ui_window_width_start_ + 1, frame_coordinate_y_ptr->data() + ui_window_width_end_, kGameWindowHorizontalSymbol_);

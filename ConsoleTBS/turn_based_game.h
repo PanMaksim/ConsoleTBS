@@ -126,11 +126,8 @@ private:
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent);
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, char symbol, char separator, const std::string_view* str_right_part, int indent);
     void add_creature_stat_string_to_ui(FrameCoordinate coordinate, CreatureStatId creature_stat, int stat_value_current, int stat_value_max);
-    void ui_input_help_switch();
     void ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input);
-    void ui_input_help_turn_on();
     void ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input);
-    void ui_input_help_turn_off();
     void ui_input_help_turn_off(size_t allowed_user_input_size);
     void clear_ui_log();
 
