@@ -19,5 +19,5 @@ void Army::generate_random_army() { // for testing
 	std::generate_n(std::back_inserter(army_), army_size_max_, []() { return creature_database_get_templates(static_cast<CreatureTemplate>((
 		get_random_number(static_cast<int>(CreatureTemplate::kCreatureTemplateMin), static_cast<int>(CreatureTemplate::kCreatureTemplateMax) - 1))));});
 
-	std::for_each(army_.begin(), army_.end(), [army_id{army_id_}](Creature& creature) {creature.join_army(army_id);});
+	std::for_each(army_.begin(), army_.end(), [=](Creature& creature) {creature.join_army(army_id_);});
 }
