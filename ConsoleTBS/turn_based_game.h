@@ -47,6 +47,11 @@ public:
     void print_frame();
 
     void start() {
+        const std::vector<UserInputButton> allowed_user_input { // unoptimized because will hold allowed input for main_menu when there is currently battle in proccess
+            UserInputButton::kShowInputHelp,
+            UserInputButton::kExit
+        };
+
         std::string ask_user_input_str((kWindowWidth_ / 2) - 6, ' ');
         ask_user_input_str += " User input: ";
 
@@ -63,11 +68,11 @@ public:
             std::cin >> user_input;
             player_coordinate_selection_old_ = player_coordinate_selection_;
             switch (user_input) {
-            case UserInput::kShowInputHelp:
-                ui_input_help_switch();
+            case UserInputButton::kShowInputHelp:
+                ui_input_help_switch(allowed_user_input);
                 new_frame = true;
                 break;
-            case UserInput::kStartBattle: // should start another switch with another input switch to prevent improper input
+            case UserInputButton::kStartBattle: // should start another switch with another input switch to prevent improper input
                 start_new_battle();
                 battle_process();
                 battle_map_clear();
@@ -75,7 +80,7 @@ public:
                 create_new_ui_window();
                 create_new_pv_window();
                 break;
-            case UserInput::kExit:
+            case UserInputButton::kExit:
                 return;
             default:
                 std::cerr << "Unrecognised input. Do nothing.";
@@ -122,8 +127,11 @@ private:
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, char symbol, char separator, const std::string_view* str_right_part, int indent);
     void add_creature_stat_string_to_ui(FrameCoordinate coordinate, CreatureStatId creature_stat, int stat_value_current, int stat_value_max);
     void ui_input_help_switch();
+    void ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input);
     void ui_input_help_turn_on();
+    void ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input);
     void ui_input_help_turn_off();
+    void ui_input_help_turn_off(size_t allowed_user_input_size);
     void clear_ui_log();
 
     void start_new_battle();
@@ -151,10 +159,10 @@ private:
     void battle_map_clear_old_player_selection();
 
     bool player_coordinate_selection_move_by_coordinate_input();
-    std::unique_ptr<std::vector<UserInput>> player_coordinate_selection_move_by_direction_input();
+    std::unique_ptr<std::vector<UserInputButton>> player_coordinate_selection_move_by_direction_input();
 
     bool interact_with_creature();
-    bool creature_move_by_input(UserInput input_method);
+    bool creature_move_by_input(UserInputButton input_method);
     bool move_creature_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate);
 
     void check_possible_kill(BattleMapCoordinate creature_coordinate);

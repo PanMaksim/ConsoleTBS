@@ -21,6 +21,15 @@ void TurnBasedGame::battle_process() {
     // duration = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start);
     // std::cout << "Execution time: " << duration.count() << "ms.\n";
 
+    const std::vector<UserInputButton> allowed_user_input{
+            UserInputButton::kShowInputHelp,
+            UserInputButton::kExit,
+            UserInputButton::kMoveSelectionByCoordinate,
+            UserInputButton::kMoveSelectionByDirection,
+            UserInputButton::kInteract,
+            UserInputButton::kTileNumerationSwitch
+    };
+
     bool new_frame{ true };
     char user_input{};
     do {
@@ -42,11 +51,11 @@ void TurnBasedGame::battle_process() {
         player_coordinate_selection_old_ = player_coordinate_selection_;
         std::cout << "\t\t\t\t\t\t\t\t\t\t\t\t";
         switch (user_input) {
-        case UserInput::kShowInputHelp:
-            ui_input_help_switch();
+        case UserInputButton::kShowInputHelp:
+            ui_input_help_switch(allowed_user_input);
             new_frame = true;
             break;
-        case UserInput::kMoveSelectionByCoordinate:
+        case UserInputButton::kMoveSelectionByCoordinate:
             new_frame = player_coordinate_selection_move_by_coordinate_input();
             if (new_frame) {
                 battle_map_clear_old_player_selection();
@@ -59,7 +68,7 @@ void TurnBasedGame::battle_process() {
                     std::to_string(player_coordinate_selection_old_.y) + ')');
             }
             break;
-        case UserInput::kMoveSelectionByDirection:
+        case UserInputButton::kMoveSelectionByDirection:
             if (player_coordinate_selection_move_by_direction_input() != nullptr) {
                 new_frame = true;
             }
@@ -74,13 +83,13 @@ void TurnBasedGame::battle_process() {
                     std::to_string(player_coordinate_selection_old_.y) + ')');
             }
             break;
-        case UserInput::kInteract:
+        case UserInputButton::kInteract:
             new_frame = interact_with_creature();
             break;
-        case UserInput::kTileNumerationSwitch:
+        case UserInputButton::kTileNumerationSwitch:
             new_frame = battle_map_tile_numeration_switch();
             break;
-        case UserInput::kExit:
+        case UserInputButton::kExit:
             return;
         default:
             std::cerr << "Unrecognised input. Do nothing.";
@@ -206,19 +215,19 @@ bool TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() {
 }
 
 // cin >> string and then move coordinate_selection until string ends
-std::unique_ptr<std::vector<UserInput>> TurnBasedGame::player_coordinate_selection_move_by_direction_input() {
+std::unique_ptr<std::vector<UserInputButton>> TurnBasedGame::player_coordinate_selection_move_by_direction_input() {
     if (!ui_status[UI_Status::kBattleMap]) { return nullptr; }
 
     std::cout << "Move by direction";
     std::cout << '\n';
     BattleMapCoordinate player_coordinate_selection_tmp{};
     bool failed{};
-    std::unique_ptr<std::vector<UserInput>> direction_log;
+    std::unique_ptr<std::vector<UserInputButton>> direction_log;
 
     do {
         failed = false;
         player_coordinate_selection_tmp = player_coordinate_selection_;
-        direction_log = std::make_unique<std::vector<UserInput>>();
+        direction_log = std::make_unique<std::vector<UserInputButton>>();
 
         std::cout << "Enter direction to move: ";
         std::string direction_global;
@@ -227,46 +236,46 @@ std::unique_ptr<std::vector<UserInput>> TurnBasedGame::player_coordinate_selecti
 
         for (char direction : direction_global) {
             switch (direction) {
-            case UserInput::kExit:
+            case UserInputButton::kExit:
                 std::cout << "Stop movement input";
                 return nullptr;
-            case UserInput::kMoveUp:
+            case UserInputButton::kMoveUp:
                 if (player_coordinate_selection_tmp.y == 0) {
                     std::cerr << "Error, moved too high\n";
                     failed = true;
                 }
                 else {
-                    direction_log->push_back(UserInput::kMoveUp);
+                    direction_log->push_back(UserInputButton::kMoveUp);
                     --player_coordinate_selection_tmp.y;
                 }
                 break;
-            case UserInput::kMoveDown:
+            case UserInputButton::kMoveDown:
                 if (player_coordinate_selection_tmp.y == kBattleMapSizeHeight_ - 1) {
                     std::cerr << "Error, moved too low\n";
                     failed = true;
                 }
                 else {
-                    direction_log->push_back(UserInput::kMoveDown);
+                    direction_log->push_back(UserInputButton::kMoveDown);
                     ++player_coordinate_selection_tmp.y;
                 }
                 break;
-            case UserInput::kMoveLeft:
+            case UserInputButton::kMoveLeft:
                 if (player_coordinate_selection_tmp.x == 0) {
                     std::cerr << "Error, moved too left\n";
                     failed = true;
                 }
                 else {
-                    direction_log->push_back(UserInput::kMoveLeft);
+                    direction_log->push_back(UserInputButton::kMoveLeft);
                     --player_coordinate_selection_tmp.x;
                 }
                 break;
-            case UserInput::kMoveRight:
+            case UserInputButton::kMoveRight:
                 if (player_coordinate_selection_tmp.x == kBattleMapSizeWidth_ - 1) {
                     std::cerr << "Error, moved too right\n";
                     failed = true;
                 }
                 else {
-                    direction_log->push_back(UserInput::kMoveRight);
+                    direction_log->push_back(UserInputButton::kMoveRight);
                     ++player_coordinate_selection_tmp.x;
                 }
                 break;
@@ -352,17 +361,17 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordina
     return true;
 }
 
-bool TurnBasedGame::creature_move_by_input(UserInput input_method) {
+bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
     std::vector<BattleTile>::pointer player_coordinate_selection_old_ptr{ 
         (*battle_map_info_)[player_coordinate_selection_.y].data() + player_coordinate_selection_.x };
 
     bool input_result;
-    std::unique_ptr<std::vector<UserInput>> direction_log;
+    std::unique_ptr<std::vector<UserInputButton>> direction_log;
     switch (input_method) {
-    case UserInput::kMoveSelectionByDirection:
+    case UserInputButton::kMoveSelectionByDirection:
         direction_log = player_coordinate_selection_move_by_direction_input();
         break;
-    case UserInput::kMoveSelectionByCoordinate:
+    case UserInputButton::kMoveSelectionByCoordinate:
         input_result = player_coordinate_selection_move_by_coordinate_input(); // change to direction log
         break;
     default:
@@ -386,22 +395,22 @@ bool TurnBasedGame::creature_move_by_input(UserInput input_method) {
         const TerrainMovementCost* movement_cost{ terrain_database_get_movement_cost(
                                                     (battle_tile_y_ptr->data() + player_coordinate_selection_old_.x)->terrain_type_) };
 
-        for (std::vector<UserInput>::pointer direction_begin{direction_log->data()}, direction_end{direction_log->data() + direction_log->size()};
+        for (std::vector<UserInputButton>::pointer direction_begin{direction_log->data()}, direction_end{direction_log->data() + direction_log->size()};
             direction_begin < direction_end; ++direction_begin) {
 
             AP_cost_for_movement += movement_cost->leaving_value; // AP for leaving tile
 
             switch (*direction_begin) {
-            case UserInput::kMoveUp:
+            case UserInputButton::kMoveUp:
                 --moved_distance_y;
                 break;
-            case UserInput::kMoveDown:
+            case UserInputButton::kMoveDown:
                 ++moved_distance_y;
                 break;
-            case UserInput::kMoveRight:
+            case UserInputButton::kMoveRight:
                 ++moved_distance_x;
                 break;
-            case UserInput::kMoveLeft:
+            case UserInputButton::kMoveLeft:
                 --moved_distance_x;
                 break;
             default:
@@ -497,11 +506,11 @@ bool TurnBasedGame::interact_with_creature() {
         std::cin >> user_input;
 
         switch (user_input) {
-        case UserInput::kMoveSelectionByCoordinate:
-            return creature_move_by_input(UserInput::kMoveSelectionByCoordinate);
-        case UserInput::kMoveSelectionByDirection:
-            return creature_move_by_input(UserInput::kMoveSelectionByDirection);
-        case UserInput::kExit:
+        case UserInputButton::kMoveSelectionByCoordinate:
+            return creature_move_by_input(UserInputButton::kMoveSelectionByCoordinate);
+        case UserInputButton::kMoveSelectionByDirection:
+            return creature_move_by_input(UserInputButton::kMoveSelectionByDirection);
+        case UserInputButton::kExit:
             return false;
         default:
             std::cerr << "Unrecognised input. Do nothing.\n";

@@ -17,50 +17,50 @@ int get_user_input(int min, int max) {
 
 const int user_input_max{ 11 };
 
-const std::vector<std::pair<char, std::string_view>> user_input_database_description{
-	{UserInput::kExit, "return"},
-	{UserInput::kShowInputHelp, "show input help"}, // not key binding, because it shows only available input
-	{UserInput::kMoveUp, "move up"},
-	{UserInput::kMoveDown, "move down"},
-	{UserInput::kMoveLeft, "move left"},
-	{UserInput::kMoveRight, "move right"},
-	{UserInput::kInteract, "interact"},
-	{UserInput::kMoveSelectionByCoordinate, "move selection by coordinate"},
-	{UserInput::kMoveSelectionByDirection, "move selection by direction"},
-	{UserInput::kStartBattle, "start battle"},
-	{UserInput::kTileNumerationSwitch, "tile numeration switch"},
+const std::vector<UserInputDescription> user_input_database_description{
+	{UserInputButton::kExit, "return"},
+	{UserInputButton::kShowInputHelp, "show input help"}, // not key binding, because it shows only available input
+	{UserInputButton::kMoveUp, "move up"},
+	{UserInputButton::kMoveDown, "move down"},
+	{UserInputButton::kMoveLeft, "move left"},
+	{UserInputButton::kMoveRight, "move right"},
+	{UserInputButton::kInteract, "interact"},
+	{UserInputButton::kMoveSelectionByCoordinate, "move selection by coordinate"},
+	{UserInputButton::kMoveSelectionByDirection, "move selection by direction"},
+	{UserInputButton::kStartBattle, "start battle"},
+	{UserInputButton::kTileNumerationSwitch, "tile numeration switch"},
 };
 
 // not best variant, but enum char is better for input reading, description will be called only by player question
-const std::pair<char, std::string_view>* user_input_database_get_main_description(UserInput user_input_symbol) {
+const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol) {
 	switch (user_input_symbol) {
-	case UserInput::kExit:
+	case UserInputButton::kExit:
 		return &user_input_database_description[0];
-	case UserInput::kShowInputHelp:
+	case UserInputButton::kShowInputHelp:
 		return &user_input_database_description[1];
-	case UserInput::kMoveUp:
+	case UserInputButton::kMoveUp:
 		return &user_input_database_description[2];
-	case UserInput::kMoveDown:
+	case UserInputButton::kMoveDown:
 		return &user_input_database_description[3];
-	case UserInput::kMoveLeft:
+	case UserInputButton::kMoveLeft:
 		return &user_input_database_description[4];
-	case UserInput::kMoveRight:
+	case UserInputButton::kMoveRight:
 		return &user_input_database_description[5];
-	case UserInput::kInteract:
+	case UserInputButton::kInteract:
 		return &user_input_database_description[6];
-	case UserInput::kMoveSelectionByCoordinate:
+	case UserInputButton::kMoveSelectionByCoordinate:
 		return &user_input_database_description[7];
-	case UserInput::kMoveSelectionByDirection:
+	case UserInputButton::kMoveSelectionByDirection:
 		return &user_input_database_description[8];
-	case UserInput::kStartBattle:
+	case UserInputButton::kStartBattle:
 		return &user_input_database_description[9];
-	case UserInput::kTileNumerationSwitch:
+	case UserInputButton::kTileNumerationSwitch:
 		return &user_input_database_description[10];
+	default:
+		return &user_input_database_description[0];
 	}
-
-	return &user_input_database_description[0];
 }
 
-const std::vector<std::pair<char, std::string_view>>* user_input_database_get_all_description() {
+const std::vector<UserInputDescription>* user_input_database_get_all_description() {
 	return &user_input_database_description;
 }
