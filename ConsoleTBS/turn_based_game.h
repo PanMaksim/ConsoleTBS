@@ -120,7 +120,7 @@ private:
     void frame_clear_string(std::string::iterator frame_coordinate_x_ptr, std::string::iterator frame_coordinate_x_ptr_end);
 
     void update_ui();
-    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string&& str, int indent);
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent);
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent);
     std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const UserInputDescription* user_input_description);
@@ -170,7 +170,7 @@ private:
                          kWindowHeight_{ 66 };
 
     std::array<std::string, kWindowHeight_> frame_;
-    // when accessing it frame[y][x]  x              y
+    // when accessing it frame[y][x]
 
     static constexpr char kGameWindowVerticalSymbol_{ '|' },
         kGameWindowHorizontalSymbol_{ '_' };

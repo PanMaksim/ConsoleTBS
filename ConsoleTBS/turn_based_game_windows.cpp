@@ -478,7 +478,7 @@ void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_
 }
 
 // needs better system for transporting words from UI's right end
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent = 0) {
+std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string&& str, int indent = 0) {
     std::move(std::execution::par_unseq, str.begin(), str.end(), frame_[coordinate.y].begin() + coordinate.x + indent);
 
     std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x + indent + str.size() };
