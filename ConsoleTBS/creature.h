@@ -14,6 +14,8 @@ enum class CreatureTemplate {
 	kCreatureTemplateMax
 };
 
+static size_t creature_id_counter{};
+
 class Creature {
 public:
 	Creature(CreatureRace race, std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)> target_creature_stats) : race_{ race } {
@@ -48,12 +50,17 @@ public:
 	}
 	//Creature(CreatureTemplate creature_template) : Creature(*database_create_creature_by_template(creature_template)) {}
 	
+	//bool operator==(const Creature& another_creature) {
+	//	return creature_id_ == another_creature.get_creature_id();
+	//}
+
 	// can be realized by pointer to first element
 	//std::array<int, static_cast<int>(CreatureStatId::CreatureStatMax)>* get_all_stats() { return &creature_stats_; }
 	CreatureStat get_certain_stat_current_and_max(CreatureStatId creature_stat) const { return creature_stats_[static_cast<int>(creature_stat)]; }
 	int get_certain_stat_current_value(CreatureStatId creature_stat) const { return creature_stats_[static_cast<int>(creature_stat)].current; }
 	CreatureRace get_race() const { return race_; }
 	int get_army_id() const { return army_id_; }
+	size_t get_creature_id() const { return creature_id_; }
 	const std::string* get_name() const { return &name_; }
 
 	void change_certain_stat_current_value(CreatureStatId stat_id, float change_amount) { creature_stats_[static_cast<int>(stat_id)].current = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_id)].current) + change_amount); };
@@ -68,8 +75,10 @@ public:
 	void delete_stat_multiplier(CreatureStatMultiplier stat_multiplier);
 
 private:
-	int army_id_{ 0 };
-	int level_{ 0 };
+	int army_id_{};
+	size_t creature_id_{ creature_id_counter++ };
+
+	int level_{};
 	std::string name_{ "No_Name" }; // name selection can be modified by system with character modifiers (something like "likes jokes", "proud for family tree", etc)
 	CreatureRace race_;
 	// in future should add sex(male/female) too, and differency in names for them

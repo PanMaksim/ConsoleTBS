@@ -157,11 +157,13 @@ private:
     bool player_coordinate_selection_move_by_coordinate_input();
     std::unique_ptr<std::vector<UserInputButton>> player_coordinate_selection_move_by_direction_input();
 
+    Army* find_army_by_owned_creature(Creature* creature);
+
     bool interact_with_creature();
     bool creature_move_by_input(UserInputButton input_method);
     bool move_creature_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate);
 
-    void check_possible_kill(BattleMapCoordinate creature_coordinate);
+    void check_possible_kill(Creature* creature, BattleMapCoordinate creature_coordinate);
 
 private:
     //static constexpr int kWindowWidth_{ 317 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input
@@ -214,7 +216,7 @@ private:
         kTileCornerSymbol2_{ '\\' };
 
 
-    Army player_army_,
+    Army player_army_, // should be changed in future to factions if there will be global map (with building, etc)
         ai_army_;
 
     static constexpr char kCreatureMiddleSymbol_{ '-' },

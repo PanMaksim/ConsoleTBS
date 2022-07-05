@@ -21,3 +21,10 @@ void Army::generate_random_army() { // for testing
 
 	std::for_each(army_.begin(), army_.end(), [=](Creature& creature) {creature.join_army(army_id_);});
 }
+
+void Army::kill_creature(size_t dead_creature_id){
+	auto dead_creature_iter = std::find_if(army_.begin(), army_.end(), [dead_creature_id](const Creature& creature) { return creature.get_creature_id() == dead_creature_id; });
+	if (dead_creature_iter != army_.end()) {
+		army_.erase(dead_creature_iter);
+	}
+}

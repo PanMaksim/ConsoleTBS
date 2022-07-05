@@ -97,7 +97,6 @@ void TurnBasedGame::battle_process() {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             break;
         }
-        //direction_input.release();
         std::cout << std::endl;
     } while (true);
 }
@@ -192,7 +191,7 @@ bool TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() {
 
     std::cout << "Move by coordinate";
     std::cout << '\n' << "Enter x: ";
-    int coordinate_x = get_user_input(0, kBattleMapSizeWidth_); // should update it to char for more intuitive exit to '~' like in ofer inputs
+    int coordinate_x = get_user_input(0, kBattleMapSizeWidth_);
     if (coordinate_x == 0) {
         std::cout << "Close coordinate selection";
         return true;
@@ -207,8 +206,6 @@ bool TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() {
     }
     std::cout << '\n';
     
-    // try to build fastest way to given tile // Pathfinding AI AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 
-
     player_coordinate_selection_ = { coordinate_x - 1, coordinate_y - 1 }; // -1 cause of battle_map_info_ array numeration starts from 0
     return true;
 }
@@ -217,8 +214,7 @@ bool TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() {
 std::unique_ptr<std::vector<UserInputButton>> TurnBasedGame::player_coordinate_selection_move_by_direction_input() {
     if (!ui_status[UI_Status::kBattleMap]) { return nullptr; }
 
-    std::cout << "Move by direction";
-    std::cout << '\n';
+    std::cout << "Move by direction\n";
     BattleMapCoordinate player_coordinate_selection_tmp{};
     bool failed{};
     std::unique_ptr<std::vector<UserInputButton>> direction_log;
@@ -231,7 +227,6 @@ std::unique_ptr<std::vector<UserInputButton>> TurnBasedGame::player_coordinate_s
         std::cout << "Enter direction to move: ";
         std::string direction_global;
         std::cin >> direction_global;
-        //std::cout << '\n';
 
         for (char direction : direction_global) {
             switch (direction) {
@@ -296,17 +291,31 @@ std::unique_ptr<std::vector<UserInputButton>> TurnBasedGame::player_coordinate_s
     return direction_log;
 }
 
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!TMP
+Army* TurnBasedGame::find_army_by_owned_creature(Creature* creature) {
+    int army_id = creature->get_army_id();
+    if (army_id == player_army_.get_army_id()) {
+        return &player_army_;
+    }
+    else if (army_id == ai_army_.get_army_id()) {
+        return &ai_army_;
+    }
+    std::cerr << "ERROR, not found army\n";
+    return nullptr;
+}
+
 void TurnBasedGame::battle_map_kill_creature(BattleMapCoordinate killed_creature_coordinate) {
     battle_map_clear_tile_from_creature_image(killed_creature_coordinate);
     (*battle_map_info_)[killed_creature_coordinate.y][killed_creature_coordinate.x].creature_ = nullptr;
 }
 
-void TurnBasedGame::check_possible_kill(BattleMapCoordinate creature_coordinate) {
-    std::vector<BattleTile>::pointer creature_coordinate_ptr{ (*battle_map_info_)[creature_coordinate.y].data() + creature_coordinate.x };
-    if (creature_coordinate_ptr->creature_->get_certain_stat_current_value(CreatureStatId::kHP) <= 0) {
-        add_string_to_ui_log(*creature_coordinate_ptr->creature_->get_name() +
+void TurnBasedGame::check_possible_kill(Creature* creature, BattleMapCoordinate creature_coordinate) {
+    if (creature->get_certain_stat_current_value(CreatureStatId::kHP) <= 0) {
+        add_string_to_ui_log(*creature->get_name() + 
             ' ' + '(' + std::to_string(creature_coordinate.y + 1) + ',' + ' ' + std::to_string(creature_coordinate.x + 1) + ") died.");
+
         battle_map_kill_creature(creature_coordinate);
+        find_army_by_owned_creature(creature)->kill_creature(creature->get_creature_id());
     }
 }
 
@@ -318,8 +327,6 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordina
         std::cerr << "Error, tried to move on already occupied coordinate\n";
         return false;
     }
-
-    // try to build fastest way to given tile // Pathfinding AI AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 
 
     add_string_to_ui_log(*old_coordinate_ptr->creature_->get_name() + '(' +
         std::to_string(old_coordinate.x) + ',' + ' ' +
@@ -361,121 +368,126 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordina
 }
 
 bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
-    std::vector<BattleTile>::pointer player_coordinate_selection_old_ptr{ 
-        (*battle_map_info_)[player_coordinate_selection_.y].data() + player_coordinate_selection_.x };
+    Creature* creature_on_old_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
 
-    bool input_result;
+    bool coordinate_input_result{ false }; // used only intil user_input moving by coordinate not fixed 
     std::unique_ptr<std::vector<UserInputButton>> direction_log;
     switch (input_method) {
     case UserInputButton::kMoveSelectionByDirection:
         direction_log = player_coordinate_selection_move_by_direction_input();
         break;
     case UserInputButton::kMoveSelectionByCoordinate:
-        input_result = player_coordinate_selection_move_by_coordinate_input(); // change to direction log
+        coordinate_input_result = player_coordinate_selection_move_by_coordinate_input(); // must be changed to direction log
+        if (coordinate_input_result == false) {
+            return false;
+        }
         break;
     default:
         return false;
     }
 
-    if (direction_log == nullptr) {
-        return false;
-    }
+    //if (direction_log == nullptr) {
+    //    return false;
+    //}
 
-    // should be separated to new function and modified to check not only moved distance but for example firing range
-    // check distance
-    {
-        int moved_distance_y{},
-            moved_distance_x{};
-
-        //int moved_distance{}; // for possible multiplier
-        float AP_cost_for_movement{};
-
-        std::vector<std::vector<BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
-        const TerrainMovementCost* movement_cost{ terrain_database_get_movement_cost(
-                                                    (battle_tile_y_ptr->data() + player_coordinate_selection_old_.x)->terrain_type_) };
-
-        for (std::vector<UserInputButton>::pointer direction_begin{direction_log->data()}, direction_end{direction_log->data() + direction_log->size()};
-            direction_begin < direction_end; ++direction_begin) {
-
-            AP_cost_for_movement += movement_cost->leaving_value; // AP for leaving tile
-
-            switch (*direction_begin) {
-            case UserInputButton::kMoveUp:
-                --moved_distance_y;
-                break;
-            case UserInputButton::kMoveDown:
-                ++moved_distance_y;
-                break;
-            case UserInputButton::kMoveRight:
-                ++moved_distance_x;
-                break;
-            case UserInputButton::kMoveLeft:
-                --moved_distance_x;
-                break;
-            default:
-                return false;
-            }
-            //++moved_distance;
-
-            movement_cost = terrain_database_get_movement_cost(
-                ((*battle_map_info_)[player_coordinate_selection_old_.y + moved_distance_y])[player_coordinate_selection_old_.x + moved_distance_x].terrain_type_);
-
-            AP_cost_for_movement += movement_cost->entry_value; // AP for going into tile
-        }
-
-        if (AP_cost_for_movement > player_coordinate_selection_old_ptr->creature_->get_certain_stat_current_value(CreatureStatId::kMovementSpeed)) {
-            std::cerr << "Error, tried to move too far. Used AP: " << AP_cost_for_movement <<
-                ". When creature SPD = " << player_coordinate_selection_old_ptr->creature_->get_certain_stat_current_value(CreatureStatId::kMovementSpeed) << '\n';
-            player_coordinate_selection_ = player_coordinate_selection_old_;
+    if (coordinate_input_result == false) { // !!!!!!!!!!!!!!!!tmp until moving by coordinate will be fixed, checking that input was got not from selection_by_coordinate
+        if (direction_log == nullptr) {
             return false;
         }
-        add_string_to_ui_log("AP used for movement: " + std::to_string(AP_cost_for_movement));
+        // should be separated to new function and modified to check not only moved distance but for example firing range
+        // check distance
+        {
+            int moved_distance_y{},
+                moved_distance_x{};
+
+            //int moved_distance{}; // for possible multiplier
+            float AP_cost_for_movement{};
+
+            std::vector<std::vector<BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
+            const TerrainMovementCost* movement_cost{ terrain_database_get_movement_cost(
+                                                        (battle_tile_y_ptr->data() + player_coordinate_selection_old_.x)->terrain_type_) };
+
+            for (std::vector<UserInputButton>::pointer direction_begin{ direction_log->data() }, direction_end{ direction_log->data() + direction_log->size() };
+                direction_begin < direction_end; ++direction_begin) {
+
+                AP_cost_for_movement += movement_cost->leaving_value; // AP for leaving tile
+
+                switch (*direction_begin) {
+                case UserInputButton::kMoveUp:
+                    --moved_distance_y;
+                    break;
+                case UserInputButton::kMoveDown:
+                    ++moved_distance_y;
+                    break;
+                case UserInputButton::kMoveRight:
+                    ++moved_distance_x;
+                    break;
+                case UserInputButton::kMoveLeft:
+                    --moved_distance_x;
+                    break;
+                default:
+                    return false;
+                }
+                //++moved_distance;
+
+                movement_cost = terrain_database_get_movement_cost(
+                    ((*battle_map_info_)[player_coordinate_selection_old_.y + moved_distance_y])[player_coordinate_selection_old_.x + moved_distance_x].terrain_type_);
+
+                AP_cost_for_movement += movement_cost->entry_value; // AP for going into tile
+            }
+
+            if (AP_cost_for_movement > creature_on_old_coordinate_ptr->get_certain_stat_current_value(CreatureStatId::kMovementSpeed)) {
+                std::cerr << "Error, tried to move too far. Used AP: " << AP_cost_for_movement <<
+                    ". When creature SPD = " << creature_on_old_coordinate_ptr->get_certain_stat_current_value(CreatureStatId::kMovementSpeed) << '\n';
+                player_coordinate_selection_ = player_coordinate_selection_old_;
+                return false;
+            }
+            add_string_to_ui_log("AP used for movement: " + std::to_string(AP_cost_for_movement));
+        }
     }
-
-
     //if (direction_log != nullptr) {
         //std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr;
 
-        std::vector<BattleTile>::pointer player_coordinate_selection_ptr{ (*battle_map_info_)[player_coordinate_selection_.y].data() + player_coordinate_selection_.x };
+    Creature* creature_on_new_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
 
-        // move on empty battle_tile
-        if (player_coordinate_selection_ptr->creature_ == nullptr) {
-            move_creature_by_coordinate(player_coordinate_selection_old_, player_coordinate_selection_);
+    // move on empty battle_tile
+    if (creature_on_new_coordinate_ptr == nullptr) {
+        move_creature_by_coordinate(player_coordinate_selection_old_, player_coordinate_selection_);
+    }
+    // macro - attack or main buff on target
+    else if (creature_on_new_coordinate_ptr != nullptr) { // in future should add check for non same army allies
+        if (creature_on_old_coordinate_ptr->get_army_id()
+            != creature_on_new_coordinate_ptr->get_army_id()) {
+
+            add_string_to_ui_log(
+                *creature_on_old_coordinate_ptr->get_name() +
+                " (" + std::to_string(player_coordinate_selection_old_.x + 1) +
+                ", " + std::to_string(player_coordinate_selection_old_.y + 1) +
+                ") attacked " +
+                *creature_on_new_coordinate_ptr->get_name() +
+                " (" + std::to_string(player_coordinate_selection_.x + 1) +
+                ", " + std::to_string(player_coordinate_selection_.y + 1) + ')');
+
+            CreatureActionResult attack_result{
+                creature_ability_default_attack(creature_on_old_coordinate_ptr, creature_on_new_coordinate_ptr) };
+
+            log_creature_action_result(&attack_result, creature_on_old_coordinate_ptr, creature_on_new_coordinate_ptr);
+            check_possible_kill(creature_on_new_coordinate_ptr, player_coordinate_selection_);
+            check_possible_kill(creature_on_old_coordinate_ptr, player_coordinate_selection_old_);
+
         }
-        // macro - attack or main buff on target
-        else if (player_coordinate_selection_ptr->creature_ != nullptr) { // in future should add check for non same army allies
-            if (player_coordinate_selection_old_ptr->creature_->get_army_id()
-                != player_coordinate_selection_ptr->creature_->get_army_id()) {
+        // if moved on another creature owned by player
+        else if (creature_on_old_coordinate_ptr->get_army_id()  // in future should add check for non same army allies
+            == creature_on_new_coordinate_ptr->get_army_id()) {
 
-                add_string_to_ui_log(
-                    *player_coordinate_selection_old_ptr->creature_->get_name() +
-                     " (" + std::to_string(player_coordinate_selection_old_.x + 1) +
-                        ", " + std::to_string(player_coordinate_selection_old_.y + 1) + 
-                    ") attacked " + 
-                    *player_coordinate_selection_old_ptr->creature_->get_name() +
-                     " (" + std::to_string(player_coordinate_selection_.x + 1) +
-                        ", " + std::to_string(player_coordinate_selection_.y + 1) + ')');
+            add_string_to_ui_log(*creature_on_old_coordinate_ptr->get_name() +
+                " (" + std::to_string(player_coordinate_selection_old_.x + 1) + ", "
+                + std::to_string(player_coordinate_selection_old_.y + 1) +
+                ") moved on ally.");
 
-                CreatureActionResult attack_result{
-                    creature_ability_default_attack(player_coordinate_selection_old_ptr->creature_, player_coordinate_selection_ptr->creature_) };
-
-                log_creature_action_result(&attack_result, player_coordinate_selection_old_ptr->creature_, player_coordinate_selection_ptr->creature_);
-                check_possible_kill(player_coordinate_selection_);
-                check_possible_kill(player_coordinate_selection_old_);
-                
-            }
-            // if moved on another creature owned by player
-            else if (player_coordinate_selection_old_ptr->creature_->get_army_id()  // in future should add check for non same army allies
-                    == player_coordinate_selection_ptr->creature_->get_army_id()) {
-
-                add_string_to_ui_log(*player_coordinate_selection_old_ptr->creature_->get_name() + 
-                    " (" + std::to_string(player_coordinate_selection_old_.x + 1) + ", " 
-                    + std::to_string(player_coordinate_selection_old_.y + 1) +
-                    ") moved on ally.");
-
-                // !!!!! TO DO
-            }
+            // !!!!! TO DO
         }
+    }
     // }
     // reverse changes
     // else {
