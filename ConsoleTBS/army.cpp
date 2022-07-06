@@ -7,6 +7,17 @@
 #include "random.h"
 #include "creature.h"
 
+Army::Army() {
+	army_.reserve(army_size_max_);
+
+	static int army_id_counter_{};
+	army_id_ = army_id_counter_++;
+}
+
+int Army::get_army_id() const { return army_id_; }
+size_t Army::get_army_size() const { return army_.size(); }
+std::vector<Creature>* Army::get_army_ptr() { return &army_; }
+
 void Army::clear() {
 	army_.clear();
 }
