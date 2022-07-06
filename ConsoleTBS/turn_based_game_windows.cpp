@@ -473,55 +473,55 @@ void TurnBasedGame::battle_map_clear_old_player_selection() {
     }
 }
 
-void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_ptr, std::string::iterator frame_coordinate_x_ptr_end) { // can be overhead but raises readability
-    std::fill(std::execution::par_unseq, frame_coordinate_x_ptr, frame_coordinate_x_ptr_end, ' ');
+void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_iter, std::string::iterator frame_coordinate_x_iter_end) { // can be overhead but raises readability
+    std::fill(std::execution::par_unseq, frame_coordinate_x_iter, frame_coordinate_x_iter_end, ' ');
 }
 
 // needs better system for transporting words from UI's right end
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string&& str, int indent = 0) {
-    std::move(std::execution::par_unseq, str.begin(), str.end(), frame_[coordinate.y].begin() + coordinate.x + indent);
+std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent = 0) {
+    std::move(std::execution::par_unseq, str_rvalue.begin(), str_rvalue.end(), frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent);
 
-    std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x + indent + str.size() };
+    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent + str_rvalue.size() };
     if (*frame_coordinate_x_ptr != ' ') {
-        frame_clear_string(frame_coordinate_x_ptr, frame_[coordinate.y].begin() + ui_window_width_end_);
+        frame_clear_string(frame_coordinate_x_ptr, frame_[frame_coordinate.y].begin() + ui_window_width_end_);
     }
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent = 0) {
-    std::copy(std::execution::par_unseq, str->begin(), str->end(), frame_[coordinate.y].begin() + coordinate.x + indent);
+std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent = 0) {
+    std::copy(std::execution::par_unseq, str_ptr->begin(), str_ptr->end(), frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent);
 
-    std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x + indent + str->size() };
+    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent + str_ptr->size() };
     if (*frame_coordinate_x_ptr != ' ') {
-        frame_clear_string(frame_coordinate_x_ptr, frame_[coordinate.y].begin() + ui_window_width_end_);
+        frame_clear_string(frame_coordinate_x_ptr, frame_[frame_coordinate.y].begin() + ui_window_width_end_);
     }
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent = 0) {
-    std::copy(std::execution::par_unseq, str->begin(), str->end(), frame_[coordinate.y].begin() + coordinate.x + indent);
+std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent = 0) {
+    std::copy(std::execution::par_unseq, str_view_ptr->begin(), str_view_ptr->end(), frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent);
 
-    std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x + indent + str->size() };
+    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent + str_view_ptr->size() };
     if (*frame_coordinate_x_ptr != ' ') {
-        frame_clear_string(frame_coordinate_x_ptr, frame_[coordinate.y].begin() + ui_window_width_end_);
+        frame_clear_string(frame_coordinate_x_ptr, frame_[frame_coordinate.y].begin() + ui_window_width_end_);
     }
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate coordinate, const UserInputDescription* user_input_description) {
-    std::string::iterator frame_coordinate_x_ptr{ frame_[coordinate.y].begin() + coordinate.x };
+std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr) {
+    std::string::iterator frame_coordinate_x_ptr{ frame_[frame_coordinate.y].begin() + frame_coordinate.x };
 
-    *frame_coordinate_x_ptr++ = user_input_description->button;
+    *frame_coordinate_x_ptr++ = user_input_description_ptr->button;
     *frame_coordinate_x_ptr++ = ' ';
     *frame_coordinate_x_ptr++ = '-';
     *frame_coordinate_x_ptr++ = ' ';
 
-    const std::string_view* str_v{ &user_input_description->description };
+    const std::string_view* str_v{ &user_input_description_ptr->description };
     std::copy(std::execution::par_unseq, str_v->cbegin(), str_v->cend(), frame_coordinate_x_ptr);
 
     frame_coordinate_x_ptr += str_v->size();
     if (*frame_coordinate_x_ptr != ' ') {
-        frame_clear_string(frame_coordinate_x_ptr, frame_[coordinate.y].begin() + ui_window_width_end_);
+        frame_clear_string(frame_coordinate_x_ptr, frame_[frame_coordinate.y].begin() + ui_window_width_end_);
     }
     return frame_coordinate_x_ptr;
 }
@@ -563,13 +563,13 @@ void TurnBasedGame::ui_input_help_switch(const std::vector<UserInputButton>& all
     (!ui_status[UI_Status::kUI_InputHelp]) ? ui_input_help_turn_on(allowed_user_input) : ui_input_help_turn_off(allowed_user_input.size());
 }
 
-void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate coordinate, 
-        CreatureStatId creature_stat, int stat_value_current, int stat_value_max = 0) {
+void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, 
+        CreatureStatId creature_stat_id, int stat_value_current, int stat_value_max = 0) {
 
-    std::string::iterator frame_coordinate_x_ptr = { frame_[coordinate.y].begin() + coordinate.x
-        + static_cast<int>(creature_database_get_stat_naming(creature_stat)->size()) + 2 }; // +2 for indent from stat naming to stat numeric values
+    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x
+        + static_cast<int>(creature_database_get_stat_naming(creature_stat_id)->size()) + 2 }; // +2 for indent from stat naming to stat numeric values
     
-    std::string::iterator frame_coordinate_x_ptr_end{ frame_[coordinate.y].begin() + ui_window_width_end_ };
+    std::string::iterator frame_coordinate_x_ptr_end{ frame_[frame_coordinate.y].begin() + ui_window_width_end_ };
 
     std::string::const_pointer str_ptr, str_ptr_end;
 
@@ -687,8 +687,8 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
     }
 }
 
-void TurnBasedGame::battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_coordinate) {
-    FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(creature_coordinate) };
+void TurnBasedGame::battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_battle_map_coordinate) {
+    FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(creature_battle_map_coordinate) };
 
     std::string::pointer frame_coordinate_x_ptr{
         frame_[tile_center_coordinate.y].data() + tile_center_coordinate.x };

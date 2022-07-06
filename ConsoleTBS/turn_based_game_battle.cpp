@@ -125,20 +125,20 @@ void TurnBasedGame::start_new_battle() {
     battle_map_update_player_selection();
 }
 
-void TurnBasedGame::battle_map_add_creature(Creature* creature, BattleMapCoordinate coordinate, BattleStartStatus status) {
-    (*battle_map_info_)[coordinate.y][coordinate.x].creature_ = creature;
+void TurnBasedGame::battle_map_add_creature(Creature* creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status) {
+    (*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].creature_ = creature_ptr;
     const std::vector<CreatureStatMultiplier>* new_terrain_effects{
-        terrain_database_get_effects((*battle_map_info_)[coordinate.y][coordinate.x].terrain_type_) };
+        terrain_database_get_effects((*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].terrain_type_) };
 
     std::for_each(std::execution::par_unseq, new_terrain_effects->begin(), new_terrain_effects->end(), 
-        [&creature](CreatureStatMultiplier effect) { creature->apply_stat_multiplier(effect); });
+        [&creature_ptr](CreatureStatMultiplier effect) { creature_ptr->apply_stat_multiplier(effect); });
 
-    char creature_head_symbol = ((creature->get_army_id() == 0) ? kCreaturePlayerHeadSymbol_ : kCreatureEnemyHeadSymbol_);
-    FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(coordinate) };
+    char creature_head_symbol = ((creature_ptr->get_army_id() == 0) ? kCreaturePlayerHeadSymbol_ : kCreatureEnemyHeadSymbol_);
+    FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(battle_map_coordinate) };
     std::array<char, kWindowWidth_>::pointer frame_coordinate_ptr{ frame_[tile_center_coordinate.y].data() + tile_center_coordinate.x };
 
     // switch for possible another starting ways in future
-    switch (status) {
+    switch (battle_status) {
     case BattleStartStatus::kAttaking: // attacking from left
         *(frame_coordinate_ptr - 1) = kCreatureBackSymbol_;
         *frame_coordinate_ptr = kCreatureMiddleSymbol_;
@@ -152,34 +152,34 @@ void TurnBasedGame::battle_map_add_creature(Creature* creature, BattleMapCoordin
     }
 }
 
-void TurnBasedGame::battle_map_add_army(Army* army, BattleStartStatus status) {
-    std::vector<Creature>* army_ptr{ army->get_army_ptr() };
-    std::vector<Creature>::pointer army_ptr_current{ army_ptr->data() },
-        army_ptr_end{ army_ptr->data() + army_ptr->size() };
+void TurnBasedGame::battle_map_add_army(Army* army_ptr, BattleStartStatus battle_status) {
+    std::vector<Creature>* army_vector_ptr{ army_ptr->get_army_ptr() };
+    std::vector<Creature>::pointer army_vector_ptr_current{ army_vector_ptr->data() },
+        army_vector_ptr_end{ army_vector_ptr->data() + army_vector_ptr->size() };
 
-    switch (status) {
+    switch (battle_status) {
     case BattleStartStatus::kAttaking: // ATK from left
-        for (int battle_map_coordinate_x{}; army_ptr_current != army_ptr_end; ++battle_map_coordinate_x) {
+        for (int battle_map_coordinate_x{}; army_vector_ptr_current != army_vector_ptr_end; ++battle_map_coordinate_x) {
 
             for (int battle_map_coordinate_y{}, shown_tiles_height{};
-                army_ptr_current != army_ptr_end && shown_tiles_height != kBattleMapSizeHeight_;
-                ++army_ptr_current, ++battle_map_coordinate_y, ++shown_tiles_height) {
+                army_vector_ptr_current != army_vector_ptr_end && shown_tiles_height != kBattleMapSizeHeight_;
+                ++army_vector_ptr_current, ++battle_map_coordinate_y, ++shown_tiles_height) {
 
-                battle_map_add_creature(army_ptr_current,
-                    BattleMapCoordinate{battle_map_coordinate_x, battle_map_coordinate_y}, status);
+                battle_map_add_creature(army_vector_ptr_current,
+                    BattleMapCoordinate{battle_map_coordinate_x, battle_map_coordinate_y}, battle_status);
             }
         }
         break;
 
     case BattleStartStatus::kDefending: // DEF at right
-        for (int battle_map_coordinate_x{ kBattleMapSizeWidth_ - 1 }; army_ptr_current != army_ptr_end; --battle_map_coordinate_x) {
+        for (int battle_map_coordinate_x{ kBattleMapSizeWidth_ - 1 }; army_vector_ptr_current != army_vector_ptr_end; --battle_map_coordinate_x) {
 
             for (int battle_map_coordinate_y{}, shown_tiles_height{};
-                army_ptr_current != army_ptr_end && shown_tiles_height != kBattleMapSizeHeight_;
-                ++army_ptr_current, ++battle_map_coordinate_y, ++shown_tiles_height) {
+                army_vector_ptr_current != army_vector_ptr_end && shown_tiles_height != kBattleMapSizeHeight_;
+                ++army_vector_ptr_current, ++battle_map_coordinate_y, ++shown_tiles_height) {
 
-                battle_map_add_creature(army_ptr_current,
-                    BattleMapCoordinate{battle_map_coordinate_x, battle_map_coordinate_y}, status);
+                battle_map_add_creature(army_vector_ptr_current,
+                    BattleMapCoordinate{battle_map_coordinate_x, battle_map_coordinate_y}, battle_status);
             }
         }
         break;
@@ -292,8 +292,8 @@ std::unique_ptr<std::vector<UserInputButton>> TurnBasedGame::player_coordinate_s
 }
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!TMP
-Army* TurnBasedGame::find_army_by_owned_creature(Creature* creature) {
-    int army_id = creature->get_army_id();
+Army* TurnBasedGame::find_army_by_owned_creature(Creature* creature_ptr) {
+    int army_id = creature_ptr->get_army_id();
     if (army_id == player_army_.get_army_id()) {
         return &player_army_;
     }
@@ -304,24 +304,24 @@ Army* TurnBasedGame::find_army_by_owned_creature(Creature* creature) {
     return nullptr;
 }
 
-void TurnBasedGame::battle_map_kill_creature(BattleMapCoordinate killed_creature_coordinate) {
-    battle_map_clear_tile_from_creature_image(killed_creature_coordinate);
-    (*battle_map_info_)[killed_creature_coordinate.y][killed_creature_coordinate.x].creature_ = nullptr;
+void TurnBasedGame::battle_map_kill_creature(BattleMapCoordinate killed_creature_battle_map_coordinate) {
+    battle_map_clear_tile_from_creature_image(killed_creature_battle_map_coordinate);
+    (*battle_map_info_)[killed_creature_battle_map_coordinate.y][killed_creature_battle_map_coordinate.x].creature_ = nullptr;
 }
 
-void TurnBasedGame::check_possible_kill(Creature* creature, BattleMapCoordinate creature_coordinate) {
-    if (creature->get_certain_stat_current_value(CreatureStatId::kHP) <= 0) {
-        add_string_to_ui_log(*creature->get_name() + 
-            ' ' + '(' + std::to_string(creature_coordinate.y + 1) + ',' + ' ' + std::to_string(creature_coordinate.x + 1) + ") died.");
+void TurnBasedGame::check_possible_kill(Creature* creature_ptr, BattleMapCoordinate creature_battle_map_coordinate) {
+    if (creature_ptr->get_certain_stat_current_value(CreatureStatId::kHP) <= 0) {
+        add_string_to_ui_log(*creature_ptr->get_name() + 
+            ' ' + '(' + std::to_string(creature_battle_map_coordinate.y + 1) + ',' + ' ' + std::to_string(creature_battle_map_coordinate.x + 1) + ") died.");
 
-        battle_map_kill_creature(creature_coordinate);
-        find_army_by_owned_creature(creature)->kill_creature(creature->get_creature_id());
+        battle_map_kill_creature(creature_battle_map_coordinate);
+        find_army_by_owned_creature(creature_ptr)->kill_creature(creature_ptr->get_creature_id());
     }
 }
 
-bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate) {
-    std::vector<BattleTile>::pointer old_coordinate_ptr{ (*battle_map_info_)[old_coordinate.y].data() + old_coordinate.x },
-                                        new_coordinate_ptr{ (*battle_map_info_)[new_coordinate.y].data() + new_coordinate.x };
+bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_coordinate_old, BattleMapCoordinate battle_map_coordinate_new) {
+    std::vector<BattleTile>::pointer old_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_old.y].data() + battle_map_coordinate_old.x },
+                                        new_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_new.y].data() + battle_map_coordinate_new.x };
 
     if (new_coordinate_ptr->creature_ != nullptr) { // sometimes can be unneeded because of check before function call
         std::cerr << "Error, tried to move on already occupied coordinate\n";
@@ -329,9 +329,9 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordina
     }
 
     add_string_to_ui_log(*old_coordinate_ptr->creature_->get_name() + '(' +
-        std::to_string(old_coordinate.x) + ',' + ' ' +
-        std::to_string(old_coordinate.y) + ") moved to coordinate (" + std::to_string(new_coordinate.x + 1) +
-        ',' + ' ' + std::to_string(new_coordinate.y + 1) + ')');
+        std::to_string(battle_map_coordinate_old.x) + ',' + ' ' +
+        std::to_string(battle_map_coordinate_old.y) + ") moved to coordinate (" + std::to_string(battle_map_coordinate_new.x + 1) +
+        ',' + ' ' + std::to_string(battle_map_coordinate_new.y + 1) + ')');
 
     new_coordinate_ptr->creature_ = old_coordinate_ptr->creature_;
     old_coordinate_ptr->creature_ = nullptr;
@@ -348,10 +348,10 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordina
             [&creature](CreatureStatMultiplier effect) { creature->apply_stat_multiplier(effect); });
     }
 
-    battle_map_clear_tile_from_creature_image(old_coordinate);
+    battle_map_clear_tile_from_creature_image(battle_map_coordinate_old);
 
-    // create creature "image" at new coordinate
-    FrameCoordinate tile_center_of_new_coordinate{ battle_map_find_tile_center_frame_coordinate(new_coordinate) };
+    // create creature_ptr "image" at new battle_map_coordinate
+    FrameCoordinate tile_center_of_new_coordinate{ battle_map_find_tile_center_frame_coordinate(battle_map_coordinate_new) };
     std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr = &(frame_[tile_center_of_new_coordinate.y][tile_center_of_new_coordinate.x]);
     if (new_coordinate_ptr->creature_->get_army_id() == 0) {
         *(frame_coordinate_x_ptr - 1) = kCreatureBackSymbol_;
@@ -370,7 +370,7 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate old_coordina
 bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
     Creature* creature_on_old_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
 
-    bool coordinate_input_result{ false }; // used only intil user_input moving by coordinate not fixed 
+    bool coordinate_input_result{ false }; // used only intil user_input moving by battle_map_coordinate not fixed 
     std::unique_ptr<std::vector<UserInputButton>> direction_log;
     switch (input_method) {
     case UserInputButton::kMoveSelectionByDirection:
@@ -390,7 +390,7 @@ bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
     //    return false;
     //}
 
-    if (coordinate_input_result == false) { // !!!!!!!!!!!!!!!!tmp until moving by coordinate will be fixed, checking that input was got not from selection_by_coordinate
+    if (coordinate_input_result == false) { // !!!!!!!!!!!!!!!!tmp until moving by battle_map_coordinate will be fixed, checking that input was got not from selection_by_coordinate
         if (direction_log == nullptr) {
             return false;
         }
@@ -455,7 +455,7 @@ bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
         move_creature_by_coordinate(player_coordinate_selection_old_, player_coordinate_selection_);
     }
     // macro - attack or main buff on target
-    else if (creature_on_new_coordinate_ptr != nullptr) { // in future should add check for non same army allies
+    else if (creature_on_new_coordinate_ptr != nullptr) { // in future should add check for non same army_ptr allies
         if (creature_on_old_coordinate_ptr->get_army_id()
             != creature_on_new_coordinate_ptr->get_army_id()) {
 
@@ -476,8 +476,8 @@ bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
             check_possible_kill(creature_on_old_coordinate_ptr, player_coordinate_selection_old_);
 
         }
-        // if moved on another creature owned by player
-        else if (creature_on_old_coordinate_ptr->get_army_id()  // in future should add check for non same army allies
+        // if moved on another creature_ptr owned by player
+        else if (creature_on_old_coordinate_ptr->get_army_id()  // in future should add check for non same army_ptr allies
             == creature_on_new_coordinate_ptr->get_army_id()) {
 
             add_string_to_ui_log(*creature_on_old_coordinate_ptr->get_name() +
@@ -506,7 +506,7 @@ bool TurnBasedGame::interact_with_creature() {
         return false;
     }
 
-    // switch to decide what to do with creature
+    // switch to decide what to do with creature_ptr
     char user_input{};
     char user_input_end{};
     do {

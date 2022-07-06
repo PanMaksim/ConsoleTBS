@@ -93,7 +93,7 @@ public:
         } while (true);
     }
 
-    friend void add_string_to_ui_log(const std::string* str);
+    friend void add_string_to_ui_log(const std::string* str_ptr);
     friend void add_string_to_ui_log(const std::string str);
 
 private:
@@ -106,7 +106,7 @@ private:
         kBattleMap,
         kBattleMapTileNumeration,
         kCreatureStats,
-        kCreatureSelected, // for situations when something will be shown over creature stats
+        kCreatureSelected, // for situations when something will be shown over creature_ptr stats
         // kCreatureInteracted, // for future, example when interaction creates new "windows"
         kWindowsAndInterfacesStatusMax,
     };
@@ -117,14 +117,14 @@ private:
 
     void set_ui_status_flags_to_default();
     void calculate_window_borders();
-    void frame_clear_string(std::string::iterator frame_coordinate_x_ptr, std::string::iterator frame_coordinate_x_ptr_end);
+    void frame_clear_string(std::string::iterator frame_coordinate_x_iter, std::string::iterator frame_coordinate_x_iter_end);
 
     void update_ui();
-    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string&& str, int indent);
-    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent);
-    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const std::string_view* str, int indent);
-    std::string::iterator add_string_to_ui(FrameCoordinate coordinate, const UserInputDescription* user_input_description);
-    void add_creature_stat_string_to_ui(FrameCoordinate coordinate, CreatureStatId creature_stat, int stat_value_current, int stat_value_max);
+    std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr);
+    void add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, CreatureStatId creature_stat_id, int stat_value_current, int stat_value_max);
     void ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input);
     void ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input);
     void ui_input_help_turn_off(size_t allowed_user_input_size);
@@ -139,17 +139,17 @@ private:
     void calculate_battle_map_visual();
     void show_battle_map();
     void battle_map_show_landscape();
-    void battle_map_add_creature(Creature* creature, BattleMapCoordinate coordinate, BattleStartStatus battle_reason);
-    void battle_map_add_army(Army* army, BattleStartStatus status);
+    void battle_map_add_creature(Creature* creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
+    void battle_map_add_army(Army* army_ptr, BattleStartStatus battle_status);
     bool battle_map_tile_numeration_switch();
     bool battle_map_tile_numeration_turn_on();
     bool battle_map_tile_numeration_turn_off();
     void battle_map_create_basic_ui();
     void battle_map_create_basic_ui_with_creature();
-    void battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_coordinate);
-    void battle_map_kill_creature(BattleMapCoordinate killed_creature_coordinate);
+    void battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_battle_map_coordinate);
+    void battle_map_kill_creature(BattleMapCoordinate killed_creature_battle_map_coordinate);
 
-    FrameCoordinate battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate); // returns frame_[y,x] where creature_middle_symbol would be
+    FrameCoordinate battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate battle_map_coordinate); // returns frame_[y,x] where creature_middle_symbol would be
 
     void battle_map_update_player_selection();
     void battle_map_clear_old_player_selection();
@@ -157,13 +157,13 @@ private:
     bool player_coordinate_selection_move_by_coordinate_input();
     std::unique_ptr<std::vector<UserInputButton>> player_coordinate_selection_move_by_direction_input();
 
-    Army* find_army_by_owned_creature(Creature* creature);
+    Army* find_army_by_owned_creature(Creature* creature_ptr);
 
     bool interact_with_creature();
     bool creature_move_by_input(UserInputButton input_method);
-    bool move_creature_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate);
+    bool move_creature_by_coordinate(BattleMapCoordinate battle_map_coordinate_old, BattleMapCoordinate battle_map_coordinate_new);
 
-    void check_possible_kill(Creature* creature, BattleMapCoordinate creature_coordinate);
+    void check_possible_kill(Creature* creature_ptr, BattleMapCoordinate creature_battle_map_coordinate);
 
 private:
     //static constexpr int kWindowWidth_{ 317 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input
