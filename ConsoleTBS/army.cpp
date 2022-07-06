@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <execution>
 
 #include "random.h"
 #include "creature.h"
@@ -34,7 +35,7 @@ void Army::generate_random_army() { // for testing
 }
 
 void Army::kill_creature(size_t dead_creature_id){
-	auto dead_creature_iter = std::find_if(army_.begin(), army_.end(), [dead_creature_id](const Creature& creature) { return creature.get_creature_id() == dead_creature_id; });
+	auto dead_creature_iter = std::find_if(std::execution::par_unseq, army_.begin(), army_.end(), [dead_creature_id](const Creature& creature) { return creature.get_creature_id() == dead_creature_id; }); // there are unique creature_id for every creature, so there can be par_unsec execution
 	if (dead_creature_iter != army_.end()) {
 		army_.erase(dead_creature_iter);
 	}
