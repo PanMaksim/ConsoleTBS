@@ -59,7 +59,7 @@ void TurnBasedGame::create_new_ui_window() {
     *((frame_.begin() + ui_window_height_end_)->begin() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
 
     // Hint to button that calls list of allowed for user input buttons
-    FrameCoordinate coordinate{ ui_window_width_start_ + 2, ui_window_height_end_ - kUserInterfaceLogWindowHeight_ - 1 };
+    FrameCoordinate coordinate{ ui_window_width_start_ + 2, ui_window_input_help_coordinate_height };
     if (frame_[coordinate.y][coordinate.x] != UserInputButton::kShowInputHelp) {
         add_string_to_ui(coordinate, user_input_database_get_main_description(UserInputButton::kShowInputHelp));
     }
@@ -100,6 +100,8 @@ void TurnBasedGame::calculate_window_borders() {
 
     pv_window_width_start_ = 2;
     pv_window_width_end_ = ui_window_width_start_ - 1;
+
+    ui_window_input_help_coordinate_height = ui_window_height_end_ - kUserInterfaceLogWindowHeight_ - 1;
 
     ui_log_window_height_start_ = ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
 }
@@ -479,6 +481,10 @@ void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_
 
 // needs better system for transporting words from UI's right end
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent = 0) {
+    if (frame_coordinate.y >= ui_window_input_help_coordinate_height) {
+        std::cerr << "ERROR, UI height is too big\n";
+    }
+
     std::move(std::execution::par_unseq, str_rvalue.begin(), str_rvalue.end(), frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent);
 
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent + str_rvalue.size() };
@@ -489,6 +495,10 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
 }
 
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent = 0) {
+    if (frame_coordinate.y >= ui_window_input_help_coordinate_height) {
+        std::cerr << "ERROR, UI height is too big\n";
+    }
+    
     std::copy(std::execution::par_unseq, str_ptr->begin(), str_ptr->end(), frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent);
 
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent + str_ptr->size() };
@@ -499,6 +509,10 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
 }
 
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent = 0) {
+    if (frame_coordinate.y >= ui_window_input_help_coordinate_height) {
+        std::cerr << "ERROR, UI height is too big\n";
+    }
+    
     std::copy(std::execution::par_unseq, str_view_ptr->begin(), str_view_ptr->end(), frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent);
 
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent + str_view_ptr->size() };
@@ -509,6 +523,10 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
 }
 
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr) {
+    if (frame_coordinate.y >= ui_window_input_help_coordinate_height) {
+        std::cerr << "ERROR, UI height is too big\n";
+    }
+    
     std::string::iterator frame_coordinate_x_ptr{ frame_[frame_coordinate.y].begin() + frame_coordinate.x };
 
     *frame_coordinate_x_ptr++ = user_input_description_ptr->button;

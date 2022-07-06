@@ -177,9 +177,6 @@ private:
     static constexpr char kGameWindowVerticalSymbol_{ '|' },
         kGameWindowHorizontalSymbol_{ '_' };
 
-    static constexpr int kUserInterfaceLogWindowHeight_{ 14 };
-    int ui_log_window_height_current_{ 1 };
-
     int pv_window_height_start_, // they are used for navigation through std::array frame, not showing actual interface window height/width
         pv_window_height_end_,
         pv_window_width_start_,
@@ -190,6 +187,11 @@ private:
         ui_window_width_start_,
         ui_window_width_end_;
     int ui_log_window_height_start_;
+
+    int ui_window_input_help_coordinate_height; // calculates once, but used by every add_string_to_ui()
+
+    static constexpr int kUserInterfaceLogWindowHeight_{ 14 };
+    int ui_log_window_height_current_{ 1 };
 
     std::array<bool, UI_Status::kWindowsAndInterfacesStatusMax> ui_status{ false }; // represent opened windows/interfaces
 

@@ -28,7 +28,6 @@ void TurnBasedGame::battle_process() {
             UserInputButton::kInteract,
             UserInputButton::kTileNumerationSwitch
     };
-
     bool new_frame{ true };
     char user_input{};
     do {
