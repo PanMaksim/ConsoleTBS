@@ -1,18 +1,18 @@
 
 #include "creature_stats.h"
 
-#include <string>
+#include <string_view>
 
-const std::string creature_database_races_naming[static_cast<int>(CreatureRace::kCreatureRaceMax)]{
+const std::string_view creature_database_races_naming[static_cast<int>(CreatureRace::kCreatureRaceMax)]{
 	"Human",
 	"Orc"
 };
 
-const std::string* creature_database_get_race_naming(CreatureRace race) {
+const std::string_view* creature_database_get_race_naming(CreatureRace race) {
 	return &creature_database_races_naming[static_cast<int>(race)];
 }
 
-const std::string creature_database_stats_naming[static_cast<int>(CreatureStatId::kCreatureStatMax)]{
+const std::string_view creature_database_stats_naming[static_cast<int>(CreatureStatId::kCreatureStatMax)]{
 	"HP",
 	"SPD",
 	"ATK ML",
@@ -21,6 +21,6 @@ const std::string creature_database_stats_naming[static_cast<int>(CreatureStatId
 	"DMG ML PHS"
 };
 
-const std::string* creature_database_get_stat_naming(CreatureStatId stat) {
+const std::string_view* creature_database_get_stat_naming(CreatureStatId stat) {
 	return &creature_database_stats_naming[static_cast<int>(stat)];
 }

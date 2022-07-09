@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <string_view>
 
 enum class CreatureRace {
 	kCreatureRaceMin,
@@ -25,5 +25,10 @@ struct CreatureStat {
 	int max;
 };
 
-const std::string* creature_database_get_race_naming(CreatureRace race);
-const std::string* creature_database_get_stat_naming(CreatureStatId stat);
+struct CreatureStatMultiplier {
+	CreatureStatId stat_id;
+	float multiplier;
+};
+
+const std::string_view* creature_database_get_race_naming(CreatureRace race);
+const std::string_view* creature_database_get_stat_naming(CreatureStatId stat);

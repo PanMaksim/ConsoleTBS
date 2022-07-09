@@ -18,48 +18,45 @@
     <ClCompile Include="TurnBasedGame.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="I:\Programming\C++\TurnBasedGame\TurnBasedGame\army.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="creature.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="army.cpp">
+      <Filter>Файлы ресурсов</Filter>
     </ClCompile>
     <ClCompile Include="battle_tile.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы ресурсов</Filter>
+    </ClCompile>
+    <ClCompile Include="creature.cpp">
+      <Filter>Файлы ресурсов</Filter>
     </ClCompile>
     <ClCompile Include="creature_actions.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы ресурсов</Filter>
     </ClCompile>
     <ClCompile Include="creature_stats.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы ресурсов</Filter>
     </ClCompile>
-    <ClCompile Include="turn_based_game_battle.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="turn_based_game_windows.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="files_initialization.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="turn_based_game_global.cpp">
+      <Filter>Файлы ресурсов</Filter>
     </ClCompile>
     <ClCompile Include="random.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы ресурсов</Filter>
     </ClCompile>
     <ClCompile Include="rolls.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы ресурсов</Filter>
     </ClCompile>
     <ClCompile Include="terrain.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы ресурсов</Filter>
+    </ClCompile>
+    <ClCompile Include="turn_based_game_battle.cpp">
+      <Filter>Файлы ресурсов</Filter>
+    </ClCompile>
+    <ClCompile Include="turn_based_game_windows.cpp">
+      <Filter>Файлы ресурсов</Filter>
     </ClCompile>
     <ClCompile Include="user_input.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы ресурсов</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="I:\Programming\C++\TurnBasedGame\TurnBasedGame\army.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="creature.h">
+    <ClInclude Include="army.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="battle_map_coordinate.h">
@@ -68,13 +65,16 @@
     <ClInclude Include="battle_tile.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="creature.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
     <ClInclude Include="creature_actions.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="creature_stats.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="files_initialization.h">
+    <ClInclude Include="turn_based_game_global.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="frame_coordinate.h">

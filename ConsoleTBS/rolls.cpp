@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "files_initialization.h"
+#include "turn_based_game_global.h"
 #include "creature.h"
 #include "creature_stats.h"
 
@@ -42,8 +42,8 @@ RollResult compare_rolls(const Creature* action_dealer, CreatureStatId action_de
 	int creature_roll{ action_dealer->roll_stat_with_bonus(action_dealer_stat_to_compare) },
 		target_roll{ target->roll_stat_with_bonus(target_stat_to_compare) };
 
-	game_ptr->add_string_to_ui_log(*(action_dealer->get_name()) + " rolled: " + std::to_string(creature_roll));
-	game_ptr->add_string_to_ui_log(*(target->get_name()) + " rolled: " + std::to_string(target_roll));
+	add_string_to_ui_log(*(action_dealer->get_name()) + " rolled: " + std::to_string(creature_roll));
+	add_string_to_ui_log(*(target->get_name()) + " rolled: " + std::to_string(target_roll));
 
 	if (creature_roll > target_roll) { // action success
 		int roll_difference{ creature_roll - target_roll };

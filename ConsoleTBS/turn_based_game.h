@@ -6,6 +6,8 @@
 #include <vector>
 #include <utility>
 
+#include <chrono>
+
 #include "user_input.h"
 #include "battle_map_coordinate.h"
 #include "frame_coordinate.h"
@@ -33,8 +35,9 @@ public:
     TurnBasedGame() {
         create_new_main_game_window();
         calculate_window_borders();
-        create_new_ui_window();
-        create_new_pv_window();
+        create_new_ui_window(); // currently at first launch doing only unneeded clearing
+        //create_new_pv_window(); // currently at first launch doing only unneeded clearing
+        ui_status[UI_Status::kPlayerViewWindow] = true;
     }
 
     ~TurnBasedGame() {
@@ -44,6 +47,13 @@ public:
     void print_frame();
 
     void start() {
+        const std::vector<UserInputButton> allowed_user_input { // unoptimized because will hold allowed input for main_menu when there is currently battle in proccess
+            UserInputButton::kExit
+        };
+
+        std::string ask_user_input_str((kWindowWidth_ / 2) - 6, ' ');
+        ask_user_input_str += " User input: ";
+
         bool new_frame{ true };
         char user_input{};
         do {
@@ -53,25 +63,23 @@ public:
             }
             else { new_frame = true; }
 
-            for (int iter{ 0 }; iter != (kWindowWidth_ / 2) - 6; ++iter) {
-                std::cout << ' ';
-            }
-            std::cout << "User Input: ";
+            std::cout << ask_user_input_str;
             std::cin >> user_input;
             player_coordinate_selection_old_ = player_coordinate_selection_;
             switch (user_input) {
-            case UserInput::kShowInputHelp:
-                ui_input_help_switch();
+            case UserInputButton::kShowInputHelp:
+                ui_input_help_switch(allowed_user_input);
                 new_frame = true;
                 break;
-            case UserInput::kStartBattle: // should start another switch with another input switch to prevent improper input
+            case UserInputButton::kStartBattle: // should start another switch with another input switch to prevent improper input
                 start_new_battle();
                 battle_process();
                 battle_map_clear();
+                set_ui_status_flags_to_default();
                 create_new_ui_window();
                 create_new_pv_window();
                 break;
-            case UserInput::kExit:
+            case UserInputButton::kExit:
                 return;
             default:
                 std::cerr << "Unrecognised input. Do nothing.";
@@ -85,24 +93,41 @@ public:
         } while (true);
     }
 
-    void add_string_to_ui_log(const std::string* str);
-    void add_string_to_ui_log(const std::string str);
+    friend void add_string_to_ui_log(const std::string* str_ptr);
+    friend void add_string_to_ui_log(const std::string str);
 
 private:
+    enum UI_Status {
+        kWindowsAndInterfacesStatusMin,
+        kPlayerViewWindow = kWindowsAndInterfacesStatusMin,
+        kUI_Window,
+        kUI_WindowLog,
+        kUI_InputHelp,
+        kBattleMap,
+        kBattleMapTileNumeration,
+        kCreatureStats,
+        kCreatureSelected, // for situations when something will be shown over creature_ptr stats
+        // kCreatureInteracted, // for future, example when interaction creates new "windows"
+        kWindowsAndInterfacesStatusMax,
+    };
+
     void create_new_main_game_window();
     void create_new_ui_window();
     void create_new_pv_window();
 
+    void set_ui_status_flags_to_default();
     void calculate_window_borders();
-    void frame_clear_string(char* frame_coordinate_x_ptr, char* frame_coordinate_x_ptr_end);
+    void frame_clear_string(std::string::iterator frame_coordinate_x_iter, std::string::iterator frame_coordinate_x_iter_end);
 
     void update_ui();
-    char* add_string_to_ui(FrameCoordinate coordinate, const std::string str, int indent);
-    char* add_string_to_ui(FrameCoordinate coordinate, const std::string* str, int indent);
-    void add_creature_stat_string_to_ui(FrameCoordinate coordinate, CreatureStatId creature_stat, int stat_value_current, int stat_value_max);
-    void ui_input_help_switch();
-    void ui_input_help_turn_on();
-    void ui_input_help_turn_off();
+    std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent);
+    std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr);
+    void add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, CreatureStatId creature_stat_id, int stat_value_current, int stat_value_max);
+    void ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input);
+    void ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input);
+    void ui_input_help_turn_off(size_t allowed_user_input_size);
     void clear_ui_log();
 
     void start_new_battle();
@@ -114,29 +139,31 @@ private:
     void calculate_battle_map_visual();
     void show_battle_map();
     void battle_map_show_landscape();
-    void battle_map_add_creature(Creature* creature, BattleMapCoordinate coordinate, BattleStartStatus battle_reason);
-    void battle_map_add_army(Army* army, BattleStartStatus status);
+    void battle_map_add_creature(Creature* creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
+    void battle_map_add_army(Army* army_ptr, BattleStartStatus battle_status);
     bool battle_map_tile_numeration_switch();
     bool battle_map_tile_numeration_turn_on();
     bool battle_map_tile_numeration_turn_off();
     void battle_map_create_basic_ui();
     void battle_map_create_basic_ui_with_creature();
-    void battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_coordinate);
-    void battle_map_kill_creature(BattleMapCoordinate killed_creature_coordinate);
+    void battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_battle_map_coordinate);
+    void battle_map_kill_creature(BattleMapCoordinate killed_creature_battle_map_coordinate);
 
-    FrameCoordinate battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate); // returns frame_[y,x] where creature_middle_symbol would be
+    FrameCoordinate battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate battle_map_coordinate); // returns frame_[y,x] where creature_middle_symbol would be
 
     void battle_map_update_player_selection();
     void battle_map_clear_old_player_selection();
 
     bool player_coordinate_selection_move_by_coordinate_input();
-    std::unique_ptr<std::vector<UserInput>> player_coordinate_selection_move_by_direction_input();
+    std::unique_ptr<std::vector<UserInputButton>> player_coordinate_selection_move_by_direction_input();
+
+    Army* find_army_by_owned_creature(Creature* creature_ptr);
 
     bool interact_with_creature();
-    bool creature_move_by_input(UserInput input_method);
-    bool creature_move_by_coordinate(BattleMapCoordinate old_coordinate, BattleMapCoordinate new_coordinate);
+    bool creature_move_by_input(UserInputButton input_method);
+    bool move_creature_by_coordinate(BattleMapCoordinate battle_map_coordinate_old, BattleMapCoordinate battle_map_coordinate_new);
 
-    void check_possible_kill(BattleMapCoordinate creature_coordinate);
+    void check_possible_kill(Creature* creature_ptr, BattleMapCoordinate creature_battle_map_coordinate);
 
 private:
     //static constexpr int kWindowWidth_{ 317 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input
@@ -144,8 +171,8 @@ private:
     static constexpr int kWindowWidth_{ 264 },  // tmp value for laptop
                          kWindowHeight_{ 66 };
 
-    std::array<std::array<char, kWindowWidth_>, kWindowHeight_> frame_{};
-    // when accessing it frame[y][x]  x              y
+    std::array<std::string, kWindowHeight_> frame_;
+    // when accessing it frame[y][x]
 
     static constexpr char kGameWindowVerticalSymbol_{ '|' },
         kGameWindowHorizontalSymbol_{ '_' };
@@ -189,7 +216,7 @@ private:
         kTileCornerSymbol2_{ '\\' };
 
 
-    Army player_army_,
+    Army player_army_, // should be changed in future to factions if there will be global map (with building, etc)
         ai_army_;
 
     static constexpr char kCreatureMiddleSymbol_{ '-' },
