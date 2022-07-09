@@ -89,6 +89,10 @@ void TurnBasedGame::battle_process() {
             break;
         case UserInputButton::kExit:
             return;
+        case 't':
+            std::cout << "TEST!\n";
+            test();
+            break;
         default:
             std::cerr << "Unrecognised input. Do nothing.";
             new_frame = false;

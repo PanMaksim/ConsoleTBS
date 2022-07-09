@@ -5,9 +5,77 @@
 #include <string_view>
 #include <vector>
 
+#include <iostream> // only for cerr
+#include <fstream>
+
+#include "file_database.h"
 #include "random.h"
 #include "creature_actions.h"
 #include "creature_stats.h"
+
+std::unique_ptr<std::vector<std::string>> creature_database_first_names_tmp;
+std::unique_ptr<std::vector<std::string>> creature_database_last_names_tmp;
+
+void open_creature_main_database(FileDatabaseId database_id) { // open file and copy info into needed array
+	if (file_databases_status[static_cast<int>(database_id)] == true) {
+		std::cerr << "ERROR, tried to open already opened database.\n";
+	}
+
+	std::ifstream txt_database;
+	switch (database_id) {
+	case FileDatabaseId::kCreatureFirstNameDatabase:
+		txt_database.open("TextDatabases/creatures_first_names_database.txt", std::ios::app);
+		if (!txt_database) {
+			std::cerr << "ERROR, database not found.\n";
+		}
+		creature_database_first_names_tmp = std::make_unique<std::vector<std::string>>(
+			std::istream_iterator<std::string>(txt_database), std::istream_iterator<std::string>());
+		for (const std::string& str : *creature_database_first_names_tmp) {
+			std::cout << str << '\n';
+		}
+		break;
+	case FileDatabaseId::kCreatureLastNameDatabase:
+		txt_database.open("TextDatabases/creatures_last_names_database.txt", std::ios::app);
+		if (!txt_database) {
+			std::cerr << "ERROR, database not found.\n";
+		}
+		creature_database_last_names_tmp = std::make_unique<std::vector<std::string>>(
+			std::istream_iterator<std::string>(txt_database), std::istream_iterator<std::string>());
+		break;
+	case FileDatabaseId::kCreatureTemplateDatabase:
+		break;
+	default:
+		std::cerr << "Error, tried to open unknown database.\n";
+	}
+
+	file_databases_status[static_cast<int>(database_id)] = true;
+}
+
+void close_creature_main_database(FileDatabaseId database_id) { // release memory
+	if (file_databases_status[static_cast<int>(database_id)] == false) {
+		std::cerr << "ERROR, tried to close unopened database.\n";
+	}
+
+	switch (database_id) {
+	case FileDatabaseId::kCreatureFirstNameDatabase:
+		creature_database_first_names_tmp.reset();
+		break;
+	case FileDatabaseId::kCreatureLastNameDatabase:
+		creature_database_last_names_tmp.reset();
+		break;
+	case FileDatabaseId::kCreatureTemplateDatabase:
+		break;
+	default:
+		std::cerr << "Error, tried to close unknown database.\n";
+	}
+
+	file_databases_status[static_cast<int>(database_id)] = false;
+}
+
+void test() {
+	open_creature_main_database(FileDatabaseId::kCreatureFirstNameDatabase);
+	close_creature_main_database(FileDatabaseId::kCreatureFirstNameDatabase);
+}
 
 // Movement speed = 20 for faster testing
 const Creature creature_database_templates[static_cast<int>(CreatureTemplate::kCreatureTemplateMax)]{
@@ -18,7 +86,7 @@ const Creature creature_database_templates[static_cast<int>(CreatureTemplate::kC
 const Creature* creature_database_get_templates(CreatureTemplate creature_template) {
 	return &creature_database_templates[static_cast<int>(creature_template)];
 }
-
+ 
 // possibly not const array, but only const strings inside array, must be checked
 const std::string_view creature_database_first_name[]{
 	"Alfons",
@@ -43,7 +111,7 @@ const std::string_view creature_database_second_name[]{
 	"Wulfheart",
 	"Lionheart",
 	"Benner",
-	"Pestilens",
+	"Pestilens"
 };
 
 Creature::Creature(CreatureRace creature_race, std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)> target_creature_stats) : race_{ creature_race } {

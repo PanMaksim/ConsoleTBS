@@ -7,6 +7,8 @@
 
 #include "creature_stats.h"
 
+void test();
+
 enum class CreatureTemplate {
 	kCreatureTemplateMin,
 	kHumanSpearman = kCreatureTemplateMin,

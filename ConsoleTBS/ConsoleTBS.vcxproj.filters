@@ -13,87 +13,123 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Файлы заголовков\big classes">
+      <UniqueIdentifier>{e5c84f43-1b6c-4d70-a43a-39b59bd8d6b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\only functions">
+      <UniqueIdentifier>{ad502f1b-f463-4e19-8254-24dfdd949c25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\small classes">
+      <UniqueIdentifier>{fceeb8cf-6b11-4c08-8a07-94d19c28c372}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\structs">
+      <UniqueIdentifier>{7ec06d9a-9a83-40cc-99a5-86bd4befdb74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\big classes">
+      <UniqueIdentifier>{1d9ecb7e-02f5-4625-9273-2a8a7bc4ac47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\small classes">
+      <UniqueIdentifier>{f714b0ab-2e88-4fd8-9434-f56711c3f111}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\structs">
+      <UniqueIdentifier>{4dca1575-dddd-41b8-8f5e-f69af99e314a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\only functions">
+      <UniqueIdentifier>{4b886f17-a7e6-4e01-ad21-3b7aa6a9774e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\main game">
+      <UniqueIdentifier>{82792612-930d-46bb-a314-a44573a05017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\main game">
+      <UniqueIdentifier>{2b50cab2-3a83-41c7-8490-6216e9fd58d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TurnBasedGame.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="army.cpp">
-      <Filter>Файлы ресурсов</Filter>
-    </ClCompile>
-    <ClCompile Include="battle_tile.cpp">
-      <Filter>Файлы ресурсов</Filter>
+      <Filter>Файлы ресурсов\big classes</Filter>
     </ClCompile>
     <ClCompile Include="creature.cpp">
-      <Filter>Файлы ресурсов</Filter>
+      <Filter>Файлы ресурсов\big classes</Filter>
     </ClCompile>
     <ClCompile Include="creature_actions.cpp">
-      <Filter>Файлы ресурсов</Filter>
+      <Filter>Файлы ресурсов\big classes</Filter>
     </ClCompile>
-    <ClCompile Include="creature_stats.cpp">
-      <Filter>Файлы ресурсов</Filter>
-    </ClCompile>
-    <ClCompile Include="turn_based_game_global.cpp">
-      <Filter>Файлы ресурсов</Filter>
-    </ClCompile>
-    <ClCompile Include="random.cpp">
-      <Filter>Файлы ресурсов</Filter>
-    </ClCompile>
-    <ClCompile Include="rolls.cpp">
-      <Filter>Файлы ресурсов</Filter>
+    <ClCompile Include="battle_tile.cpp">
+      <Filter>Файлы ресурсов\small classes</Filter>
     </ClCompile>
     <ClCompile Include="terrain.cpp">
-      <Filter>Файлы ресурсов</Filter>
+      <Filter>Файлы ресурсов\small classes</Filter>
     </ClCompile>
-    <ClCompile Include="turn_based_game_battle.cpp">
-      <Filter>Файлы ресурсов</Filter>
-    </ClCompile>
-    <ClCompile Include="turn_based_game_windows.cpp">
-      <Filter>Файлы ресурсов</Filter>
+    <ClCompile Include="creature_stats.cpp">
+      <Filter>Файлы ресурсов\structs</Filter>
     </ClCompile>
     <ClCompile Include="user_input.cpp">
-      <Filter>Файлы ресурсов</Filter>
+      <Filter>Файлы ресурсов\structs</Filter>
+    </ClCompile>
+    <ClCompile Include="file_database.cpp">
+      <Filter>Файлы ресурсов\only functions</Filter>
+    </ClCompile>
+    <ClCompile Include="random.cpp">
+      <Filter>Файлы ресурсов\only functions</Filter>
+    </ClCompile>
+    <ClCompile Include="rolls.cpp">
+      <Filter>Файлы ресурсов\only functions</Filter>
+    </ClCompile>
+    <ClCompile Include="turn_based_game_windows.cpp">
+      <Filter>Файлы ресурсов\main game</Filter>
+    </ClCompile>
+    <ClCompile Include="turn_based_game_global.cpp">
+      <Filter>Файлы ресурсов\main game</Filter>
+    </ClCompile>
+    <ClCompile Include="turn_based_game_battle.cpp">
+      <Filter>Файлы ресурсов\main game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="army.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="battle_map_coordinate.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="battle_tile.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\big classes</Filter>
     </ClInclude>
     <ClInclude Include="creature.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\big classes</Filter>
     </ClInclude>
     <ClInclude Include="creature_actions.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\big classes</Filter>
     </ClInclude>
-    <ClInclude Include="creature_stats.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="turn_based_game_global.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="frame_coordinate.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="random.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="rolls.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="battle_tile.h">
+      <Filter>Файлы заголовков\small classes</Filter>
     </ClInclude>
     <ClInclude Include="terrain.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\small classes</Filter>
     </ClInclude>
-    <ClInclude Include="turn_based_game.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="creature_stats.h">
+      <Filter>Файлы заголовков\structs</Filter>
+    </ClInclude>
+    <ClInclude Include="battle_map_coordinate.h">
+      <Filter>Файлы заголовков\structs</Filter>
+    </ClInclude>
+    <ClInclude Include="frame_coordinate.h">
+      <Filter>Файлы заголовков\structs</Filter>
     </ClInclude>
     <ClInclude Include="user_input.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\structs</Filter>
+    </ClInclude>
+    <ClInclude Include="file_database.h">
+      <Filter>Файлы заголовков\only functions</Filter>
+    </ClInclude>
+    <ClInclude Include="random.h">
+      <Filter>Файлы заголовков\only functions</Filter>
+    </ClInclude>
+    <ClInclude Include="rolls.h">
+      <Filter>Файлы заголовков\only functions</Filter>
+    </ClInclude>
+    <ClInclude Include="turn_based_game.h">
+      <Filter>Файлы заголовков\main game</Filter>
+    </ClInclude>
+    <ClInclude Include="turn_based_game_global.h">
+      <Filter>Файлы заголовков\main game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
