@@ -5,8 +5,7 @@
 enum class FileDatabaseId {
 	FileDatabaseIdMin = 0,
 	kCreatureTemplateDatabase = FileDatabaseIdMin,
-	kCreatureFirstNameDatabase,
-	kCreatureLastNameDatabase,
+	kCreatureNameDatabase,
 	FileDatabaseIdMax
 };
 

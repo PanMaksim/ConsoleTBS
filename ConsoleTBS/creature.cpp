@@ -13,8 +13,8 @@
 #include "creature_actions.h"
 #include "creature_stats.h"
 
-std::unique_ptr<std::vector<std::string>> creature_database_first_names_tmp;
-std::unique_ptr<std::vector<std::string>> creature_database_last_names_tmp;
+std::unique_ptr<std::vector<std::string>> creature_database_first_name_tmp;
+std::unique_ptr<std::vector<std::string>> creature_database_last_name_tmp;
 
 void open_creature_main_database(FileDatabaseId database_id) { // open file and copy info into needed array
 	if (file_databases_status[static_cast<int>(database_id)] == true) {
@@ -23,23 +23,20 @@ void open_creature_main_database(FileDatabaseId database_id) { // open file and 
 
 	std::ifstream txt_database;
 	switch (database_id) {
-	case FileDatabaseId::kCreatureFirstNameDatabase:
-		txt_database.open("TextDatabases/creatures_first_names_database.txt", std::ios::app);
+	case FileDatabaseId::kCreatureNameDatabase:
+		txt_database.open("TextDatabases/creature_first_names_database.txt", std::ios::app);
 		if (!txt_database) {
 			std::cerr << "ERROR, database not found.\n";
 		}
-		creature_database_first_names_tmp = std::make_unique<std::vector<std::string>>(
+		creature_database_first_name_tmp = std::make_unique<std::vector<std::string>>(
 			std::istream_iterator<std::string>(txt_database), std::istream_iterator<std::string>());
-		for (const std::string& str : *creature_database_first_names_tmp) {
-			std::cout << str << '\n';
-		}
-		break;
-	case FileDatabaseId::kCreatureLastNameDatabase:
-		txt_database.open("TextDatabases/creatures_last_names_database.txt", std::ios::app);
+		txt_database.close();
+
+		txt_database.open("TextDatabases/creature_last_names_database.txt", std::ios::app);
 		if (!txt_database) {
 			std::cerr << "ERROR, database not found.\n";
 		}
-		creature_database_last_names_tmp = std::make_unique<std::vector<std::string>>(
+		creature_database_last_name_tmp = std::make_unique<std::vector<std::string>>(
 			std::istream_iterator<std::string>(txt_database), std::istream_iterator<std::string>());
 		break;
 	case FileDatabaseId::kCreatureTemplateDatabase:
@@ -57,11 +54,9 @@ void close_creature_main_database(FileDatabaseId database_id) { // release memor
 	}
 
 	switch (database_id) {
-	case FileDatabaseId::kCreatureFirstNameDatabase:
-		creature_database_first_names_tmp.reset();
-		break;
-	case FileDatabaseId::kCreatureLastNameDatabase:
-		creature_database_last_names_tmp.reset();
+	case FileDatabaseId::kCreatureNameDatabase:
+		creature_database_first_name_tmp.reset();
+		creature_database_last_name_tmp.reset();
 		break;
 	case FileDatabaseId::kCreatureTemplateDatabase:
 		break;
@@ -73,8 +68,7 @@ void close_creature_main_database(FileDatabaseId database_id) { // release memor
 }
 
 void test() {
-	open_creature_main_database(FileDatabaseId::kCreatureFirstNameDatabase);
-	close_creature_main_database(FileDatabaseId::kCreatureFirstNameDatabase);
+
 }
 
 // Movement speed = 20 for faster testing
@@ -88,31 +82,31 @@ const Creature* creature_database_get_templates(CreatureTemplate creature_templa
 }
  
 // possibly not const array, but only const strings inside array, must be checked
-const std::string_view creature_database_first_name[]{
-	"Alfons",
-	"Adner",
-	"Maksim",
-	"Taras",
-	"Jonny",
-	"Lourence",
-	"Claus",
-	"Bernard",
-	"Benny",
-	"Ranald"
-};
+//const std::string_view creature_database_first_name[]{
+//	"Alfons",
+//	"Adner",
+//	"Maksim",
+//	"Taras",
+//	"Jonny",
+//	"Lourence",
+//	"Claus",
+//	"Bernard",
+//	"Benny",
+//	"Ranald"
+//};
 
-const std::string_view creature_database_second_name[]{
-	"White",
-	"Black",
-	"Folknir",
-	"Hastner",
-	"Norman",
-	"Festner",
-	"Wulfheart",
-	"Lionheart",
-	"Benner",
-	"Pestilens"
-};
+//const std::string_view creature_database_second_name[]{
+//	"White",
+//	"Black",
+//	"Folknir",
+//	"Hastner",
+//	"Norman",
+//	"Festner",
+//	"Wulfheart",
+//	"Lionheart",
+//	"Benner",
+//	"Pestilens"
+//};
 
 Creature::Creature(CreatureRace creature_race, std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)> target_creature_stats) : race_{ creature_race } {
 	std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>::pointer
@@ -138,7 +132,7 @@ Creature::Creature(CreatureRace creature_race, std::array<int, static_cast<int>(
 		}
 	}
 
-	name_ = generate_name();
+	name_ = "No_Name";
 }
 
 Creature::Creature(const Creature* creature_ptr) : race_{ creature_ptr->get_race() } {
@@ -168,8 +162,11 @@ int Creature::roll_stat_with_bonus(CreatureStatId stat_id) const {
 }
 
 const std::string Creature::generate_name() {
-	return static_cast<std::string>(creature_database_first_name[get_random_number(0, static_cast<int>(creature_database_first_name->size()))]) + ' ' +
-		creature_database_second_name[get_random_number(0, static_cast<int>(creature_database_second_name->size()))].data(); // maube should not calculate size every time
+	if (creature_database_first_name_tmp == nullptr || creature_database_last_name_tmp == nullptr) {
+		std::cerr << "ERROR, tried to generate name when database is not open.\n";
+	}
+	return (*creature_database_first_name_tmp)[get_random_number(0, creature_database_first_name_tmp->size() - 1)] + ' ' +
+		(*creature_database_last_name_tmp)[get_random_number(0, creature_database_last_name_tmp->size() - 1)]; // maube should not calculate size every time
 }
 
 // should add multipliers for different ATK chances (Critical, Success, Small hit)

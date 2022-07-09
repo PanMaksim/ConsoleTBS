@@ -5,8 +5,11 @@
 #include <algorithm>
 #include <execution>
 
+#include "file_database.h"
 #include "random.h"
 #include "creature.h"
+
+#include <chrono>
 
 Army::Army() {
 	army_.reserve(army_size_max_);
@@ -27,11 +30,13 @@ void Army::generate_random_army() { // for testing
 	if (army_.size() != 0) {
 		this->clear();
 	}
+	open_creature_main_database(FileDatabaseId::kCreatureNameDatabase);
 
 	std::generate_n(std::back_inserter(army_), army_size_max_, []() { return creature_database_get_templates(static_cast<CreatureTemplate>((
 		get_random_number(static_cast<int>(CreatureTemplate::kCreatureTemplateMin), static_cast<int>(CreatureTemplate::kCreatureTemplateMax) - 1))));});
+	std::for_each(std::execution::par_unseq, army_.begin(), army_.end(), [=](Creature& creature) {creature.join_army(army_id_);});
 
-	std::for_each(army_.begin(), army_.end(), [=](Creature& creature) {creature.join_army(army_id_);});
+	close_creature_main_database(FileDatabaseId::kCreatureNameDatabase);
 }
 
 void Army::kill_creature(size_t dead_creature_id){

@@ -69,9 +69,6 @@
     <ClCompile Include="user_input.cpp">
       <Filter>Файлы ресурсов\structs</Filter>
     </ClCompile>
-    <ClCompile Include="file_database.cpp">
-      <Filter>Файлы ресурсов\only functions</Filter>
-    </ClCompile>
     <ClCompile Include="random.cpp">
       <Filter>Файлы ресурсов\only functions</Filter>
     </ClCompile>
@@ -86,6 +83,9 @@
     </ClCompile>
     <ClCompile Include="turn_based_game_battle.cpp">
       <Filter>Файлы ресурсов\main game</Filter>
+    </ClCompile>
+    <ClCompile Include="file_database.cpp">
+      <Filter>Файлы ресурсов\only functions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

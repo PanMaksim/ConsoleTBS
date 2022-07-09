@@ -5,9 +5,12 @@
 #include <string>
 #include <utility>
 
+#include "file_database.h"
 #include "creature_stats.h"
 
 void test();
+void open_creature_main_database(FileDatabaseId database_id);
+void close_creature_main_database(FileDatabaseId database_id);
 
 enum class CreatureTemplate {
 	kCreatureTemplateMin,
@@ -54,7 +57,7 @@ private:
 	size_t creature_id_{ creature_id_counter++ };
 
 	int level_{};
-	std::string name_{ "No_Name" }; // name selection can be modified by system with character modifiers (something like "likes jokes", "proud for family tree", etc)
+	std::string name_{}; // name selection can be modified by system with character modifiers (something like "likes jokes", "proud for family tree", etc)
 	CreatureRace race_;
 	// in future should add sex(male/female) too, and differency in names for them
 	std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)> creature_stats_{}; // pair for current/max stats
