@@ -8,7 +8,6 @@
 #include "file_database.h"
 #include "creature_stats.h"
 
-void test();
 void open_creature_main_database(FileDatabaseId database_id);
 void close_creature_main_database(FileDatabaseId database_id);
 

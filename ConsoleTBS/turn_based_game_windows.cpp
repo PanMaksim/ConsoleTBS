@@ -58,10 +58,10 @@ void TurnBasedGame::create_new_ui_window() {
 
     *((frame_.begin() + ui_window_height_end_)->begin() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
 
-    // Hint to button that calls list of allowed for user input buttons
+    // Hint to button_ that calls list of allowed for user input buttons
     FrameCoordinate coordinate{ ui_window_width_start_ + 2, ui_window_input_help_coordinate_height };
     if (frame_[coordinate.y][coordinate.x] != UserInputButton::kShowInputHelp) {
-        add_string_to_ui(coordinate, user_input_database_get_main_description(UserInputButton::kShowInputHelp));
+        add_string_to_ui(coordinate, &description_to_show_input_help_button);
     }
 
     // border for log window
@@ -513,15 +513,15 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr) {
     std::string::iterator frame_coordinate_x_ptr{ frame_[frame_coordinate.y].begin() + frame_coordinate.x };
 
-    *frame_coordinate_x_ptr++ = user_input_description_ptr->button;
+    *frame_coordinate_x_ptr++ = user_input_description_ptr->button_;
     *frame_coordinate_x_ptr++ = ' ';
     *frame_coordinate_x_ptr++ = '-';
     *frame_coordinate_x_ptr++ = ' ';
 
-    const std::string_view* str_v{ &user_input_description_ptr->description };
-    std::copy(std::execution::par_unseq, str_v->cbegin(), str_v->cend(), frame_coordinate_x_ptr);
+    const std::string* str{ &user_input_description_ptr->description_ };
+    std::copy(std::execution::par_unseq, str->cbegin(), str->cend(), frame_coordinate_x_ptr);
 
-    frame_coordinate_x_ptr += str_v->size();
+    frame_coordinate_x_ptr += str->size();
     if (*frame_coordinate_x_ptr != ' ') {
         frame_clear_string(frame_coordinate_x_ptr, frame_[frame_coordinate.y].begin() + ui_window_width_end_);
     }
@@ -531,12 +531,16 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
 void TurnBasedGame::ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input) {
     if (ui_status[UI_Status::kCreatureStats]) { create_new_ui_window(); } // clear from ui stats, can be changed to more optimized variant
 
+    open_user_input_database(FileDatabaseId::kUserInputDescription);
+
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
     std::for_each(std::execution::seq, allowed_user_input.begin(), allowed_user_input.end(),
         [=, &coordinate](const UserInputButton allowed_user_input_description) {
             add_string_to_ui(coordinate, user_input_database_get_main_description(allowed_user_input_description));
             ++coordinate.y;
         });
+
+    close_user_input_database(FileDatabaseId::kUserInputDescription);
 
     add_string_to_ui_log("Turn in input help");
     ui_status[UI_Status::kUI_InputHelp] = true;

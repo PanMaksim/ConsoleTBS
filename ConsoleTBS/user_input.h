@@ -3,6 +3,10 @@
 #include <string>
 #include <vector>
 
+#include "file_database.h"
+
+void test();
+
 enum UserInputButton {
     kExit = '~', // kUserInputMin
     kShowInputHelp = '`', // not key binding, because it shows only available input
@@ -11,18 +15,24 @@ enum UserInputButton {
     kMoveLeft = 'a',
     kMoveRight = 'd',
     kInteract = 'e',
-    kMoveSelectionByCoordinate = 'Q',
     kMoveSelectionByDirection = 'q',
+    kMoveSelectionByCoordinate = 'Q',
     kStartBattle = 'b',
     kTileNumerationSwitch = 'z',
 };
 
 struct UserInputDescription {
-    UserInputButton button;
-    std::string_view description;
+    UserInputButton button_;
+    std::string description_;
+
+    UserInputDescription(char button, std::string&& description);
 };
+
+extern const UserInputDescription description_to_show_input_help_button;
 
 int get_user_input(int min, int max);
 const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol);
 const std::vector<UserInputDescription>* user_input_database_get_all_description();
-// const std::vector<UserInputButton>* user_input_database_get_input_availability(UI_Status status);
+
+void open_user_input_database(FileDatabaseId database_id);
+void close_user_input_database(FileDatabaseId database_id);

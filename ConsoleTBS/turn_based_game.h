@@ -72,6 +72,7 @@ public:
                 new_frame = true;
                 break;
             case UserInputButton::kStartBattle: // should start another switch with another input switch to prevent improper input
+                ui_status[UI_Status::kUI_InputHelp] = false;
                 start_new_battle();
                 battle_process();
                 battle_map_clear();

@@ -4,21 +4,23 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <fstream>
+#include <memory>
 
 #include <iostream> // only for cerr
-#include <fstream>
 
 #include "file_database.h"
 #include "random.h"
 #include "creature_actions.h"
 #include "creature_stats.h"
 
-std::unique_ptr<std::vector<std::string>> creature_database_first_name_tmp;
-std::unique_ptr<std::vector<std::string>> creature_database_last_name_tmp;
+std::unique_ptr<std::vector<std::string>> creature_database_first_name;
+std::unique_ptr<std::vector<std::string>> creature_database_last_name;
 
 void open_creature_main_database(FileDatabaseId database_id) { // open file and copy info into needed array
 	if (file_databases_status[static_cast<int>(database_id)] == true) {
 		std::cerr << "ERROR, tried to open already opened database.\n";
+		return;
 	}
 
 	std::ifstream txt_database;
@@ -28,7 +30,8 @@ void open_creature_main_database(FileDatabaseId database_id) { // open file and 
 		if (!txt_database) {
 			std::cerr << "ERROR, database not found.\n";
 		}
-		creature_database_first_name_tmp = std::make_unique<std::vector<std::string>>(
+
+		creature_database_first_name = std::make_unique<std::vector<std::string>>(
 			std::istream_iterator<std::string>(txt_database), std::istream_iterator<std::string>());
 		txt_database.close();
 
@@ -36,10 +39,8 @@ void open_creature_main_database(FileDatabaseId database_id) { // open file and 
 		if (!txt_database) {
 			std::cerr << "ERROR, database not found.\n";
 		}
-		creature_database_last_name_tmp = std::make_unique<std::vector<std::string>>(
+		creature_database_last_name = std::make_unique<std::vector<std::string>>(
 			std::istream_iterator<std::string>(txt_database), std::istream_iterator<std::string>());
-		break;
-	case FileDatabaseId::kCreatureTemplateDatabase:
 		break;
 	default:
 		std::cerr << "Error, tried to open unknown database.\n";
@@ -51,24 +52,19 @@ void open_creature_main_database(FileDatabaseId database_id) { // open file and 
 void close_creature_main_database(FileDatabaseId database_id) { // release memory
 	if (file_databases_status[static_cast<int>(database_id)] == false) {
 		std::cerr << "ERROR, tried to close unopened database.\n";
+		return;
 	}
 
 	switch (database_id) {
 	case FileDatabaseId::kCreatureNameDatabase:
-		creature_database_first_name_tmp.reset();
-		creature_database_last_name_tmp.reset();
-		break;
-	case FileDatabaseId::kCreatureTemplateDatabase:
+		creature_database_first_name.reset();
+		creature_database_last_name.reset();
 		break;
 	default:
 		std::cerr << "Error, tried to close unknown database.\n";
 	}
 
 	file_databases_status[static_cast<int>(database_id)] = false;
-}
-
-void test() {
-
 }
 
 // Movement speed = 20 for faster testing
@@ -162,11 +158,11 @@ int Creature::roll_stat_with_bonus(CreatureStatId stat_id) const {
 }
 
 const std::string Creature::generate_name() {
-	if (creature_database_first_name_tmp == nullptr || creature_database_last_name_tmp == nullptr) {
+	if (creature_database_first_name == nullptr || creature_database_last_name == nullptr) {
 		std::cerr << "ERROR, tried to generate name when database is not open.\n";
 	}
-	return (*creature_database_first_name_tmp)[get_random_number(0, creature_database_first_name_tmp->size() - 1)] + ' ' +
-		(*creature_database_last_name_tmp)[get_random_number(0, creature_database_last_name_tmp->size() - 1)]; // maube should not calculate size every time
+	return (*creature_database_first_name)[get_random_number(0, creature_database_first_name->size() - 1)] + ' ' +
+		(*creature_database_last_name)[get_random_number(0, creature_database_last_name->size() - 1)]; // maube should not calculate size every time
 }
 
 // should add multipliers for different ATK chances (Critical, Success, Small hit)
