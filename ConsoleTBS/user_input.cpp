@@ -32,6 +32,7 @@ void open_user_input_database(FileDatabaseId database_id) {
 		int database_size;
 		txt_database >> database_size;
 		user_input_database_description->reserve(database_size);
+
 		for (int readed_description_counter{}; readed_description_counter != database_size; ++readed_description_counter) {
 			char button_tmp;
 			txt_database >> button_tmp;
@@ -39,7 +40,6 @@ void open_user_input_database(FileDatabaseId database_id) {
 			std::getline(txt_database, str_tmp);
 			user_input_database_description->emplace_back(button_tmp, std::move(str_tmp));
 		}
-
 		break;
 	default:
 		std::cerr << "Error, tried to open unknown database.\n";
@@ -63,12 +63,6 @@ void close_user_input_database(FileDatabaseId database_id) {
 	}
 
 	file_databases_status[static_cast<int>(database_id)] = false;
-}
-
-
-void test() {
-	open_user_input_database(FileDatabaseId::kUserInputDescription);
-	close_user_input_database(FileDatabaseId::kUserInputDescription);
 }
 
 int get_user_input(int min, int max) {

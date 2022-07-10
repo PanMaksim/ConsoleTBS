@@ -5,8 +5,6 @@
 
 #include "file_database.h"
 
-void test();
-
 enum UserInputButton {
     kExit = '~', // kUserInputMin
     kShowInputHelp = '`', // not key binding, because it shows only available input
