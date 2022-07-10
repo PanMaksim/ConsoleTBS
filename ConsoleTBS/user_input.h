@@ -28,7 +28,7 @@ struct UserInputDescription {
     UserInputDescription(char button, std::string&& description);
 };
 
-extern const UserInputDescription description_to_show_input_help_button;
+extern const UserInputDescription description_to_show_input_help_button; // always holded in memory to prevent opening the database each time ui is cleaned (cleaning can be changed to not touch help_button, but in future sometimes there can be potencial another window over ui)
 
 int get_user_input(int min, int max);
 const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol);
