@@ -76,33 +76,6 @@ const Creature creature_database_templates[static_cast<int>(CreatureTemplate::kC
 const Creature* creature_database_get_templates(CreatureTemplate creature_template) {
 	return &creature_database_templates[static_cast<int>(creature_template)];
 }
- 
-// possibly not const array, but only const strings inside array, must be checked
-//const std::string_view creature_database_first_name[]{
-//	"Alfons",
-//	"Adner",
-//	"Maksim",
-//	"Taras",
-//	"Jonny",
-//	"Lourence",
-//	"Claus",
-//	"Bernard",
-//	"Benny",
-//	"Ranald"
-//};
-
-//const std::string_view creature_database_second_name[]{
-//	"White",
-//	"Black",
-//	"Folknir",
-//	"Hastner",
-//	"Norman",
-//	"Festner",
-//	"Wulfheart",
-//	"Lionheart",
-//	"Benner",
-//	"Pestilens"
-//};
 
 Creature::Creature(CreatureRace creature_race, std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)> target_creature_stats) : race_{ creature_race } {
 	std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>::pointer

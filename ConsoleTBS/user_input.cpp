@@ -81,22 +81,6 @@ int get_user_input(int min, int max) {
 	return value;
 }
 
-const int user_input_max{ 11 };
-
-//const std::vector<UserInputDescription> user_input_database_description{
-//	{UserInputButton::kExit, "return"},
-//	{UserInputButton::kShowInputHelp, "show input help"}, // not key binding, because it shows only available input
-//	{UserInputButton::kMoveUp, "move up"},
-//	{UserInputButton::kMoveDown, "move down"},
-//	{UserInputButton::kMoveLeft, "move left"},
-//	{UserInputButton::kMoveRight, "move right"},
-//	{UserInputButton::kInteract, "interact"},
-//	{UserInputButton::kMoveSelectionByCoordinate, "move selection by coordinate"},
-//	{UserInputButton::kMoveSelectionByDirection, "move selection by direction"},
-//	{UserInputButton::kStartBattle, "start battle"},
-//	{UserInputButton::kTileNumerationSwitch, "tile numeration switch"},
-//};
-
 // not best variant, but enum char is better for input reading, description_ will be called only by player question
 const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol) {
 	if (file_databases_status[static_cast<int>(FileDatabaseId::kUserInputDescription)] == false) {
