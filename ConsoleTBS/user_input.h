@@ -32,5 +32,5 @@ int get_user_input(int min, int max);
 const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol);
 const std::vector<UserInputDescription>* user_input_database_get_all_description();
 
-void open_user_input_database(FileDatabaseId database_id);
-void close_user_input_database(FileDatabaseId database_id);
+void load_user_input_database(FileDatabaseId database_id);
+void unload_user_input_database(FileDatabaseId database_id);

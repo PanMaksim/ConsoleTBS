@@ -17,7 +17,7 @@
 std::unique_ptr<std::vector<std::string>> creature_database_first_name;
 std::unique_ptr<std::vector<std::string>> creature_database_last_name;
 
-void open_creature_main_database(FileDatabaseId database_id) { // open file and copy info into needed array
+void load_creature_main_database(FileDatabaseId database_id) { // open file and copy info into needed array
 	if (file_databases_status[static_cast<int>(database_id)] == true) {
 		std::cerr << "ERROR, tried to open already opened database.\n";
 		return;
@@ -49,7 +49,7 @@ void open_creature_main_database(FileDatabaseId database_id) { // open file and 
 	file_databases_status[static_cast<int>(database_id)] = true;
 }
 
-void close_creature_main_database(FileDatabaseId database_id) { // release memory
+void unload_creature_main_database(FileDatabaseId database_id) { // release memory
 	if (file_databases_status[static_cast<int>(database_id)] == false) {
 		std::cerr << "ERROR, tried to close unopened database.\n";
 		return;

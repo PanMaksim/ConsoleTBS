@@ -13,7 +13,7 @@
 const UserInputDescription description_to_show_input_help_button{ '`', "show input help"};
 std::unique_ptr<std::vector<UserInputDescription>> user_input_database_description;
 
-void open_user_input_database(FileDatabaseId database_id) {
+void load_user_input_database(FileDatabaseId database_id) {
 	if (file_databases_status[static_cast<int>(database_id)] == true) {
 		std::cerr << "ERROR, tried to open already opened database.\n";
 		return;
@@ -48,7 +48,7 @@ void open_user_input_database(FileDatabaseId database_id) {
 
 	file_databases_status[static_cast<int>(database_id)] = true;
 }
-void close_user_input_database(FileDatabaseId database_id) {
+void unload_user_input_database(FileDatabaseId database_id) {
 	if (file_databases_status[static_cast<int>(database_id)] == false) {
 		std::cerr << "ERROR, tried to close unopened database.\n";
 		return;

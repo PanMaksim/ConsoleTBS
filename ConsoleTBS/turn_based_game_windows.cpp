@@ -531,7 +531,7 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
 void TurnBasedGame::ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input) {
     if (ui_status[UI_Status::kCreatureStats]) { create_new_ui_window(); } // clear from ui stats, can be changed to more optimized variant
 
-    open_user_input_database(FileDatabaseId::kUserInputDescription);
+    load_user_input_database(FileDatabaseId::kUserInputDescription);
 
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
     std::for_each(std::execution::seq, allowed_user_input.begin(), allowed_user_input.end(),
@@ -540,7 +540,7 @@ void TurnBasedGame::ui_input_help_turn_on(const std::vector<UserInputButton>& al
             ++coordinate.y;
         });
 
-    close_user_input_database(FileDatabaseId::kUserInputDescription);
+    unload_user_input_database(FileDatabaseId::kUserInputDescription);
 
     add_string_to_ui_log("Turn in input help");
     ui_status[UI_Status::kUI_InputHelp] = true;

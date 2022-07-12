@@ -8,8 +8,8 @@
 #include "file_database.h"
 #include "creature_stats.h"
 
-void open_creature_main_database(FileDatabaseId database_id);
-void close_creature_main_database(FileDatabaseId database_id);
+void load_creature_main_database(FileDatabaseId database_id);
+void unload_creature_main_database(FileDatabaseId database_id);
 
 enum class CreatureTemplate {
 	kCreatureTemplateMin,
