@@ -630,6 +630,11 @@ void TurnBasedGame::battle_map_create_basic_ui_with_creature() {
 }
 
 void TurnBasedGame::update_ui() { // maybe should save in memory previus selection coordinates for possible action skips
+    if (ui_status[UI_Status::kUI_InputHelp] == true) {
+        create_new_ui_window(); // not ui_help_turn_off because it asks for allowed_input_size
+        battle_map_create_basic_ui();
+    }
+    
     BattleTile* target{ &(*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x] };
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
