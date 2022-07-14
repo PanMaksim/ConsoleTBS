@@ -3,8 +3,7 @@
 #include <array>
 
 enum class FileDatabaseId {
-	FileDatabaseIdMin = 0,
-	kCreatureTemplateDatabase = FileDatabaseIdMin,
+	kCreatureTemplateDatabase,
 	kCreatureNameDatabase,
 	kUserInputDescription,
 	FileDatabaseIdMax

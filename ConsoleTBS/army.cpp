@@ -31,12 +31,14 @@ void Army::generate_random_army() { // for testing
 		this->clear();
 	}
 	load_creature_main_database(FileDatabaseId::kCreatureNameDatabase);
+	load_creature_main_database(FileDatabaseId::kCreatureTemplateDatabase);
 
 	std::generate_n(std::back_inserter(army_), army_size_max_, []() { return creature_database_get_templates(static_cast<CreatureTemplate>((
-		get_random_number(static_cast<int>(CreatureTemplate::kCreatureTemplateMin), static_cast<int>(CreatureTemplate::kCreatureTemplateMax) - 1))));});
+		get_random_number(static_cast<int>(CreatureTemplate::kHumanSpearman), static_cast<int>(CreatureTemplate::kCreatureTemplateMax) - 1))));});
 	std::for_each(std::execution::par_unseq, army_.begin(), army_.end(), [=](Creature& creature) {creature.join_army(army_id_);});
 
 	unload_creature_main_database(FileDatabaseId::kCreatureNameDatabase);
+	unload_creature_main_database(FileDatabaseId::kCreatureTemplateDatabase);
 }
 
 void Army::kill_creature(size_t dead_creature_id){

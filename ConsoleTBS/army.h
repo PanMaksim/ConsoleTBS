@@ -5,8 +5,7 @@
 #include "creature.h"
 
 enum class BattleStartStatus {
-	kBattleStartStatusMin,
-	kAttaking = kBattleStartStatusMin,
+	kAttaking,
 	kDefending,
 	kBattleStartStatusMax
 };

@@ -6,8 +6,7 @@
 #include "creature.h"
 
 enum class BattleTileParameters {
-	kBattleTileParametersMin,
-	kLandscape = kBattleTileParametersMin,
+	kLandscape,
 	kCreature,
 	kBattleTileParametersMax
 };

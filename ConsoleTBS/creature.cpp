@@ -17,6 +17,8 @@
 std::unique_ptr<std::vector<std::string>> creature_database_first_name;
 std::unique_ptr<std::vector<std::string>> creature_database_last_name;
 
+std::unique_ptr<std::vector<Creature>> creature_database_templates;
+
 void load_creature_main_database(FileDatabaseId database_id) { // open file and copy info into needed array
 	if (file_databases_status[static_cast<int>(database_id)] == true) {
 		std::cerr << "ERROR, tried to open already opened database.\n";
@@ -42,6 +44,36 @@ void load_creature_main_database(FileDatabaseId database_id) { // open file and 
 		creature_database_last_name = std::make_unique<std::vector<std::string>>(
 			std::istream_iterator<std::string>(txt_database), std::istream_iterator<std::string>());
 		break;
+	case FileDatabaseId::kCreatureTemplateDatabase:
+		txt_database.open("TextDatabases/creature_templates_database.txt", std::ios::app);
+		if (!txt_database) {
+			std::cerr << "ERROR, database not found.\n";
+		}
+
+		{
+			creature_database_templates = std::make_unique<std::vector<Creature>>();
+			std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)> creature_stats;
+			for (int templates_counter{}, templates_max{ static_cast<int>(CreatureTemplate::kCreatureTemplateMax) };
+				templates_counter != templates_max; ++ templates_counter) { // changed to number of templates from check until file ends because it readed last string twice for unknown reason
+
+				// read CreatureRace
+				int creature_race{};
+				txt_database >> creature_race;
+
+				// read CreatureStats
+				creature_stats = std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>();
+				for (std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>::iterator
+					current_stat_iter{ creature_stats.begin() }, stat_iter_end{ creature_stats.end() };
+					current_stat_iter != stat_iter_end; ++current_stat_iter) {
+
+					txt_database >> *current_stat_iter;
+				}
+
+				// load Creature into database
+				creature_database_templates->emplace_back(static_cast<CreatureRace>(creature_race), std::move(creature_stats), true);
+			}
+		}
+		break;
 	default:
 		std::cerr << "Error, tried to open unknown database.\n";
 	}
@@ -60,6 +92,9 @@ void unload_creature_main_database(FileDatabaseId database_id) { // release memo
 		creature_database_first_name.reset();
 		creature_database_last_name.reset();
 		break;
+	case FileDatabaseId::kCreatureTemplateDatabase:
+		creature_database_templates.reset();
+		break;
 	default:
 		std::cerr << "Error, tried to close unknown database.\n";
 	}
@@ -67,46 +102,51 @@ void unload_creature_main_database(FileDatabaseId database_id) { // release memo
 	file_databases_status[static_cast<int>(database_id)] = false;
 }
 
-// Movement speed = 20 for faster testing
-const Creature creature_database_templates[static_cast<int>(CreatureTemplate::kCreatureTemplateMax)]{
-	{CreatureRace::kHuman, {8, 20, 8, 8, 1, 3} },
-	{CreatureRace::kOrc, {10, 20, 10, 8, 1, 4} }
-};
 
 const Creature* creature_database_get_templates(CreatureTemplate creature_template) {
-	return &creature_database_templates[static_cast<int>(creature_template)];
+	return &(*creature_database_templates)[static_cast<int>(creature_template)];
 }
 
-Creature::Creature(CreatureRace creature_race, std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)> target_creature_stats) : race_{ creature_race } {
-	std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>::pointer
-		creature_stat_ptr{ creature_stats_.data() };
+//Creature::Creature(CreatureRace creature_race, const std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)>& target_creature_stats) : race_{ creature_race } {
+//	std::copy(target_creature_stats.begin(), target_creature_stats.end(), std::back_inserter(creature_stats_));
+//	
+//	//std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>::pointer
+//	//	creature_stat_ptr{ creature_stats_.data() };
+//
+//	/*for (std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)>::const_pointer
+//		target_creature_stat_ptr{ target_creature_stats.data() },
+//		target_creature_stat_ptr_end{ target_creature_stats.data() + target_creature_stats.size() };
+//		target_creature_stat_ptr != target_creature_stat_ptr_end; ++target_creature_stat_ptr, ++creature_stat_ptr) {
+//
+//		creature_stat_ptr->current = *target_creature_stat_ptr;
+//		creature_stat_ptr->max = *target_creature_stat_ptr;
+//	}*/
+//
+//	//std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>::pointer
+//	//	creature_stat_ptr_end{ creature_stats_.data() + creature_stats_.size() };
+//
+//	//if (creature_stat_ptr != creature_stat_ptr_end) {
+//	//	for (; creature_stat_ptr != creature_stat_ptr_end; ++creature_stat_ptr) {
+//
+//	//		creature_stat_ptr->current = 0;
+//	//		creature_stat_ptr->max = 0;
+//	//	}
+//	//}
+//
+//	name_ = "No_Name";
+//	creature_id_ = creature_id_counter++;
+//}
 
-	for (std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)>::pointer
-		target_creature_stat_ptr{ target_creature_stats.data() },
-		target_creature_stat_ptr_end{ target_creature_stats.data() + target_creature_stats.size() };
-		target_creature_stat_ptr != target_creature_stat_ptr_end; ++target_creature_stat_ptr, ++creature_stat_ptr) {
-
-		creature_stat_ptr->current = *target_creature_stat_ptr;
-		creature_stat_ptr->max = *target_creature_stat_ptr;
-	}
-
-	std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>::pointer
-		creature_stat_ptr_end{ creature_stats_.data() + creature_stats_.size() };
-
-	if (creature_stat_ptr != creature_stat_ptr_end) {
-		for (; creature_stat_ptr != creature_stat_ptr_end; ++creature_stat_ptr) {
-
-			creature_stat_ptr->current = 0;
-			creature_stat_ptr->max = 0;
-		}
-	}
-
+Creature::Creature(CreatureRace creature_race, std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>&& target_creature_stats, bool no_creature_id) : race_{creature_race} {
+	std::move(target_creature_stats.begin(), target_creature_stats.end(), creature_stats_.begin());
 	name_ = "No_Name";
+	creature_id_ = (no_creature_id == false) ? creature_id_counter++ : 0;
 }
 
 Creature::Creature(const Creature* creature_ptr) : race_{ creature_ptr->get_race() } {
-	std::copy(creature_ptr->creature_stats_.begin(), creature_ptr->creature_stats_.end(), this->creature_stats_.begin());
+	std::copy(creature_ptr->creature_stats_.begin(), creature_ptr->creature_stats_.end(), creature_stats_.begin());
 	name_ = generate_name();
+	creature_id_ = creature_id_counter++;
 }
 
 CreatureStat Creature::get_certain_stat_current_and_max(CreatureStatId stat_id) const { return creature_stats_[static_cast<int>(stat_id)]; }
@@ -127,7 +167,7 @@ void Creature::join_army(int army_id) { army_id_ = army_id; }
 int Creature::roll_stat_with_bonus(CreatureStatId stat_id) const {
 	return static_cast<int>(
 		this->get_certain_stat_current_value(stat_id) * creature_database_get_roll_result_multiplier(
-			static_cast<RollResult>(get_random_number(static_cast<int>(RollResult::kRollResultMin), static_cast<int>(RollResult::kRollResultMax)))));
+			static_cast<RollResult>(get_random_number(static_cast<int>(RollResult::kCriticalFail), static_cast<int>(RollResult::kRollResultMax)))));
 }
 
 const std::string Creature::generate_name() {

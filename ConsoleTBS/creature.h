@@ -12,20 +12,23 @@ void load_creature_main_database(FileDatabaseId database_id);
 void unload_creature_main_database(FileDatabaseId database_id);
 
 enum class CreatureTemplate {
-	kCreatureTemplateMin,
-	kHumanSpearman = kCreatureTemplateMin,
+	NoTemplate,
+	kHumanSpearman,
 	kOrcAxeman,
 	kCreatureTemplateMax
 };
 
-static size_t creature_id_counter{};
+static size_t creature_id_counter{ static_cast<int>(CreatureTemplate::kCreatureTemplateMax) }; // starts from 3 because of database templates that are loading and unloading from memory a lot (number of those templates)
 
 class Creature {
 public:
-	Creature(CreatureRace creature_race, std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)> target_creature_stats);
-	Creature(const Creature* creature_ptr);
+	//Creature(CreatureRace creature_race, const std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)>& target_creature_stats); // default creature_id = -1 because 0 can be used for first element
+	Creature(CreatureRace creature_race, std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>&& target_creature_stats, bool no_creature_id = false); // used to load database from file
+	Creature(const Creature* creature_ptr); // used to construct from database
 	//Creature(CreatureTemplate creature_template) : Creature(*database_create_creature_by_template(creature_template)) {}
 	
+	~Creature() = default;
+
 	//bool operator==(const Creature& another_creature) {
 	//	return creature_id_ == another_creature.get_creature_id();
 	//}
@@ -53,14 +56,13 @@ public:
 
 private:
 	int army_id_{};
-	size_t creature_id_{ creature_id_counter++ };
+	size_t creature_id_{};
 
 	int level_{};
 	std::string name_{}; // name selection can be modified by system with character modifiers (something like "likes jokes", "proud for family tree", etc)
 	CreatureRace race_;
 	// in future should add sex(male/female) too, and differency in names for them
-	std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)> creature_stats_{}; // pair for current/max stats
-
+	std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)> creature_stats_;
 	// std::vector<Effect> active_effects;
 
 	const std::string generate_name(); // in future should use creature_race and culture

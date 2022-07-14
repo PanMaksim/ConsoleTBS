@@ -1,17 +1,17 @@
 #pragma once
 
 #include <string_view>
+#include <fstream>
 
 enum class CreatureRace {
-	kCreatureRaceMin,
-	kHuman = kCreatureRaceMin,
+	kNoRace,
+	kHuman,
 	kOrc,
 	kCreatureRaceMax
 };
 
 enum class CreatureStatId {
-	kCreatureStatMin,
-	kHP = kCreatureStatMin,
+	kHP,
 	kMovementSpeed,
 	kATK_ML,
 	kDEF_ML,
@@ -23,6 +23,12 @@ enum class CreatureStatId {
 struct CreatureStat {
 	int current;
 	int max;
+
+	CreatureStat() = default;
+	CreatureStat(int stat_max);
+	~CreatureStat() = default;
+
+	friend std::ifstream& operator>> (std::ifstream &in, CreatureStat& creature_stat);
 };
 
 struct CreatureStatMultiplier {
