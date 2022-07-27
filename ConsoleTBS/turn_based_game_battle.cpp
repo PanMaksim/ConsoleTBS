@@ -3,11 +3,13 @@
 
 #include <memory>
 #include <string>
+#include <sstream>
 #include <utility>
 #include <chrono>
 #include <execution>
 
 #include "turn_based_game_global.h"
+#include "logger.h"
 #include "user_input.h"
 #include "creature.h"
 #include "creature_actions.h"
@@ -36,7 +38,11 @@ void TurnBasedGame::battle_process() {
             clear_ui_log();
             time_end = std::chrono::high_resolution_clock::now();
             duration = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start);
-            std::cout << "Execution time: " << duration.count() << "ms.\n";
+            {
+                std::stringstream sstr;
+                sstr << "Execution time: " << duration.count() << "ms.";
+                log_in_file(sstr);
+            }
         }
         else { new_frame = true; }
 

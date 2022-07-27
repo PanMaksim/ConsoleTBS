@@ -2,6 +2,7 @@
 #include "turn_based_game_global.h"
 
 #include "turn_based_game.h"
+#include "logger.h"
 
 TurnBasedGame* game_ptr; // for log strings
 
@@ -41,6 +42,7 @@ void add_string_to_ui_log(const std::string* str_ptr) {
 }
 
 void add_string_to_ui_log(const std::string str) {
+    log_in_file("UI_Log: " + str);
     if (game_ptr->ui_log_window_height_current_ == game_ptr->kUserInterfaceLogWindowHeight_) {
         std::cerr << "ERROR, log is too big.\n"; // lazy check
     }
