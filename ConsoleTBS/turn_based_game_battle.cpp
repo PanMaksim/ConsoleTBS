@@ -305,7 +305,7 @@ Army* TurnBasedGame::find_army_by_owned_creature(Creature* creature_ptr) {
     else if (army_id == ai_army_.get_army_id()) {
         return &ai_army_;
     }
-    std::cerr << "ERROR, not found army\n";
+    log_in_file("ERROR, not found an army", true);
     return nullptr;
 }
 
@@ -329,7 +329,7 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_c
                                         new_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_new.y].data() + battle_map_coordinate_new.x };
 
     if (new_coordinate_ptr->creature_ != nullptr) { // sometimes can be unneeded because of check before function call
-        std::cerr << "Error, tried to move on already occupied coordinate\n";
+        log_in_file("Error, tried to move on already occupied coordinate.", true);
         return false;
     }
 
