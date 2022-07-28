@@ -6,7 +6,7 @@
 #include <chrono>
 #include <time.h>
 
-std::ofstream main_logger{"Logs/main_log.txt", std::ios::trunc};
+std::ofstream main_logger;
 //std::ofstream battle_logger;
 
 void log_in_file(const char* str_log, bool critical_error) {
@@ -46,6 +46,10 @@ void log_in_file(const std::stringstream& sstr_log, bool critical_error) {
 	}
 
 	main_logger << "  " << sstr_log.str() << std::endl;
+}
+
+void initialize_logger() {
+	main_logger.open("Logs/main_log.txt", std::ios::trunc);
 }
 
 //void close_file() {

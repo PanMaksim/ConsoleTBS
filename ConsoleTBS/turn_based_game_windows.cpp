@@ -156,11 +156,15 @@ void TurnBasedGame::generate_new_battle_map() {
 void TurnBasedGame::calculate_battle_map_visual() {
     // + 1 after battle_map_indent_height for visual at the bottom
     if ((kBattleMapSizeHeight_ * kTileVisualHeight_) + 1 + pv_visual_indent_height_ + 1 > pv_window_height_end_ - pv_window_height_start_) {
+#ifdef debug_log
         log_in_file("ERROR: battle_map_height is too large to be shown all at once.", true);
+#endif
     }
     // + 2 after battle_map_indent_width for visual
     if ((kBattleMapSizeWidth_ * kTileVisualWidth_) + 1 + pv_visual_indent_width_ + 2 > pv_window_width_end_ - pv_window_width_start_) {
+#ifdef debug_log
         log_in_file("ERROR: battle_map_width is too large to be shown all at once.", true);
+#endif
     }
     // it is just cout no actual STOP!!!, program will be stopped by system error in the proccess of adding battle map to frame_
 
@@ -375,7 +379,9 @@ FrameCoordinate TurnBasedGame::battle_map_find_tile_center_frame_coordinate(Batt
         first_tile_coordinate_y{ pv_window_height_start_ + pv_visual_indent_height_ + 2 };
 
     if (coordinate.y > kBattleMapSizeHeight_ || coordinate.x > kBattleMapSizeWidth_) {
+#ifdef debug_log
         log_in_file("ERROR: battle_map_find_tile_center_coordinate out of range", true);
+#endif
         return { first_tile_coordinate_x, first_tile_coordinate_y }; // return [0, 0] tile
     }
     return { first_tile_coordinate_x + kTileVisualWidth_ * coordinate.x,

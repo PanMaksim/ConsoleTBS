@@ -20,7 +20,9 @@ std::unique_ptr<std::vector<std::string>> creature_database_last_name;
 
 void load_creature_main_database(FileDatabaseId database_id) { // open file and copy info into needed array
 	if (file_databases_status[static_cast<int>(database_id)] == true) {
+#ifdef debug_log
 		log_in_file("ERROR, tried to open already opened database.", true);
+#endif
 		return;
 	}
 
@@ -29,7 +31,9 @@ void load_creature_main_database(FileDatabaseId database_id) { // open file and 
 	case FileDatabaseId::kCreatureNameDatabase:
 		txt_database.open("TextDatabases/creature_first_names_database.txt", std::ios::app);
 		if (!txt_database) {
+#ifdef debug_log
 			log_in_file("ERROR, database not found.", true);
+#endif
 		}
 
 		creature_database_first_name = std::make_unique<std::vector<std::string>>(
@@ -38,13 +42,18 @@ void load_creature_main_database(FileDatabaseId database_id) { // open file and 
 
 		txt_database.open("TextDatabases/creature_last_names_database.txt", std::ios::app);
 		if (!txt_database) {
+#ifdef debug_log
 			log_in_file("ERROR, database not found.", true);
+#endif
 		}
 		creature_database_last_name = std::make_unique<std::vector<std::string>>(
 			std::istream_iterator<std::string>(txt_database), std::istream_iterator<std::string>());
 		break;
 	default:
+#ifdef debug_log
 		log_in_file("Error, tried to open unknown database.", true);
+#endif
+		break;
 	}
 
 	file_databases_status[static_cast<int>(database_id)] = true;
@@ -52,7 +61,9 @@ void load_creature_main_database(FileDatabaseId database_id) { // open file and 
 
 void unload_creature_main_database(FileDatabaseId database_id) { // release memory
 	if (file_databases_status[static_cast<int>(database_id)] == false) {
+#ifdef debug_log
 		log_in_file("ERROR, tried to close unopened database.", true);
+#endif
 		return;
 	}
 

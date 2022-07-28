@@ -12,7 +12,9 @@ void initialize_global_ptr_to_game_object(TurnBasedGame* game_ptr_tmp) {
 
 void add_string_to_ui_log(const std::string* str_ptr) {
     if (game_ptr->ui_log_window_height_current_ == game_ptr->kUserInterfaceLogWindowHeight_) {
+#ifdef debug_log
         log_in_file("ERROR, log is too big.", true); // lazy check
+#endif
     } // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! but when log message take more than 1 string - UB !!!!!!!!!!!!!!!!!!! needs fix
 
     std::string::const_pointer str_const_ptr{ str_ptr->data() },
@@ -42,9 +44,13 @@ void add_string_to_ui_log(const std::string* str_ptr) {
 }
 
 void add_string_to_ui_log(const std::string str) {
+#ifdef debug_log
     log_in_file("UI_Log: " + str);
+#endif
     if (game_ptr->ui_log_window_height_current_ == game_ptr->kUserInterfaceLogWindowHeight_) {
+#ifdef debug_log
         log_in_file("ERROR, log is too big.", true); // lazy check
+#endif
     }
 
     std::string::const_pointer str_ptr{ str.data() },
