@@ -3,11 +3,13 @@
 
 #include <memory>
 #include <string>
+#include <sstream>
 #include <utility>
 #include <chrono>
 #include <execution>
 
 #include "turn_based_game_global.h"
+#include "logger.h"
 #include "user_input.h"
 #include "creature.h"
 #include "creature_actions.h"
@@ -36,7 +38,13 @@ void TurnBasedGame::battle_process() {
             clear_ui_log();
             time_end = std::chrono::high_resolution_clock::now();
             duration = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start);
-            std::cout << "Execution time: " << duration.count() << "ms.\n";
+            {
+#ifdef debug_log
+                std::stringstream sstr;
+                sstr << "Execution time: " << duration.count() << "ms.";
+                log_in_file(sstr);
+#endif
+            }
         }
         else { new_frame = true; }
 
@@ -299,7 +307,9 @@ Army* TurnBasedGame::find_army_by_owned_creature(Creature* creature_ptr) {
     else if (army_id == ai_army_.get_army_id()) {
         return &ai_army_;
     }
-    std::cerr << "ERROR, not found army\n";
+#ifdef debug_log
+    log_in_file("Not found an army by creature", true);
+#endif
     return nullptr;
 }
 
@@ -323,7 +333,9 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_c
                                         new_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_new.y].data() + battle_map_coordinate_new.x };
 
     if (new_coordinate_ptr->creature_ != nullptr) { // sometimes can be unneeded because of check before function call
-        std::cerr << "Error, tried to move on already occupied coordinate\n";
+#ifdef debug_log
+        log_in_file("Error, tried to move on already occupied coordinate.", true);
+#endif
         return false;
     }
 

@@ -87,6 +87,9 @@
     <ClCompile Include="file_database.cpp">
       <Filter>Файлы ресурсов\only functions</Filter>
     </ClCompile>
+    <ClCompile Include="logger.cpp">
+      <Filter>Файлы ресурсов\only functions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="army.h">
@@ -130,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="turn_based_game_global.h">
       <Filter>Файлы заголовков\main game</Filter>
+    </ClInclude>
+    <ClInclude Include="logger.h">
+      <Filter>Файлы заголовков\only functions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -9,13 +9,14 @@
 #include <execution>
 
 #include "file_database.h"
+#include "logger.h"
 
 const UserInputDescription description_to_show_input_help_button{ '`', "show input help"};
 std::unique_ptr<std::vector<UserInputDescription>> user_input_database_description;
 
 void load_user_input_database(FileDatabaseId database_id) {
 	if (file_databases_status[static_cast<int>(database_id)] == true) {
-		std::cerr << "ERROR, tried to open already opened database.\n";
+		log_in_file("ERROR, tried to open already opened database.", true);
 		return;
 	}
 
@@ -24,7 +25,7 @@ void load_user_input_database(FileDatabaseId database_id) {
 	case FileDatabaseId::kUserInputDescription:
 		txt_database.open("TextDatabases/user_input_description_database.txt", std::ios::app);
 		if (!txt_database) {
-			std::cerr << "ERROR, database not found.\n";
+			log_in_file("ERROR, database not found.", true);
 		}
 
 		user_input_database_description = std::make_unique<std::vector<UserInputDescription>>();
@@ -42,7 +43,7 @@ void load_user_input_database(FileDatabaseId database_id) {
 		}
 		break;
 	default:
-		std::cerr << "Error, tried to open unknown database.\n";
+		log_in_file("Error, tried to open unknown database.", true);
 		break;
 	}
 
@@ -50,7 +51,7 @@ void load_user_input_database(FileDatabaseId database_id) {
 }
 void unload_user_input_database(FileDatabaseId database_id) {
 	if (file_databases_status[static_cast<int>(database_id)] == false) {
-		std::cerr << "ERROR, tried to close unopened database.\n";
+		log_in_file("ERROR, tried to close unopened database.", true);
 		return;
 	}
 
@@ -59,7 +60,7 @@ void unload_user_input_database(FileDatabaseId database_id) {
 		user_input_database_description.reset();
 		break;
 	default:
-		std::cerr << "Error, tried to close unknown database.\n";
+		log_in_file("Error, tried to close unknown database.", true);
 	}
 
 	file_databases_status[static_cast<int>(database_id)] = false;
@@ -75,10 +76,10 @@ int get_user_input(int min, int max) {
 	return value;
 }
 
-// not best variant, but enum char is better for input reading, description_ will be called only by player question
+// not best variant, but enum char is better for input reading, description_ will be called only if player will ask for it
 const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol) {
 	if (file_databases_status[static_cast<int>(FileDatabaseId::kUserInputDescription)] == false) {
-		std::cerr << "ERROR, tried to get input description when database is not open.\n";
+		log_in_file("ERROR, tried to get input description when database is not open.", true);
 	}
 
 	switch (user_input_symbol) {
@@ -111,7 +112,7 @@ const UserInputDescription* user_input_database_get_main_description(UserInputBu
 
 const std::vector<UserInputDescription>* user_input_database_get_all_description() {
 	if (file_databases_status[static_cast<int>(FileDatabaseId::kUserInputDescription) == false]) {
-		std::cerr << "ERROR, tried to get input description when database is not open.\n";
+		log_in_file("ERROR, tried to get input description when database is not open.", true);
 	}
 
 	return &(*user_input_database_description);
