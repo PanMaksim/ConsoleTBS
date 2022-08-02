@@ -3,18 +3,20 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <chrono>
 #include <time.h>
 
 std::ofstream main_logger;
 //std::ofstream battle_logger;
 
-void log_in_file(const char* str_log, bool critical_error) {
-	std::time_t log_time{ std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) }; // i think there should be better way to give it to std::ctime(), what i seen it requier custom library
-	char time_str[26]{};
-	ctime_s(time_str, 26, &log_time);
+std::string get_current_time_as_string() {
+	std::time_t current_time{ std::time(0) };
+	std::tm ltm;
+	localtime_s(&ltm, &current_time);
+	return { std::to_string(ltm.tm_hour) + ':' + std::to_string(ltm.tm_min) + ':' + std::to_string(ltm.tm_sec) + ' ' + '-'};
+}
 
-	main_logger << time_str;
+void log_in_file(const char* str_log, bool critical_error) {
+	main_logger << get_current_time_as_string();
 	if (critical_error) {
 		main_logger << "!!!!!!!!!!!!!!!!!!!!!CRITICAL ERROR!!!!!!!!!!!!!!!!!!!!!\n";
 	}
@@ -23,11 +25,7 @@ void log_in_file(const char* str_log, bool critical_error) {
 }
 
 void log_in_file(std::string str_log, bool critical_error) {
-	std::time_t log_time{ std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) }; // i think there should be better way to give it to std::ctime(), what i seen it requier custom library
-	char time_str[26]{};
-	ctime_s(time_str, 26, &log_time);
-
-	main_logger << time_str;
+	main_logger << get_current_time_as_string();
 	if (critical_error) {
 		main_logger << "!!!!!!!!!!!!!!!!!!!!!CRITICAL ERROR!!!!!!!!!!!!!!!!!!!!!\n";
 	}
@@ -36,11 +34,7 @@ void log_in_file(std::string str_log, bool critical_error) {
 }
 
 void log_in_file(const std::stringstream& sstr_log, bool critical_error) {
-	std::time_t log_time{ std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) }; // i think there should be better way to give it to std::ctime(), what i seen it requier custom library
-	char time_str[26]{};
-	ctime_s(time_str, 26, &log_time);
-
-	main_logger << time_str;
+	main_logger << get_current_time_as_string();
 	if (critical_error) {
 		main_logger << "!!!!!!!!!!!!!!!!!!!!!CRITICAL ERROR!!!!!!!!!!!!!!!!!!!!!\n";
 	}
