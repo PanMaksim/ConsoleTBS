@@ -11,6 +11,8 @@
 
 #include <chrono>
 
+const int army_size_max_{ 14 }; // changed from 18 to 14 for laptop
+
 Army::Army() {
 	army_.reserve(army_size_max_);
 
@@ -26,19 +28,22 @@ void Army::clear() {
 	army_.clear();
 }
 
-void Army::generate_random_army() { // for testing
-	if (army_.size() != 0) {
-		this->clear();
-	}
+Army generate_random_army() {
+	Army army;
 	load_creature_main_database(FileDatabaseId::kCreatureNameDatabase);
 	load_creature_main_database(FileDatabaseId::kCreatureTemplateDatabase);
 
-	std::generate_n(std::back_inserter(army_), army_size_max_, []() { return creature_database_get_templates(static_cast<CreatureTemplate>((
+	std::vector<Creature>* army_ptr{ army.get_army_ptr() };
+	int army_id{ army.get_army_id() };
+
+	std::generate_n(std::back_inserter(*army_ptr), army_size_max_, []() { return creature_database_get_templates(static_cast<CreatureTemplate>((
 		get_random_number(static_cast<int>(CreatureTemplate::kHumanSpearman), static_cast<int>(CreatureTemplate::kCreatureTemplateMax) - 1))));});
-	std::for_each(std::execution::par_unseq, army_.begin(), army_.end(), [=](Creature& creature) {creature.join_army(army_id_);});
+	std::for_each(std::execution::par_unseq, army_ptr->begin(), army_ptr->end(), [=](Creature& creature) {creature.join_army(army_id);});
 
 	unload_creature_main_database(FileDatabaseId::kCreatureNameDatabase);
 	unload_creature_main_database(FileDatabaseId::kCreatureTemplateDatabase);
+
+	return army;
 }
 
 void Army::kill_creature(size_t dead_creature_id){

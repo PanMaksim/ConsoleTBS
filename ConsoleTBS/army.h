@@ -4,6 +4,8 @@
 
 #include "creature.h"
 
+extern const int army_size_max_;
+
 enum class BattleStartStatus {
 	kAttaking,
 	kDefending,
@@ -11,9 +13,6 @@ enum class BattleStartStatus {
 };
 
 class Army {
-public:
-	static constexpr int army_size_max_{ 14 }; // changed from 18 to 14 for laptop
-
 public:
 
 	Army();
@@ -25,7 +24,6 @@ public:
 
 	void kill_creature(size_t creature_id);
 
-	void generate_random_army();
 	void clear();
 private:
 
@@ -33,3 +31,5 @@ private:
 	int army_id_;
 	std::vector<Creature> army_;
 };
+
+Army generate_random_army();

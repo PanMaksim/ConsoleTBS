@@ -141,7 +141,7 @@ private:
     void show_battle_map();
     void battle_map_show_landscape();
     void battle_map_add_creature(Creature* creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
-    void battle_map_add_army(Army* army_ptr, BattleStartStatus battle_status);
+    void battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status);
     bool battle_map_tile_numeration_switch();
     bool battle_map_tile_numeration_turn_on();
     bool battle_map_tile_numeration_turn_off();
@@ -158,7 +158,7 @@ private:
     bool player_coordinate_selection_move_by_coordinate_input();
     std::unique_ptr<std::vector<UserInputButton>> player_coordinate_selection_move_by_direction_input();
 
-    Army* find_army_by_owned_creature(Creature* creature_ptr);
+    std::shared_ptr<Army> find_army_by_owned_creature(Creature* creature_ptr);
 
     bool interact_with_creature();
     bool creature_move_by_input(UserInputButton input_method);
@@ -218,9 +218,8 @@ private:
         kTileCornerSymbol1_{ '/' },
         kTileCornerSymbol2_{ '\\' };
 
-
-    Army player_army_, // should be changed in future to factions if there will be global map (with building, etc)
-        ai_army_;
+    std::shared_ptr<Army> player_army_, // should be changed in future to factions if there will be global map (with building, etc)
+                          ai_army_;
 
     static constexpr char kCreatureMiddleSymbol_{ '-' },
         kCreatureBackSymbol_{ 'I' },

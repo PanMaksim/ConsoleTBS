@@ -123,11 +123,11 @@ void TurnBasedGame::start_new_battle() {
 
     battle_map_show_landscape();
 
-    player_army_.generate_random_army(); //test
-    ai_army_.generate_random_army(); //test
+    player_army_ = std::make_shared<Army>(generate_random_army()); //test
+    ai_army_ = std::make_shared<Army>(generate_random_army()); //test
 
-    battle_map_add_army(&player_army_, BattleStartStatus::kAttaking);
-    battle_map_add_army(&ai_army_, BattleStartStatus::kDefending);
+    battle_map_add_army(player_army_, BattleStartStatus::kAttaking);
+    battle_map_add_army(ai_army_, BattleStartStatus::kDefending);
 
     battle_map_update_player_selection();
 }
@@ -159,7 +159,7 @@ void TurnBasedGame::battle_map_add_creature(Creature* creature_ptr, BattleMapCoo
     }
 }
 
-void TurnBasedGame::battle_map_add_army(Army* army_ptr, BattleStartStatus battle_status) {
+void TurnBasedGame::battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status) {
     std::vector<Creature>* army_vector_ptr{ army_ptr->get_army_ptr() };
     std::vector<Creature>::pointer army_vector_ptr_current{ army_vector_ptr->data() },
         army_vector_ptr_end{ army_vector_ptr->data() + army_vector_ptr->size() };
@@ -299,13 +299,13 @@ std::unique_ptr<std::vector<UserInputButton>> TurnBasedGame::player_coordinate_s
 }
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!TMP
-Army* TurnBasedGame::find_army_by_owned_creature(Creature* creature_ptr) {
+std::shared_ptr<Army> TurnBasedGame::find_army_by_owned_creature(Creature* creature_ptr) {
     int army_id = creature_ptr->get_army_id();
-    if (army_id == player_army_.get_army_id()) {
-        return &player_army_;
+    if (army_id == player_army_->get_army_id()) {
+        return player_army_;
     }
-    else if (army_id == ai_army_.get_army_id()) {
-        return &ai_army_;
+    else if (army_id == ai_army_->get_army_id()) {
+        return ai_army_;
     }
 #ifdef debug_log
     log_in_file("Not found an army by creature", true);
