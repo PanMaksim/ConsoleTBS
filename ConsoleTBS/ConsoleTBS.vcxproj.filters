@@ -138,4 +138,7 @@
       <Filter>Файлы заголовков\only functions</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Logs\main_log.txt" />
+  </ItemGroup>
 </Project>

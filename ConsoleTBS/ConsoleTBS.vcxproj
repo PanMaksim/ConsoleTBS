@@ -52,6 +52,9 @@
     <ClInclude Include="turn_based_game.h" />
     <ClInclude Include="user_input.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Logs\main_log.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
