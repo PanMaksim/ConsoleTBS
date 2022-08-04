@@ -45,17 +45,19 @@ void TurnBasedGame::create_new_main_game_window() {
     std::fill(std::execution::par_unseq, frame_coordinate_y_ptr->begin() + 2, frame_coordinate_y_ptr->end() - 2, kGameWindowHorizontalSymbol_);
 }
 
-void TurnBasedGame::create_new_ui_window() {
+void TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
     ui_status[UI_Status::kCreatureStats] = false;
     ui_status[UI_Status::kUI_InputHelp] = false;
 
-    std::for_each(std::execution::par_unseq, frame_.begin() + ui_window_height_start_, frame_.begin() + ui_window_height_end_,
-        [=](std::string& str) {
-            std::string::iterator frame_coordinate_x_ptr{ str.begin() + ui_window_width_start_ };
-            *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
+    if (!called_on_free_space) {
+        std::for_each(std::execution::par_unseq, frame_.begin() + ui_window_height_start_, frame_.begin() + ui_window_height_end_,
+            [=](std::string& str) {
+                std::string::iterator frame_coordinate_x_ptr{ str.begin() + ui_window_width_start_ };
+                *frame_coordinate_x_ptr++ = kGameWindowVerticalSymbol_;
 
-            std::fill(std::execution::par_unseq, frame_coordinate_x_ptr, str.begin() + ui_window_width_end_, ' ');
-        });
+                std::fill(std::execution::par_unseq, frame_coordinate_x_ptr, str.begin() + ui_window_width_end_, ' ');
+            });
+    }
 
     *((frame_.begin() + ui_window_height_end_)->begin() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
 

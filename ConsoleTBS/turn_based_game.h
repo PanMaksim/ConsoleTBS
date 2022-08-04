@@ -35,8 +35,8 @@ public:
     TurnBasedGame() {
         create_new_main_game_window();
         calculate_window_borders();
-        create_new_ui_window(); // currently at first launch doing only unneeded clearing
-        //create_new_pv_window(); // currently at first launch doing only unneeded clearing
+        create_new_ui_window( true );
+        //create_new_pv_window( true ); // currently at first launch doing only unneeded clearing, so it got commented, but in future it can change
         ui_status[UI_Status::kPlayerViewWindow] = true;
     }
 
@@ -113,7 +113,7 @@ private:
     };
 
     void create_new_main_game_window();
-    void create_new_ui_window();
+    void create_new_ui_window(bool called_on_free_space = 0);
     void create_new_pv_window();
 
     void set_ui_status_flags_to_default();
