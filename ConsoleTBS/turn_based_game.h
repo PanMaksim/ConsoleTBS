@@ -187,6 +187,8 @@ private:
         ui_window_height_end_,
         ui_window_width_start_,
         ui_window_width_end_;
+    int ui_window_string_width_; // how much characters it can store at one string (for transparency and check to not go out of ui)
+
     int ui_log_window_height_start_;
 
     int ui_window_input_help_coordinate_height; // calculates once, but used by every add_string_to_ui()

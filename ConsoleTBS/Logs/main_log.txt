@@ -1,0 +1,6 @@
+19:8:14 -  UI size = 50
+19:8:16 -  Execution time: 269ms.
+19:8:17 -  UI_Log: AP used for movement: 4.500000
+19:8:17 -  UI_Log: Adner Wulfheart(0, 0) moved to coordinate (3, 1)
+19:8:17 -  Execution time: 371ms.
+19:8:18 -  Close game

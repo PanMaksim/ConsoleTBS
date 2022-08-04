@@ -49,7 +49,13 @@ void TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
     ui_status[UI_Status::kCreatureStats] = false;
     ui_status[UI_Status::kUI_InputHelp] = false;
 
-    if (!called_on_free_space) {
+    if (called_on_free_space) {
+        std::for_each(std::execution::par_unseq, frame_.begin() + ui_window_height_start_, frame_.begin() + ui_window_height_end_,
+            [=](std::string& str) {
+                *(str.begin() + ui_window_width_start_) = kGameWindowVerticalSymbol_;
+            });
+    }
+    else {
         std::for_each(std::execution::par_unseq, frame_.begin() + ui_window_height_start_, frame_.begin() + ui_window_height_end_,
             [=](std::string& str) {
                 std::string::iterator frame_coordinate_x_ptr{ str.begin() + ui_window_width_start_ };
@@ -100,6 +106,8 @@ void TurnBasedGame::calculate_window_borders() {
 
     ui_window_width_start_ = kWindowWidth_ - 3 - interface_main_actual_window_width;
     ui_window_width_end_ = kWindowWidth_ - 3;
+    ui_window_string_width_ = ui_window_width_end_ - ui_window_width_start_;
+    log_in_file("UI size = " + std::to_string(ui_window_string_width_));
 
     pv_window_width_start_ = 2;
     pv_window_width_end_ = ui_window_width_start_ - 1;
@@ -490,9 +498,16 @@ void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_
 
 // needs better system for transporting words from UI's right end
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent = 0) {
-    std::move(std::execution::par_unseq, str_rvalue.begin(), str_rvalue.end(), frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent);
+    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
-    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent + str_rvalue.size() };
+    if (str_rvalue.size() > ui_window_string_width_) {
+        log_in_file("Error, string is too big to be added in one ui string", true);
+        return frame_coordinate_x_ptr;
+    }
+
+    std::move(std::execution::par_unseq, str_rvalue.begin(), str_rvalue.end(), frame_coordinate_x_ptr);
+
+    frame_coordinate_x_ptr += str_rvalue.size();
     if (*frame_coordinate_x_ptr != ' ') {
         frame_clear_string(frame_coordinate_x_ptr, frame_[frame_coordinate.y].begin() + ui_window_width_end_);
     }
@@ -500,9 +515,16 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
 }
 
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent = 0) {
-    std::copy(std::execution::par_unseq, str_ptr->begin(), str_ptr->end(), frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent);
+    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
-    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent + str_ptr->size() };
+    if (str_ptr->size() > ui_window_string_width_) {
+        log_in_file("Error, string is too big to be added in one ui string", true);
+        return frame_coordinate_x_ptr;
+    }
+
+    std::copy(std::execution::par_unseq, str_ptr->begin(), str_ptr->end(), frame_coordinate_x_ptr);
+
+    frame_coordinate_x_ptr += str_ptr->size();
     if (*frame_coordinate_x_ptr != ' ') {
         frame_clear_string(frame_coordinate_x_ptr, frame_[frame_coordinate.y].begin() + ui_window_width_end_);
     }
@@ -510,9 +532,16 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
 }
 
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent = 0) {
-    std::copy(std::execution::par_unseq, str_view_ptr->begin(), str_view_ptr->end(), frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent);
+    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
-    std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent + str_view_ptr->size() };
+    if (str_view_ptr->size() > ui_window_string_width_) {
+        log_in_file("Error, string is too big to be added in one ui string", true);
+        return frame_coordinate_x_ptr;
+    }
+
+    std::copy(std::execution::par_unseq, str_view_ptr->begin(), str_view_ptr->end(), frame_coordinate_x_ptr);
+
+    frame_coordinate_x_ptr += str_view_ptr->size();
     if (*frame_coordinate_x_ptr != ' ') {
         frame_clear_string(frame_coordinate_x_ptr, frame_[frame_coordinate.y].begin() + ui_window_width_end_);
     }
@@ -521,13 +550,18 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
 
 std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr) {
     std::string::iterator frame_coordinate_x_ptr{ frame_[frame_coordinate.y].begin() + frame_coordinate.x };
+    const std::string* str{ &user_input_description_ptr->description_ };
+
+    if (str->size() > ui_window_string_width_) {
+        log_in_file("Error, string is too big to be added in one ui string", true);
+        return frame_coordinate_x_ptr;
+    }
 
     *frame_coordinate_x_ptr++ = user_input_description_ptr->button_;
     *frame_coordinate_x_ptr++ = ' ';
     *frame_coordinate_x_ptr++ = '-';
     *frame_coordinate_x_ptr++ = ' ';
 
-    const std::string* str{ &user_input_description_ptr->description_ };
     std::copy(std::execution::par_unseq, str->cbegin(), str->cend(), frame_coordinate_x_ptr);
 
     frame_coordinate_x_ptr += str->size();
