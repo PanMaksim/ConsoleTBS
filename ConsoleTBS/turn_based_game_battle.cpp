@@ -218,18 +218,18 @@ bool TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() {
 }
 
 // cin >> string and then move coordinate_selection until string ends
-std::unique_ptr<std::vector<UserInputButton>> TurnBasedGame::player_coordinate_selection_move_by_direction_input() {
+std::shared_ptr<std::vector<UserInputButton>> TurnBasedGame::player_coordinate_selection_move_by_direction_input() {
     if (!ui_status[UI_Status::kBattleMap]) { return nullptr; }
 
     std::cout << "Move by direction\n";
     BattleMapCoordinate player_coordinate_selection_tmp{};
     bool failed{};
-    std::unique_ptr<std::vector<UserInputButton>> direction_log;
+    std::shared_ptr<std::vector<UserInputButton>> direction_log;
 
     do {
         failed = false;
         player_coordinate_selection_tmp = player_coordinate_selection_;
-        direction_log = std::make_unique<std::vector<UserInputButton>>();
+        direction_log = std::make_shared<std::vector<UserInputButton>>();
 
         std::cout << "Enter direction to move: ";
         std::string direction_global;
@@ -378,11 +378,69 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_c
     return true;
 }
 
+// in future maybe will return more that bool (for ex. moved distance that can be used as damage modifier)
+// also maybe will be used to check firing distance
+bool TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInputButton>> direction_log, Creature* creature_on_old_coordinate_ptr) {
+    if (direction_log == nullptr) {
+        return false;
+    }
+    // should be modified to check not only moved distance but for example firing range
+
+    int moved_distance_y{},
+        moved_distance_x{};
+
+    //int moved_distance{}; // for possible multiplier
+    float AP_cost_for_movement{};
+
+    std::vector<std::vector<BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
+    const TerrainMovementCost* movement_cost{ terrain_database_get_movement_cost(
+                                                (battle_tile_y_ptr->data() + player_coordinate_selection_old_.x)->terrain_type_) };
+
+    for (std::vector<UserInputButton>::pointer direction_begin{ direction_log->data() }, direction_end{ direction_log->data() + direction_log->size() };
+        direction_begin < direction_end; ++direction_begin) {
+
+        AP_cost_for_movement += movement_cost->leaving_value; // AP for leaving tile
+
+        switch (*direction_begin) {
+        case UserInputButton::kMoveUp:
+            --moved_distance_y;
+            break;
+        case UserInputButton::kMoveDown:
+            ++moved_distance_y;
+            break;
+        case UserInputButton::kMoveRight:
+            ++moved_distance_x;
+            break;
+        case UserInputButton::kMoveLeft:
+            --moved_distance_x;
+            break;
+        default:
+            return false;
+        }
+        //++moved_distance;
+
+        movement_cost = terrain_database_get_movement_cost(
+            ((*battle_map_info_)[player_coordinate_selection_old_.y + moved_distance_y])[player_coordinate_selection_old_.x + moved_distance_x].terrain_type_);
+
+        AP_cost_for_movement += movement_cost->entry_value; // AP for going into tile
+    }
+
+    if (AP_cost_for_movement > creature_on_old_coordinate_ptr->get_certain_stat_current_value(CreatureStatId::kMovementSpeed)) {
+        std::cerr << "Error, tried to move too far. Used AP: " << AP_cost_for_movement <<
+            ". When creature SPD = " << creature_on_old_coordinate_ptr->get_certain_stat_current_value(CreatureStatId::kMovementSpeed) << '\n';
+        player_coordinate_selection_ = player_coordinate_selection_old_;
+        return false;
+    }
+    add_string_to_ui_log("AP used for movement: " + std::to_string(AP_cost_for_movement));
+
+    return true;
+}
+
 bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
     Creature* creature_on_old_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
 
     bool coordinate_input_result{ false }; // used only intil user_input moving by battle_map_coordinate not fixed 
-    std::unique_ptr<std::vector<UserInputButton>> direction_log;
+    std::shared_ptr<std::vector<UserInputButton>> direction_log;
     switch (input_method) {
     case UserInputButton::kMoveSelectionByDirection:
         direction_log = player_coordinate_selection_move_by_direction_input();
@@ -402,58 +460,9 @@ bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
     //}
 
     if (coordinate_input_result == false) { // !!!!!!!!!!!!!!!!tmp until moving by battle_map_coordinate will be fixed, checking that input was got not from selection_by_coordinate
-        if (direction_log == nullptr) {
+        bool distance_check = calculate_moved_distance(direction_log, creature_on_old_coordinate_ptr); // in future may return more values
+        if (distance_check == false) { // if tried to move more than could
             return false;
-        }
-        // should be separated to new function and modified to check not only moved distance but for example firing range
-        // check distance
-        {
-            int moved_distance_y{},
-                moved_distance_x{};
-
-            //int moved_distance{}; // for possible multiplier
-            float AP_cost_for_movement{};
-
-            std::vector<std::vector<BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
-            const TerrainMovementCost* movement_cost{ terrain_database_get_movement_cost(
-                                                        (battle_tile_y_ptr->data() + player_coordinate_selection_old_.x)->terrain_type_) };
-
-            for (std::vector<UserInputButton>::pointer direction_begin{ direction_log->data() }, direction_end{ direction_log->data() + direction_log->size() };
-                direction_begin < direction_end; ++direction_begin) {
-
-                AP_cost_for_movement += movement_cost->leaving_value; // AP for leaving tile
-
-                switch (*direction_begin) {
-                case UserInputButton::kMoveUp:
-                    --moved_distance_y;
-                    break;
-                case UserInputButton::kMoveDown:
-                    ++moved_distance_y;
-                    break;
-                case UserInputButton::kMoveRight:
-                    ++moved_distance_x;
-                    break;
-                case UserInputButton::kMoveLeft:
-                    --moved_distance_x;
-                    break;
-                default:
-                    return false;
-                }
-                //++moved_distance;
-
-                movement_cost = terrain_database_get_movement_cost(
-                    ((*battle_map_info_)[player_coordinate_selection_old_.y + moved_distance_y])[player_coordinate_selection_old_.x + moved_distance_x].terrain_type_);
-
-                AP_cost_for_movement += movement_cost->entry_value; // AP for going into tile
-            }
-
-            if (AP_cost_for_movement > creature_on_old_coordinate_ptr->get_certain_stat_current_value(CreatureStatId::kMovementSpeed)) {
-                std::cerr << "Error, tried to move too far. Used AP: " << AP_cost_for_movement <<
-                    ". When creature SPD = " << creature_on_old_coordinate_ptr->get_certain_stat_current_value(CreatureStatId::kMovementSpeed) << '\n';
-                player_coordinate_selection_ = player_coordinate_selection_old_;
-                return false;
-            }
-            add_string_to_ui_log("AP used for movement: " + std::to_string(AP_cost_for_movement));
         }
     }
     //if (direction_log != nullptr) {
