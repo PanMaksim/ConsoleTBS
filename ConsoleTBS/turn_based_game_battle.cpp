@@ -160,7 +160,7 @@ void TurnBasedGame::battle_map_add_creature(Creature* creature_ptr, BattleMapCoo
 }
 
 void TurnBasedGame::battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status) {
-    std::vector<Creature>* army_vector_ptr{ army_ptr->get_army_ptr() };
+    std::shared_ptr<std::vector<Creature>> army_vector_ptr{ army_ptr->get_army_shared_ptr() };
     std::vector<Creature>::pointer army_vector_ptr_current{ army_vector_ptr->data() },
         army_vector_ptr_end{ army_vector_ptr->data() + army_vector_ptr->size() };
 
