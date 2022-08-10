@@ -158,7 +158,7 @@ private:
     bool player_coordinate_selection_move_by_coordinate_input();
     std::shared_ptr<std::vector<UserInputButton>> player_coordinate_selection_move_by_direction_input();
 
-    std::shared_ptr<Army> find_army_by_owned_creature(Creature* creature_ptr);
+    std::shared_ptr<Army> get_army_ptr_via_id(int army_id);
 
     bool interact_with_creature();
     bool calculate_moved_distance(std::shared_ptr<std::vector<UserInputButton>> direction_log, Creature* creature_on_old_coordinate_ptr);
