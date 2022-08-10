@@ -1,0 +1,11 @@
+10
+~ return
+w move up
+d move down
+a move left
+d move right
+e interact
+q move selection by direction
+Q move selection by coordinate
+b start battle
+z tile numeration switch

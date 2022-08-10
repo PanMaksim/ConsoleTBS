@@ -6,8 +6,7 @@
 #include "creature_stats.h"
 
 enum class RollResult {
-	kRollResultMin,
-	kCriticalFail = kRollResultMin,
+	kCriticalFail,
 	kFail,
 	kSmallFail, // no bonus
 	kNoResult,

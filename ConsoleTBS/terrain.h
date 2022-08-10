@@ -7,8 +7,7 @@
 #include "creature_stats.h"
 
 enum class TerrainType {
-	kTerrainTypeMin,
-	kPlain = kTerrainTypeMin,
+	kPlain,
 	kHill,
 	kMountain,
 	kTerrainTypeMax

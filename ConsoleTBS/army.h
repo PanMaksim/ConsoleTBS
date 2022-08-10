@@ -1,20 +1,19 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "creature.h"
 
+extern const int army_size_max_;
+
 enum class BattleStartStatus {
-	kBattleStartStatusMin,
-	kAttaking = kBattleStartStatusMin,
+	kAttaking,
 	kDefending,
 	kBattleStartStatusMax
 };
 
 class Army {
-public:
-	static constexpr int army_size_max_{ 14 }; // changed from 18 to 14 for laptop
-
 public:
 
 	Army();
@@ -22,15 +21,23 @@ public:
 
 	int get_army_id() const;
 	size_t get_army_size() const;
-	std::vector<Creature>* get_army_ptr();
+
+	//std::weak_ptr<std::vector<std::shared_ptr<Creature>>> get_army_weak_ptr(); // currently unused
+	std::shared_ptr<std::vector<std::shared_ptr<Creature>>> get_army_shared_ptr();
 
 	void kill_creature(size_t creature_id);
 
-	void generate_random_army();
 	void clear();
+
+	std::vector<std::shared_ptr<Creature>>::iterator begin();
+	std::vector<std::shared_ptr<Creature>>::iterator end();
+
 private:
+	friend Army generate_random_army();
 
 private:
 	int army_id_;
-	std::vector<Creature> army_;
+	std::shared_ptr<std::vector<std::shared_ptr<Creature>>> army_; // owned by Army AND BattleTile
 };
+
+Army generate_random_army();

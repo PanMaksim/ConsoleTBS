@@ -35,8 +35,8 @@ public:
     TurnBasedGame() {
         create_new_main_game_window();
         calculate_window_borders();
-        create_new_ui_window(); // currently at first launch doing only unneeded clearing
-        //create_new_pv_window(); // currently at first launch doing only unneeded clearing
+        create_new_ui_window( true );
+        //create_new_pv_window( true ); // currently at first launch doing only unneeded clearing, so it got commented, but in future it can change
         ui_status[UI_Status::kPlayerViewWindow] = true;
     }
 
@@ -72,6 +72,7 @@ public:
                 new_frame = true;
                 break;
             case UserInputButton::kStartBattle: // should start another switch with another input switch to prevent improper input
+                ui_status[UI_Status::kUI_InputHelp] = false;
                 start_new_battle();
                 battle_process();
                 battle_map_clear();
@@ -112,7 +113,7 @@ private:
     };
 
     void create_new_main_game_window();
-    void create_new_ui_window();
+    void create_new_ui_window(bool called_on_free_space = 0);
     void create_new_pv_window();
 
     void set_ui_status_flags_to_default();
@@ -139,8 +140,8 @@ private:
     void calculate_battle_map_visual();
     void show_battle_map();
     void battle_map_show_landscape();
-    void battle_map_add_creature(Creature* creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
-    void battle_map_add_army(Army* army_ptr, BattleStartStatus battle_status);
+    void battle_map_add_creature(std::shared_ptr<Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
+    void battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status);
     bool battle_map_tile_numeration_switch();
     bool battle_map_tile_numeration_turn_on();
     bool battle_map_tile_numeration_turn_off();
@@ -155,15 +156,16 @@ private:
     void battle_map_clear_old_player_selection();
 
     bool player_coordinate_selection_move_by_coordinate_input();
-    std::unique_ptr<std::vector<UserInputButton>> player_coordinate_selection_move_by_direction_input();
+    std::shared_ptr<std::vector<UserInputButton>> player_coordinate_selection_move_by_direction_input();
 
-    Army* find_army_by_owned_creature(Creature* creature_ptr);
+    std::shared_ptr<Army> find_army_by_owned_creature(Creature* creature_ptr);
 
     bool interact_with_creature();
+    bool calculate_moved_distance(std::shared_ptr<std::vector<UserInputButton>> direction_log, Creature* creature_on_old_coordinate_ptr);
     bool creature_move_by_input(UserInputButton input_method);
     bool move_creature_by_coordinate(BattleMapCoordinate battle_map_coordinate_old, BattleMapCoordinate battle_map_coordinate_new);
 
-    void check_possible_kill(Creature* creature_ptr, BattleMapCoordinate creature_battle_map_coordinate);
+    void check_possible_kill(std::shared_ptr<Creature> creature_ptr, BattleMapCoordinate creature_battle_map_coordinate);
 
 private:
     //static constexpr int kWindowWidth_{ 317 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input
@@ -177,9 +179,6 @@ private:
     static constexpr char kGameWindowVerticalSymbol_{ '|' },
         kGameWindowHorizontalSymbol_{ '_' };
 
-    static constexpr int kUserInterfaceLogWindowHeight_{ 14 };
-    int ui_log_window_height_current_{ 1 };
-
     int pv_window_height_start_, // they are used for navigation through std::array frame, not showing actual interface window height/width
         pv_window_height_end_,
         pv_window_width_start_,
@@ -189,7 +188,14 @@ private:
         ui_window_height_end_,
         ui_window_width_start_,
         ui_window_width_end_;
+    int ui_window_string_width_; // how much characters it can store at one string (for transparency and check to not go out of ui)
+
     int ui_log_window_height_start_;
+
+    int ui_window_input_help_coordinate_height; // calculates once, but used by every add_string_to_ui()
+
+    static constexpr int kUserInterfaceLogWindowHeight_{ 14 };
+    int ui_log_window_height_current_{ 1 };
 
     std::array<bool, UI_Status::kWindowsAndInterfacesStatusMax> ui_status{ false }; // represent opened windows/interfaces
 
@@ -215,9 +221,8 @@ private:
         kTileCornerSymbol1_{ '/' },
         kTileCornerSymbol2_{ '\\' };
 
-
-    Army player_army_, // should be changed in future to factions if there will be global map (with building, etc)
-        ai_army_;
+    std::shared_ptr<Army> player_army_, // should be changed in future to factions if there will be global map (with building, etc)
+                          ai_army_;
 
     static constexpr char kCreatureMiddleSymbol_{ '-' },
         kCreatureBackSymbol_{ 'I' },
