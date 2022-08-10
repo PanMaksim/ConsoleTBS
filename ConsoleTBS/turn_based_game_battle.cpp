@@ -132,7 +132,7 @@ void TurnBasedGame::start_new_battle() {
     battle_map_update_player_selection();
 }
 
-void TurnBasedGame::battle_map_add_creature(Creature* creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status) {
+void TurnBasedGame::battle_map_add_creature(std::shared_ptr<Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status) {
     (*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].creature_ = creature_ptr;
     const std::vector<CreatureStatMultiplier>* new_terrain_effects{
         terrain_database_get_effects((*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].terrain_type_) };
@@ -160,8 +160,8 @@ void TurnBasedGame::battle_map_add_creature(Creature* creature_ptr, BattleMapCoo
 }
 
 void TurnBasedGame::battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status) {
-    std::shared_ptr<std::vector<Creature>> army_vector_ptr{ army_ptr->get_army_shared_ptr() };
-    std::vector<Creature>::pointer army_vector_ptr_current{ army_vector_ptr->data() },
+    std::shared_ptr<std::vector<std::shared_ptr<Creature>>> army_vector_ptr{ army_ptr->get_army_shared_ptr() };
+    std::vector<std::shared_ptr<Creature>>::pointer army_vector_ptr_current{ army_vector_ptr->data() },
         army_vector_ptr_end{ army_vector_ptr->data() + army_vector_ptr->size() };
 
     switch (battle_status) {
@@ -172,7 +172,7 @@ void TurnBasedGame::battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleSt
                 army_vector_ptr_current != army_vector_ptr_end && shown_tiles_height != kBattleMapSizeHeight_;
                 ++army_vector_ptr_current, ++battle_map_coordinate_y, ++shown_tiles_height) {
 
-                battle_map_add_creature(army_vector_ptr_current,
+                battle_map_add_creature(*army_vector_ptr_current,
                     BattleMapCoordinate{battle_map_coordinate_x, battle_map_coordinate_y}, battle_status);
             }
         }
@@ -185,7 +185,7 @@ void TurnBasedGame::battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleSt
                 army_vector_ptr_current != army_vector_ptr_end && shown_tiles_height != kBattleMapSizeHeight_;
                 ++army_vector_ptr_current, ++battle_map_coordinate_y, ++shown_tiles_height) {
 
-                battle_map_add_creature(army_vector_ptr_current,
+                battle_map_add_creature(*army_vector_ptr_current,
                     BattleMapCoordinate{battle_map_coordinate_x, battle_map_coordinate_y}, battle_status);
             }
         }
@@ -318,13 +318,13 @@ void TurnBasedGame::battle_map_kill_creature(BattleMapCoordinate killed_creature
     (*battle_map_info_)[killed_creature_battle_map_coordinate.y][killed_creature_battle_map_coordinate.x].creature_ = nullptr;
 }
 
-void TurnBasedGame::check_possible_kill(Creature* creature_ptr, BattleMapCoordinate creature_battle_map_coordinate) {
+void TurnBasedGame::check_possible_kill(std::shared_ptr<Creature> creature_ptr, BattleMapCoordinate creature_battle_map_coordinate) {
     if (creature_ptr->get_certain_stat_current_value(CreatureStatId::kHP) <= 0) {
         add_string_to_ui_log(*creature_ptr->get_name() + 
             ' ' + '(' + std::to_string(creature_battle_map_coordinate.y + 1) + ',' + ' ' + std::to_string(creature_battle_map_coordinate.x + 1) + ") died.");
 
         battle_map_kill_creature(creature_battle_map_coordinate);
-        find_army_by_owned_creature(creature_ptr)->kill_creature(creature_ptr->get_creature_id());
+        find_army_by_owned_creature(creature_ptr.get())->kill_creature(creature_ptr->get_creature_id());
     }
 }
 
@@ -349,7 +349,7 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_c
 
     // update applied terrain effects
     if (old_coordinate_ptr->terrain_type_ != new_coordinate_ptr->terrain_type_) {
-        Creature* creature{ new_coordinate_ptr->creature_ };
+        Creature* creature{ new_coordinate_ptr->creature_.get() };
         const std::vector<CreatureStatMultiplier>* terrain_effects{ terrain_database_get_effects(old_coordinate_ptr->terrain_type_) };
         std::for_each(std::execution::par_unseq, terrain_effects->begin(), terrain_effects->end(),
             [&creature](CreatureStatMultiplier effect) { creature->delete_stat_multiplier(effect); });
@@ -437,7 +437,7 @@ bool TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInp
 }
 
 bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
-    Creature* creature_on_old_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
+    std::shared_ptr<Creature> creature_on_old_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
 
     bool coordinate_input_result{ false }; // used only intil user_input moving by battle_map_coordinate not fixed 
     std::shared_ptr<std::vector<UserInputButton>> direction_log;
@@ -460,7 +460,7 @@ bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
     //}
 
     if (coordinate_input_result == false) { // !!!!!!!!!!!!!!!!tmp until moving by battle_map_coordinate will be fixed, checking that input was got not from selection_by_coordinate
-        bool distance_check = calculate_moved_distance(direction_log, creature_on_old_coordinate_ptr); // in future may return more values
+        bool distance_check = calculate_moved_distance(direction_log, creature_on_old_coordinate_ptr.get()); // in future may return more values
         if (distance_check == false) { // if tried to move more than could
             return false;
         }
@@ -468,7 +468,7 @@ bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
     //if (direction_log != nullptr) {
         //std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr;
 
-    Creature* creature_on_new_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
+    std::shared_ptr<Creature> creature_on_new_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
 
     // move on empty battle_tile
     if (creature_on_new_coordinate_ptr == nullptr) {
@@ -489,9 +489,9 @@ bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
                 ", " + std::to_string(player_coordinate_selection_.y + 1) + ')');
 
             CreatureActionResult attack_result{
-                creature_ability_default_attack(creature_on_old_coordinate_ptr, creature_on_new_coordinate_ptr) };
+                creature_ability_default_attack(creature_on_old_coordinate_ptr.get(), creature_on_new_coordinate_ptr.get()) };
 
-            log_creature_action_result(&attack_result, creature_on_old_coordinate_ptr, creature_on_new_coordinate_ptr);
+            log_creature_action_result(&attack_result, creature_on_old_coordinate_ptr.get(), creature_on_new_coordinate_ptr.get());
             check_possible_kill(creature_on_new_coordinate_ptr, player_coordinate_selection_);
             check_possible_kill(creature_on_old_coordinate_ptr, player_coordinate_selection_old_);
 

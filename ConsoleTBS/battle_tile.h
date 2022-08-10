@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string_view>
+#include <memory>
 
 #include "terrain.h"
 #include "creature.h"
@@ -60,7 +61,7 @@ struct BattleTile {
 
 	// what it contains : unit, landscape, effects, etc
 	TerrainType terrain_type_{ TerrainType::kPlain };
-	Creature* creature_{ nullptr };
+	std::shared_ptr<Creature> creature_{ nullptr }; // owned by Army AND BattleTile
 	
 	//std::vector<BattleTileModifier> modifiers_;
 	//BattleTileModifier modifier_;
