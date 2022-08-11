@@ -736,7 +736,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
 
             add_creature_stat_string_to_ui(coordinate,
                 static_cast<CreatureStatId>(stat_iter),
-                creature_stat.current, (creature_stat.current != creature_stat.max) ? creature_stat.max : 0);
+                creature_stat.current_, (creature_stat.current_ != creature_stat.max_) ? creature_stat.max_ : 0);
         }
     }
 }

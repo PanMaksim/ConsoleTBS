@@ -299,11 +299,11 @@ std::shared_ptr<std::vector<UserInputButton>> TurnBasedGame::player_coordinate_s
 }
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!TMP
-std::shared_ptr<Army> TurnBasedGame::get_army_ptr_via_id(int army_id) {
-    if (army_id == player_army_->get_army_id()) {
+std::shared_ptr<Army> TurnBasedGame::get_army_ptr_via_id(int army_id_) {
+    if (army_id_ == player_army_->get_army_id()) {
         return player_army_;
     }
-    else if (army_id == ai_army_->get_army_id()) {
+    else if (army_id_ == ai_army_->get_army_id()) {
         return ai_army_;
     }
 #ifdef debug_log
@@ -388,7 +388,7 @@ bool TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInp
     int moved_distance_y{},
         moved_distance_x{};
 
-    //int moved_distance{}; // for possible multiplier
+    //int moved_distance{}; // for possible multiplier_
     float AP_cost_for_movement{};
 
     std::vector<std::vector<BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };

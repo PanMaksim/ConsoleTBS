@@ -27,10 +27,10 @@ const std::string_view* creature_database_get_stat_naming(CreatureStatId stat) {
 	return &creature_database_stats_naming[static_cast<int>(stat)];
 }
 
-CreatureStat::CreatureStat(int stat_max) : current{ stat_max }, max{ stat_max } {}
+CreatureStat::CreatureStat(int stat_max) : current_{ stat_max }, max_{ stat_max } {}
 
 std::ifstream& operator>>(std::ifstream& in, CreatureStat& creature_stat) {
-	in >> creature_stat.max;
-	creature_stat.current = creature_stat.max;
+	in >> creature_stat.max_;
+	creature_stat.current_ = creature_stat.max_;
 	return in;
 }

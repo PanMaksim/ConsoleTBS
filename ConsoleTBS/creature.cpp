@@ -77,7 +77,7 @@ void load_creature_main_database(FileDatabaseId database_id) { // open file and 
 				}
 
 				// load Creature into database
-				creature_database_templates->emplace_back(static_cast<CreatureRace>(creature_race), std::move(creature_stats), true);
+				creature_database_templates->emplace_back(static_cast<CreatureRace>(creature_race), std::move(creature_stats));
 			}
 		}
 		break;
@@ -130,8 +130,8 @@ const Creature* creature_database_get_templates(CreatureTemplate creature_templa
 //		target_creature_stat_ptr_end{ target_creature_stats.data() + target_creature_stats.size() };
 //		target_creature_stat_ptr != target_creature_stat_ptr_end; ++target_creature_stat_ptr, ++creature_stat_ptr) {
 //
-//		creature_stat_ptr->current = *target_creature_stat_ptr;
-//		creature_stat_ptr->max = *target_creature_stat_ptr;
+//		creature_stat_ptr->current_ = *target_creature_stat_ptr;
+//		creature_stat_ptr->max_ = *target_creature_stat_ptr;
 //	}*/
 //
 //	//std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>::pointer
@@ -140,8 +140,8 @@ const Creature* creature_database_get_templates(CreatureTemplate creature_templa
 //	//if (creature_stat_ptr != creature_stat_ptr_end) {
 //	//	for (; creature_stat_ptr != creature_stat_ptr_end; ++creature_stat_ptr) {
 //
-//	//		creature_stat_ptr->current = 0;
-//	//		creature_stat_ptr->max = 0;
+//	//		creature_stat_ptr->current_ = 0;
+//	//		creature_stat_ptr->max_ = 0;
 //	//	}
 //	//}
 //
@@ -149,36 +149,36 @@ const Creature* creature_database_get_templates(CreatureTemplate creature_templa
 //	creature_id_ = creature_id_counter++;
 //}
 
-Creature::Creature(CreatureRace creature_race, std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>&& target_creature_stats, bool no_creature_id) : race_{creature_race} {
+Creature::Creature(CreatureRace creature_race, std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>&& target_creature_stats) : race_{creature_race} {
 	std::move(target_creature_stats.begin(), target_creature_stats.end(), creature_stats_.begin());
 	name_ = "No_Name";
-	creature_id_ = (no_creature_id == false) ? creature_id_counter++ : 0;
 }
 
-Creature::Creature(const Creature* creature_ptr) : race_{ creature_ptr->get_race() } {
+Creature::Creature(const Creature* creature_ptr, CreatureComplexID creature_complex_id) : race_{ creature_ptr->get_race() }, creature_complex_id_{ creature_complex_id } {
 	std::copy(creature_ptr->creature_stats_.begin(), creature_ptr->creature_stats_.end(), creature_stats_.begin());
 	name_ = generate_name();
 	creature_id_ = creature_id_counter++;
 }
 
-CreatureStat Creature::get_certain_stat_current_and_max(CreatureStatId stat_id) const { return creature_stats_[static_cast<int>(stat_id)]; }
-int Creature::get_certain_stat_current_value(CreatureStatId stat_id) const { return creature_stats_[static_cast<int>(stat_id)].current; }
+CreatureStat Creature::get_certain_stat_current_and_max(CreatureStatId stat_id_) const { return creature_stats_[static_cast<int>(stat_id_)]; }
+int Creature::get_certain_stat_current_value(CreatureStatId stat_id_) const { return creature_stats_[static_cast<int>(stat_id_)].current_; }
 CreatureRace Creature::get_race() const { return race_; }
-int Creature::get_army_id() const { return army_id_; }
-size_t Creature::get_creature_id() const { return creature_id_; }
+CreatureComplexID Creature::get_creature_complex_id() { return creature_complex_id_; }
+int Creature::get_army_id() const { return creature_complex_id_.army_id_; }
+size_t Creature::get_creature_id() const { return creature_complex_id_.creature_id_; }
 const std::string* Creature::get_name() const { return &name_; }
 
-void Creature::change_certain_stat_current_value(CreatureStatId stat_id, float change_amount) {
-	creature_stats_[static_cast<int>(stat_id)].current = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_id)].current) + change_amount); };
+void Creature::change_certain_stat_current_value(CreatureStatId stat_id_, float change_amount) {
+	creature_stats_[static_cast<int>(stat_id_)].current_ = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_id_)].current_) + change_amount); };
 
-void Creature::change_certain_stat_current_value(CreatureStatId stat_id, int change_amount) { creature_stats_[static_cast<int>(stat_id)].current += change_amount; };
+void Creature::change_certain_stat_current_value(CreatureStatId stat_id_, int change_amount) { creature_stats_[static_cast<int>(stat_id_)].current_ += change_amount; };
 
-void Creature::join_army(int army_id) { army_id_ = army_id; }
+void Creature::join_army(int army_id_) { army_id_ = army_id_; }
 
 
-int Creature::roll_stat_with_bonus(CreatureStatId stat_id) const {
+int Creature::roll_stat_with_bonus(CreatureStatId stat_id_) const {
 	return static_cast<int>(
-		this->get_certain_stat_current_value(stat_id) * creature_database_get_roll_result_multiplier(
+		this->get_certain_stat_current_value(stat_id_) * creature_database_get_roll_result_multiplier(
 			static_cast<RollResult>(get_random_number(static_cast<int>(RollResult::kCriticalFail), static_cast<int>(RollResult::kRollResultMax)))));
 }
 
@@ -197,10 +197,10 @@ int Creature::calculate_received_damage(const Creature* attacker_ptr, double dam
 }
 
 void Creature::apply_stat_multiplier(CreatureStatMultiplier stat_multiplier) {
-	creature_stats_[static_cast<int>(stat_multiplier.stat_id)].current = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_multiplier.stat_id)].max) * stat_multiplier.multiplier);
+	creature_stats_[static_cast<int>(stat_multiplier.stat_id_)].current_ = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_multiplier.stat_id_)].max_) * stat_multiplier.multiplier_);
 }
 
 void Creature::delete_stat_multiplier(CreatureStatMultiplier stat_multiplier) {
-	creature_stats_[static_cast<int>(stat_multiplier.stat_id)].current = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_multiplier.stat_id)].max) / stat_multiplier.multiplier);
+	creature_stats_[static_cast<int>(stat_multiplier.stat_id_)].current_ = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_multiplier.stat_id_)].max_) / stat_multiplier.multiplier_);
 }
 

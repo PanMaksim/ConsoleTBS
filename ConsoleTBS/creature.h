@@ -23,8 +23,8 @@ static size_t creature_id_counter{ static_cast<int>(CreatureTemplate::kCreatureT
 class Creature {
 public:
 	//Creature(CreatureRace creature_race, const std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)>& target_creature_stats); // default creature_id = -1 because 0 can be used for first element
-	Creature(CreatureRace creature_race, std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>&& target_creature_stats, bool no_creature_id = false); // used to load database from file
-	Creature(const Creature* creature_ptr); // used to construct from database
+	Creature(CreatureRace creature_race, std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>&& target_creature_stats); // used to load database from file, !!! no ID !!!
+	Creature(const Creature* creature_ptr, CreatureComplexID creature_complex_id); // used to construct from database
 	//Creature(CreatureTemplate creature_template) : Creature(*database_create_creature_by_template(creature_template)) {}
 	
 	~Creature() = default;
@@ -34,20 +34,22 @@ public:
 	//}
 
 
+
 	// can be realized by pointer to first element
 	//std::array<int, static_cast<int>(CreatureStatId::CreatureStatMax)>* get_all_stats() { return &creature_stats_; }
-	CreatureStat get_certain_stat_current_and_max(CreatureStatId stat_id) const;
-	int get_certain_stat_current_value(CreatureStatId stat_id) const;
+	CreatureStat get_certain_stat_current_and_max(CreatureStatId stat_id_) const;
+	int get_certain_stat_current_value(CreatureStatId stat_id_) const;
 	CreatureRace get_race() const;
+	CreatureComplexID get_creature_complex_id();
 	int get_army_id() const;
 	size_t get_creature_id() const;
 	const std::string* get_name() const;
 
-	void change_certain_stat_current_value(CreatureStatId stat_id, float change_amount);
-	void change_certain_stat_current_value(CreatureStatId stat_id, int change_amount);
+	void change_certain_stat_current_value(CreatureStatId stat_id_, float change_amount);
+	void change_certain_stat_current_value(CreatureStatId stat_id_, int change_amount);
 
-	void join_army(int army_id);
-	int roll_stat_with_bonus(CreatureStatId stat_id) const; // returns stat after bonus damage_multiplier
+	void join_army(int army_id_);
+	int roll_stat_with_bonus(CreatureStatId stat_id_) const; // returns stat after bonus damage_multiplier
 	int calculate_received_damage(const Creature* attacker_ptr, double damage_multiplier);
 	
 	// in future should be created new class for effects and shoving active effects on screen
@@ -57,6 +59,7 @@ public:
 private:
 	int army_id_{};
 	size_t creature_id_{};
+	CreatureComplexID creature_complex_id_{};
 
 	int level_{};
 	std::string name_{}; // name selection can be modified by system with character modifiers (something like "likes jokes", "proud for family tree", etc)

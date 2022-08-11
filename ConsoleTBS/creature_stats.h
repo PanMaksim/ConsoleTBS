@@ -21,8 +21,8 @@ enum class CreatureStatId {
 };
 
 struct CreatureStat {
-	int current;
-	int max;
+	int current_;
+	int max_;
 
 	CreatureStat() = default;
 	CreatureStat(int stat_max);
@@ -32,8 +32,14 @@ struct CreatureStat {
 };
 
 struct CreatureStatMultiplier {
-	CreatureStatId stat_id;
-	float multiplier;
+	CreatureStatId stat_id_;
+	float multiplier_;
+};
+
+struct CreatureComplexID {
+	//int faction_id;
+	short army_id_;
+	int creature_id_; 
 };
 
 const std::string_view* creature_database_get_race_naming(CreatureRace race);
