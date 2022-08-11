@@ -35,8 +35,12 @@ std::vector<std::shared_ptr<Creature>>::iterator Army::begin() { return army_->b
 std::vector<std::shared_ptr<Creature>>::iterator Army::end() { return army_->end(); }
 
 CreatureComplexID Army::generate_creature_complex_id() {
-	if (creature_id_counter_ >= int_max_value) {
-		// reassign creature_id_'s from start (free unused id's and resort)
+	if (++creature_id_counter_ == int_max_value) {
+		// reassign creature_id_'s from start (free unused id's)
+		creature_id_counter_ = 0;
+		std::for_each(army_->begin(), army_->end(), [&](std::shared_ptr<Creature> creature) { 
+			creature->receive_new_creature_simple_id(creature_id_counter_); });
+		// not ending, because return value used to create new creature after reassigning id's
 	}
 	return{ army_id_, creature_id_counter_ };
 }

@@ -154,10 +154,9 @@ Creature::Creature(CreatureRace creature_race, std::array<CreatureStat, static_c
 	name_ = "No_Name";
 }
 
-Creature::Creature(const Creature* creature_ptr, CreatureComplexID creature_complex_id) : race_{ creature_ptr->get_race() }, creature_complex_id_{ creature_complex_id } {
+Creature::Creature(const Creature* creature_ptr, CreatureComplexID&& creature_complex_id) : race_{ creature_ptr->get_race() }, creature_complex_id_{ creature_complex_id } {
 	std::copy(creature_ptr->creature_stats_.begin(), creature_ptr->creature_stats_.end(), creature_stats_.begin());
 	name_ = generate_name();
-	creature_id_ = creature_id_counter++;
 }
 
 CreatureStat Creature::get_certain_stat_current_and_max(CreatureStatId stat_id_) const { return creature_stats_[static_cast<int>(stat_id_)]; }
@@ -171,10 +170,10 @@ const std::string* Creature::get_name() const { return &name_; }
 void Creature::change_certain_stat_current_value(CreatureStatId stat_id_, float change_amount) {
 	creature_stats_[static_cast<int>(stat_id_)].current_ = static_cast<int>(static_cast<float>(creature_stats_[static_cast<int>(stat_id_)].current_) + change_amount); };
 
-void Creature::change_certain_stat_current_value(CreatureStatId stat_id_, int change_amount) { creature_stats_[static_cast<int>(stat_id_)].current_ += change_amount; };
+void Creature::change_certain_stat_current_value(CreatureStatId stat_id_, int change_amount) { 
+	creature_stats_[static_cast<int>(stat_id_)].current_ += change_amount; };
 
-void Creature::join_army(int army_id_) { army_id_ = army_id_; }
-
+void Creature::receive_new_creature_simple_id(int new_creature_id) { creature_complex_id_.creature_id_ = new_creature_id; }
 
 int Creature::roll_stat_with_bonus(CreatureStatId stat_id_) const {
 	return static_cast<int>(

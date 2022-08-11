@@ -18,13 +18,11 @@ enum class CreatureTemplate {
 	kCreatureTemplateMax
 };
 
-static size_t creature_id_counter{ static_cast<int>(CreatureTemplate::kCreatureTemplateMax) }; // starts from 3 because of database templates that are loading and unloading from memory a lot (number of those templates)
-
 class Creature {
 public:
 	//Creature(CreatureRace creature_race, const std::array<int, static_cast<int>(CreatureStatId::kCreatureStatMax)>& target_creature_stats); // default creature_id = -1 because 0 can be used for first element
 	Creature(CreatureRace creature_race, std::array<CreatureStat, static_cast<int>(CreatureStatId::kCreatureStatMax)>&& target_creature_stats); // used to load database from file, !!! no ID !!!
-	Creature(const Creature* creature_ptr, CreatureComplexID creature_complex_id); // used to construct from database
+	Creature(const Creature* creature_ptr, CreatureComplexID&& creature_complex_id); // used to construct from database, receives only rhs ID because it must be unique
 	//Creature(CreatureTemplate creature_template) : Creature(*database_create_creature_by_template(creature_template)) {}
 	
 	~Creature() = default;
@@ -48,7 +46,7 @@ public:
 	void change_certain_stat_current_value(CreatureStatId stat_id_, float change_amount);
 	void change_certain_stat_current_value(CreatureStatId stat_id_, int change_amount);
 
-	void join_army(int army_id_);
+	void receive_new_creature_simple_id(int new_creature_id);
 	int roll_stat_with_bonus(CreatureStatId stat_id_) const; // returns stat after bonus damage_multiplier
 	int calculate_received_damage(const Creature* attacker_ptr, double damage_multiplier);
 	
@@ -57,8 +55,6 @@ public:
 	void delete_stat_multiplier(CreatureStatMultiplier stat_multiplier);
 
 private:
-	int army_id_{};
-	size_t creature_id_{};
 	CreatureComplexID creature_complex_id_{};
 
 	int level_{};
