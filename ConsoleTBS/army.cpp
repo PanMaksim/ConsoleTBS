@@ -13,6 +13,8 @@
 
 #include <chrono>
 
+using namespace creature;
+
 const int army_size_max_{ 14 }; // changed from 18 to 14 for laptop
 int int_max_value{ std::numeric_limits<int>::max() };
 
@@ -34,12 +36,12 @@ void Army::clear() { army_->clear(); }
 std::vector<std::shared_ptr<Creature>>::iterator Army::begin() { return army_->begin(); }
 std::vector<std::shared_ptr<Creature>>::iterator Army::end() { return army_->end(); }
 
-CreatureComplexID Army::generate_creature_complex_id() {
+creature::ComplexID Army::generate_creature_complex_id() {
 	if (++creature_id_counter_ == int_max_value) {
 		// reassign creature_id_'s from start (free unused id's)
 		creature_id_counter_ = 0;
 		std::for_each(army_->begin(), army_->end(), [&](std::shared_ptr<Creature> creature) { 
-			creature->receive_new_creature_simple_id(creature_id_counter_); });
+			creature->receive_new_creature_id(creature_id_counter_); });
 		// not ending, because return value used to create new creature after reassigning id's
 	}
 	return{ army_id_, creature_id_counter_ };
@@ -48,14 +50,14 @@ CreatureComplexID Army::generate_creature_complex_id() {
 Army generate_random_army() {
 	Army army{};
 
-	load_creature_main_database(FileDatabaseId::kCreatureNameDatabase);
-	load_creature_main_database(FileDatabaseId::kCreatureTemplateDatabase);
+	creature::load_database_into_memory(FileDatabaseId::kCreatureNameDatabase);
+	creature::load_database_into_memory(FileDatabaseId::kCreatureTemplateDatabase);
 
-	std::generate_n(std::back_inserter(*army.army_), army_size_max_, [&army]() { return std::make_shared<Creature>(creature_database_get_templates(static_cast<CreatureTemplate>((
+	std::generate_n(std::back_inserter(*army.army_), army_size_max_, [&army]() { return std::make_shared<Creature>(get_ptr_to_creature_template_from_database(static_cast<CreatureTemplate>((
 		get_random_number(static_cast<int>(CreatureTemplate::kHumanSpearman), static_cast<int>(CreatureTemplate::kCreatureTemplateMax) - 1)))), army.generate_creature_complex_id());});
 
-	unload_creature_main_database(FileDatabaseId::kCreatureNameDatabase);
-	unload_creature_main_database(FileDatabaseId::kCreatureTemplateDatabase);
+	creature::unload_database_from_memory(FileDatabaseId::kCreatureNameDatabase);
+	creature::unload_database_from_memory(FileDatabaseId::kCreatureTemplateDatabase);
 
 	return army;
 }

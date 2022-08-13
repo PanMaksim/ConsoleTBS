@@ -4,17 +4,19 @@
 #include <string_view>
 #include <fstream>
 
-const std::string_view creature_database_races_naming[static_cast<int>(CreatureRace::kCreatureRaceMax)]{
-	"NoRace",
-	"Human",
-	"Orc"
+using namespace creature;
+
+const std::string_view database_race_naming[static_cast<int>(Race::kRaceMax)]{
+		"NoRace",
+		"Human",
+		"Orc"
 };
 
-const std::string_view* creature_database_get_race_naming(CreatureRace race) {
-	return &creature_database_races_naming[static_cast<int>(race)];
+const std::string_view* creature::get_race_naming_from_database(Race race) {
+	return &database_race_naming[static_cast<int>(race)];
 }
 
-const std::string_view creature_database_stats_naming[static_cast<int>(CreatureStatId::kCreatureStatMax)]{
+const std::string_view database_stat_naming[static_cast<int>(StatId::kStatMax)]{
 	"HP",
 	"SPD",
 	"ATK ML",
@@ -23,14 +25,17 @@ const std::string_view creature_database_stats_naming[static_cast<int>(CreatureS
 	"DMG ML PHS"
 };
 
-const std::string_view* creature_database_get_stat_naming(CreatureStatId stat) {
-	return &creature_database_stats_naming[static_cast<int>(stat)];
+const std::string_view* creature::get_stat_naming_from_database(StatId stat) {
+	return &database_stat_naming[static_cast<int>(stat)];
 }
 
-CreatureStat::CreatureStat(int stat_max) : current_{ stat_max }, max_{ stat_max } {}
+creature::Stat::Stat(int stat_max) : current_{ stat_max }, max_{ stat_max } {}
 
-std::ifstream& operator>>(std::ifstream& in, CreatureStat& creature_stat) {
-	in >> creature_stat.max_;
-	creature_stat.current_ = creature_stat.max_;
-	return in;
+
+namespace creature {
+	std::ifstream& operator>>(std::ifstream& in, Stat& creature_stat) {
+		in >> creature_stat.max_;
+		creature_stat.current_ = creature_stat.max_;
+		return in;
+	}
 }

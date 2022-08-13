@@ -613,10 +613,10 @@ void TurnBasedGame::ui_input_help_switch(const std::vector<UserInputButton>& all
 }
 
 void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, 
-        CreatureStatId creature_stat_id, int stat_value_current, int stat_value_max = 0) {
+    creature::StatId creature_stat_id, int stat_value_current, int stat_value_max = 0) {
 
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x
-        + static_cast<int>(creature_database_get_stat_naming(creature_stat_id)->size()) + 2 }; // +2 for indent from stat naming to stat numeric values
+        + static_cast<int>(creature::get_stat_naming_from_database(creature_stat_id)->size()) + 2 }; // +2 for indent from stat naming to stat numeric values
     
     std::string::iterator frame_coordinate_x_ptr_end{ frame_[frame_coordinate.y].begin() + ui_window_width_end_ };
 
@@ -664,11 +664,11 @@ void TurnBasedGame::battle_map_create_basic_ui_with_creature() {
     *(add_string_to_ui(coordinate, "Race")) = ':';
     ++coordinate.y;
 
-    for (int creature_stat_iter{}, creature_stat_iter_max{ static_cast<int>(CreatureStatId::kCreatureStatMax) };
+    for (int creature_stat_iter{}, creature_stat_iter_max{ static_cast<int>(creature::StatId::kStatMax) };
         creature_stat_iter != creature_stat_iter_max; ++creature_stat_iter, ++coordinate.y) {
 
         *(add_string_to_ui(coordinate,
-            creature_database_get_stat_naming(static_cast<CreatureStatId>(creature_stat_iter)))) = ':';
+            creature::get_stat_naming_from_database(static_cast<creature::StatId>(creature_stat_iter)))) = ':';
     }
 }
 
@@ -723,19 +723,19 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
 
     // creature race
     add_string_to_ui(coordinate,
-        creature_database_get_race_naming(target->creature_->get_race()), 6);
+        get_race_naming_from_database(target->creature_->get_race()), 6);
     ++coordinate.y;
 
     // creature stats
     { 
-        CreatureStat creature_stat;
-        for (int stat_iter{}, stat_iter_end{ static_cast<int>(CreatureStatId::kCreatureStatMax) };
+        creature::Stat creature_stat;
+        for (int stat_iter{}, stat_iter_end{ static_cast<int>(creature::StatId::kStatMax) };
             stat_iter != stat_iter_end; ++stat_iter, ++coordinate.y) {
 
-            creature_stat = target->creature_->get_certain_stat_current_and_max(static_cast<CreatureStatId>(stat_iter));
+            creature_stat = target->creature_->get_stat_current_and_max(static_cast<creature::StatId>(stat_iter));
 
             add_creature_stat_string_to_ui(coordinate,
-                static_cast<CreatureStatId>(stat_iter),
+                static_cast<creature::StatId>(stat_iter),
                 creature_stat.current_, (creature_stat.current_ != creature_stat.max_) ? creature_stat.max_ : 0);
         }
     }

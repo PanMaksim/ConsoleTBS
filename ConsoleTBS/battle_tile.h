@@ -61,7 +61,7 @@ struct BattleTile {
 
 	// what it contains : unit, landscape, effects, etc
 	TerrainType terrain_type_{ TerrainType::kPlain };
-	std::shared_ptr<Creature> creature_{ nullptr }; // owned by Army AND BattleTile
+	std::shared_ptr<creature::Creature> creature_{ nullptr }; // owned by Army AND BattleTile
 	
 	//std::vector<BattleTileModifier> modifiers_;
 	//BattleTileModifier modifier_;

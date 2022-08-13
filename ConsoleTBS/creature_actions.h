@@ -6,26 +6,29 @@
 #include "creature.h"
 #include "rolls.h"
 
-//enum class AbilityResult {
-//	kAbilityResultMin,
-//	kGotDead = kAbilityResultMin,
-//	kCriticalFail,
-//	kFailed,
-//	kNoResult,
-//	kSuccess,
-//	kCriticalSuccess,
-//	kKilledTarget,
-//	kAbilityResultMax
-//};
+namespace creature {
 
-struct CreatureActionResult {
-	RollResult ability_result;
-	int damage_dealed;
-	int damage_received;
-};
+	//enum class AbilityResult {
+	//	kAbilityResultMin,
+	//	kGotDead = kAbilityResultMin,
+	//	kCriticalFail,
+	//	kFailed,
+	//	kNoResult,
+	//	kSuccess,
+	//	kCriticalSuccess,
+	//	kKilledTarget,
+	//	kAbilityResultMax
+	//};
 
-//const std::string* creature_database_get_ability_result_naming(AbilityResult ability_result);
+	struct ActionResult {
+		RollResult ability_result;
+		int damage_dealed;
+		int damage_received;
+	};
 
-void log_creature_action_result(const CreatureActionResult* action_result, const Creature* action_dealer, const Creature* action_target);
+	//const std::string* creature_database_get_ability_result_naming(AbilityResult ability_result);
 
-CreatureActionResult creature_ability_default_attack(Creature* attacker, Creature* defender);
+	void log_action_result(const ActionResult* action_result, const Creature* action_dealer, const Creature* action_target);
+
+	ActionResult ability_default_attack(Creature* attacker, Creature* defender);
+}
