@@ -1,3 +1,44 @@
-18:54:51 -  UI size = 50
-18:54:53 -  Execution time: 288ms.
-18:54:54 -  Close game
+18:33:36 -  UI size = 50
+18:35:46 -  Execution time: 167ms.
+18:35:49 -  UI_Log: AP used for movement: 11.000000
+18:35:49 -  UI_Log: Maksim Pestilens(0, 0) moved to coordinate (3, 1)
+18:35:49 -  Execution time: 270ms.
+18:35:51 -  UI_Log: Maksim Pestilens(2, 0) moved to coordinate (14, 1)
+18:35:51 -  Execution time: 1285ms.
+18:35:52 -  UI_Log: AP used for movement: 4.000000
+18:35:52 -  UI_Log: Maksim Pestilens (14, 1) attacked Ranald Pestilens (15, 1)
+18:35:52 -  UI_Log: Maksim Pestilens rolled: 12
+18:35:52 -  UI_Log: Ranald Pestilens rolled: 4
+18:35:52 -  UI_Log: Ability Result: Critical Success
+18:35:52 -  UI_Log: Ranald Pestilens received 3 damage.
+18:35:52 -  Execution time: 193ms.
+18:35:53 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
+18:35:53 -  Execution time: 191ms.
+18:35:54 -  UI_Log: AP used for movement: 4.000000
+18:35:54 -  UI_Log: Maksim Pestilens (14, 1) attacked Ranald Pestilens (15, 1)
+18:35:54 -  UI_Log: Maksim Pestilens rolled: 6
+18:35:54 -  UI_Log: Ranald Pestilens rolled: 0
+18:35:54 -  UI_Log: Ability Result: Critical Success
+18:35:54 -  UI_Log: Ranald Pestilens received 3 damage.
+18:35:54 -  Execution time: 304ms.
+18:35:54 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
+18:35:55 -  Execution time: 215ms.
+18:35:55 -  UI_Log: AP used for movement: 4.000000
+18:35:55 -  UI_Log: Maksim Pestilens (14, 1) attacked Ranald Pestilens (15, 1)
+18:35:55 -  UI_Log: Maksim Pestilens rolled: 12
+18:35:55 -  UI_Log: Ranald Pestilens rolled: 12
+18:35:55 -  UI_Log: Ability Result: No Result
+18:35:55 -  Execution time: 239ms.
+18:35:56 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
+18:35:56 -  Execution time: 195ms.
+18:35:57 -  UI_Log: AP used for movement: 4.000000
+18:35:57 -  UI_Log: Maksim Pestilens (14, 1) attacked Ranald Pestilens (15, 1)
+18:35:57 -  UI_Log: Maksim Pestilens rolled: 12
+18:35:57 -  UI_Log: Ranald Pestilens rolled: 10
+18:35:57 -  UI_Log: Ability Result: Small Success
+18:35:57 -  UI_Log: Ranald Pestilens received 2 damage.
+18:35:57 -  UI_Log: Ranald Pestilens (1, 15) died.
+18:35:57 -  Execution time: 201ms.
+18:35:59 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
+18:35:59 -  Execution time: 182ms.
+18:36:2 -  Close game
