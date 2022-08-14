@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <array>
 #include <vector>
@@ -723,7 +722,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
 
     // creature race
     add_string_to_ui(coordinate,
-        get_race_naming_from_database(target->creature_->get_race()), 6);
+        creature::get_race_naming_from_database(target->creature_->get_race()), 6);
     ++coordinate.y;
 
     // creature stats

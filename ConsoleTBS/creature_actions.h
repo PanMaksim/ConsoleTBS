@@ -31,4 +31,5 @@ namespace creature {
 	void log_action_result(const ActionResult* action_result, const Creature* action_dealer, const Creature* action_target);
 
 	ActionResult ability_default_attack(Creature* attacker, Creature* defender);
+
 }

@@ -132,7 +132,7 @@ void TurnBasedGame::start_new_battle() {
     battle_map_update_player_selection();
 }
 
-void TurnBasedGame::battle_map_add_creature(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status) {
+void TurnBasedGame::battle_map_add_creature(std::shared_ptr<Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status) {
     (*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].creature_ = creature_ptr;
     const std::vector<creature::StatMultiplier>* new_terrain_effects{
         terrain_database_get_effects((*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].terrain_type_) };
@@ -160,8 +160,8 @@ void TurnBasedGame::battle_map_add_creature(std::shared_ptr<creature::Creature> 
 }
 
 void TurnBasedGame::battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status) {
-    std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> army_vector_ptr{ army_ptr->get_army_shared_ptr() };
-    std::vector<std::shared_ptr<creature::Creature>>::pointer army_vector_ptr_current{ army_vector_ptr->data() },
+    std::shared_ptr<std::vector<std::shared_ptr<Creature>>> army_vector_ptr{ army_ptr->get_army_shared_ptr() };
+    std::vector<std::shared_ptr<Creature>>::pointer army_vector_ptr_current{ army_vector_ptr->data() },
         army_vector_ptr_end{ army_vector_ptr->data() + army_vector_ptr->size() };
 
     switch (battle_status) {
@@ -317,7 +317,7 @@ void TurnBasedGame::battle_map_kill_creature(BattleMapCoordinate killed_creature
     (*battle_map_info_)[killed_creature_battle_map_coordinate.y][killed_creature_battle_map_coordinate.x].creature_ = nullptr;
 }
 
-void TurnBasedGame::check_possible_kill(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate creature_battle_map_coordinate) {
+void TurnBasedGame::check_possible_kill(std::shared_ptr<Creature> creature_ptr, BattleMapCoordinate creature_battle_map_coordinate) {
     if (creature_ptr->get_stat_current_value(creature::StatId::kHP) <= 0) {
         add_string_to_ui_log(*creature_ptr->get_name() + 
             ' ' + '(' + std::to_string(creature_battle_map_coordinate.y + 1) + ',' + ' ' + std::to_string(creature_battle_map_coordinate.x + 1) + ") died.");
@@ -348,7 +348,7 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_c
 
     // update applied terrain effects
     if (old_coordinate_ptr->terrain_type_ != new_coordinate_ptr->terrain_type_) {
-        creature::Creature* creature{ new_coordinate_ptr->creature_.get() };
+        Creature* creature{ new_coordinate_ptr->creature_.get() };
         const std::vector<creature::StatMultiplier>* terrain_effects{ terrain_database_get_effects(old_coordinate_ptr->terrain_type_) };
         std::for_each(std::execution::par_unseq, terrain_effects->begin(), terrain_effects->end(),
             [&creature](creature::StatMultiplier effect) { creature->delete_stat_multiplier(effect); });
@@ -379,7 +379,7 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_c
 
 // in future maybe will return more that bool (for ex. moved distance that can be used as damage modifier)
 // also maybe will be used to check firing distance
-bool TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInputButton>> direction_log, creature::Creature* creature_on_old_coordinate_ptr) {
+bool TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInputButton>> direction_log, Creature* creature_on_old_coordinate_ptr) {
     if (direction_log == nullptr) {
         return false;
     }
@@ -436,7 +436,7 @@ bool TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInp
 }
 
 bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
-    std::shared_ptr<creature::Creature> creature_on_old_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
+    std::shared_ptr<Creature> creature_on_old_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
 
     bool coordinate_input_result{ false }; // used only intil user_input moving by battle_map_coordinate not fixed 
     std::shared_ptr<std::vector<UserInputButton>> direction_log;
@@ -467,7 +467,7 @@ bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
     //if (direction_log != nullptr) {
         //std::array<char, kWindowWidth_>::pointer frame_coordinate_x_ptr;
 
-    std::shared_ptr<creature::Creature> creature_on_new_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
+    std::shared_ptr<Creature> creature_on_new_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
 
     // move on empty battle_tile
     if (creature_on_new_coordinate_ptr == nullptr) {
@@ -488,7 +488,7 @@ bool TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
                 ", " + std::to_string(player_coordinate_selection_.y + 1) + ')');
 
             creature::ActionResult attack_result{
-                ability_default_attack(creature_on_old_coordinate_ptr.get(), creature_on_new_coordinate_ptr.get()) };
+                creature::ability_default_attack(creature_on_old_coordinate_ptr.get(), creature_on_new_coordinate_ptr.get()) };
 
             log_action_result(&attack_result, creature_on_old_coordinate_ptr.get(), creature_on_new_coordinate_ptr.get());
             check_possible_kill(creature_on_new_coordinate_ptr, player_coordinate_selection_);

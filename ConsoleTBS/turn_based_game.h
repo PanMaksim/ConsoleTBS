@@ -140,7 +140,7 @@ private:
     void calculate_battle_map_visual();
     void show_battle_map();
     void battle_map_show_landscape();
-    void battle_map_add_creature(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
+    void battle_map_add_creature(std::shared_ptr<Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
     void battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status);
     bool battle_map_tile_numeration_switch();
     bool battle_map_tile_numeration_turn_on();
@@ -161,11 +161,11 @@ private:
     std::shared_ptr<Army> get_army_ptr_via_id(int army_id_);
 
     bool interact_with_creature();
-    bool calculate_moved_distance(std::shared_ptr<std::vector<UserInputButton>> direction_log, creature::Creature* creature_on_old_coordinate_ptr);
+    bool calculate_moved_distance(std::shared_ptr<std::vector<UserInputButton>> direction_log, Creature* creature_on_old_coordinate_ptr);
     bool creature_move_by_input(UserInputButton input_method);
     bool move_creature_by_coordinate(BattleMapCoordinate battle_map_coordinate_old, BattleMapCoordinate battle_map_coordinate_new);
 
-    void check_possible_kill(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate creature_battle_map_coordinate);
+    void check_possible_kill(std::shared_ptr<Creature> creature_ptr, BattleMapCoordinate creature_battle_map_coordinate);
 
 private:
     //static constexpr int kWindowWidth_{ 317 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input

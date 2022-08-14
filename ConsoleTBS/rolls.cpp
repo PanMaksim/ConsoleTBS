@@ -34,8 +34,8 @@ const double creature_database_get_roll_result_multiplier(RollResult roll_result
 	return creature_database_roll_result_multipliers[static_cast<int>(roll_result)];
 }
 
-RollResult compare_rolls(const creature::Creature* action_dealer, creature::StatId action_dealer_stat_to_compare,
-	const creature::Creature* target, creature::StatId target_stat_to_compare) {
+RollResult compare_rolls(const Creature* action_dealer, creature::StatId action_dealer_stat_to_compare,
+	const Creature* target, creature::StatId target_stat_to_compare) {
 
 	RollResult roll_result;
 

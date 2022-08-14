@@ -1,13 +1,21 @@
-19:44:56 -  UI size = 50
-19:45:2 -  Execution time: 178ms.
-19:45:3 -  UI_Log: AP used for movement: 6.500000
-19:45:3 -  UI_Log: Adner Hastner(0, 0) moved to coordinate (3, 1)
-19:45:3 -  Execution time: 165ms.
-19:45:8 -  UI_Log: Turn in input help
-19:45:8 -  Execution time: 154ms.
-19:45:13 -  UI_Log: Turn on tile numeration
-19:45:13 -  Execution time: 198ms.
-19:45:17 -  UI_Log: Player seletion moved to coordinate (2, 1) from (2,0)
-19:45:17 -  Execution time: 163ms.
-19:45:19 -  UI_Log: Turn off tile numeration
-19:45:20 -  Close game
+17:58:33 -  UI size = 50
+17:58:34 -  Execution time: 261ms.
+17:58:39 -  UI_Log: Taras Hastner(0, 0) moved to coordinate (14, 1)
+17:58:39 -  Execution time: 1626ms.
+17:58:40 -  UI_Log: AP used for movement: 4.000000
+17:58:40 -  UI_Log: Taras Hastner (14, 1) attacked Adner White (15, 1)
+17:58:40 -  UI_Log: Taras Hastner rolled: 8
+17:58:40 -  UI_Log: Adner White rolled: 10
+17:58:40 -  UI_Log: Ability Result: Small Fail
+17:58:40 -  UI_Log: Taras Hastner received 3 damage.
+17:58:41 -  Execution time: 257ms.
+17:58:42 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
+17:58:42 -  Execution time: 942ms.
+17:58:43 -  UI_Log: AP used for movement: 7.000000
+17:58:43 -  UI_Log: Taras Hastner(13, 0) moved to coordinate (14, 2)
+17:58:43 -  Execution time: 273ms.
+17:58:43 -  UI_Log: Player seletion moved to coordinate (13, 2) from (13,1)
+17:58:44 -  Execution time: 233ms.
+17:58:44 -  UI_Log: Player seletion moved to coordinate (13, 1) from (12,1)
+17:58:45 -  Execution time: 249ms.
+17:58:45 -  Close game
