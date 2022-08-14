@@ -1,21 +1,27 @@
-17:58:33 -  UI size = 50
-17:58:34 -  Execution time: 261ms.
-17:58:39 -  UI_Log: Taras Hastner(0, 0) moved to coordinate (14, 1)
-17:58:39 -  Execution time: 1626ms.
-17:58:40 -  UI_Log: AP used for movement: 4.000000
-17:58:40 -  UI_Log: Taras Hastner (14, 1) attacked Adner White (15, 1)
-17:58:40 -  UI_Log: Taras Hastner rolled: 8
-17:58:40 -  UI_Log: Adner White rolled: 10
-17:58:40 -  UI_Log: Ability Result: Small Fail
-17:58:40 -  UI_Log: Taras Hastner received 3 damage.
-17:58:41 -  Execution time: 257ms.
-17:58:42 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
-17:58:42 -  Execution time: 942ms.
-17:58:43 -  UI_Log: AP used for movement: 7.000000
-17:58:43 -  UI_Log: Taras Hastner(13, 0) moved to coordinate (14, 2)
-17:58:43 -  Execution time: 273ms.
-17:58:43 -  UI_Log: Player seletion moved to coordinate (13, 2) from (13,1)
-17:58:44 -  Execution time: 233ms.
-17:58:44 -  UI_Log: Player seletion moved to coordinate (13, 1) from (12,1)
-17:58:45 -  Execution time: 249ms.
-17:58:45 -  Close game
+19:20:56 -  UI size = 50
+19:21:1 -  Execution time: 156ms.
+19:21:3 -  UI_Log: AP used for movement: 5.000000
+19:21:3 -  UI_Log: Taras Benner (1, 1) moved on ally.
+19:21:4 -  Execution time: 221ms.
+19:21:5 -  UI_Log: Taras Hastner(1, 0) moved to coordinate (14, 1)
+19:21:5 -  Execution time: 1029ms.
+19:21:6 -  UI_Log: AP used for movement: 2.000000
+19:21:6 -  UI_Log: Taras Hastner (14, 1) attacked Adner Lionheart (15, 1)
+19:21:6 -  UI_Log: Taras Hastner rolled: 10
+19:21:6 -  UI_Log: Adner Lionheart rolled: 10
+19:21:6 -  UI_Log: Ability Result: No Result
+19:21:6 -  Execution time: 171ms.
+19:21:7 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
+19:21:7 -  Execution time: 168ms.
+19:21:8 -  UI_Log: AP used for movement: 2.000000
+19:21:8 -  UI_Log: Taras Hastner (14, 1) attacked Adner Lionheart (15, 1)
+19:21:8 -  UI_Log: Taras Hastner rolled: 0
+19:21:8 -  UI_Log: Adner Lionheart rolled: 0
+19:21:8 -  UI_Log: Ability Result: No Result
+19:21:8 -  Execution time: 174ms.
+19:21:9 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
+19:21:9 -  Execution time: 157ms.
+19:21:9 -  UI_Log: AP used for movement: 3.000000
+19:21:9 -  UI_Log: Taras Hastner(13, 0) moved to coordinate (13, 1)
+19:21:10 -  Execution time: 174ms.
+19:21:10 -  Close game

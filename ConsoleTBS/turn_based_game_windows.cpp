@@ -149,6 +149,7 @@ void TurnBasedGame::battle_map_clear() {
 }
 
 void TurnBasedGame::generate_new_battle_map() {
+    using namespace terrain;
     battle_map_clear();
     battle_map_info_ = std::make_unique<std::vector<std::vector<BattleTile>>>(kBattleMapSizeHeight_, std::vector<BattleTile>(kBattleMapSizeWidth_));
 
@@ -156,8 +157,8 @@ void TurnBasedGame::generate_new_battle_map() {
     std::for_each(std::execution::par_unseq, battle_map_info_->data(), battle_map_info_->data() + kBattleMapSizeHeight_,
         [](std::vector<BattleTile>& battle_tile_line) {
             std::for_each(std::execution::par_unseq, battle_tile_line.data(), battle_tile_line.data() + kBattleMapSizeWidth_, // not generate because we need to change only terrain
-                [](BattleTile& battle_tile) { battle_tile.terrain_type_ = static_cast<TerrainType>
-                    (get_random_number(static_cast<int>(TerrainType::kPlain), static_cast<int>(TerrainType::kTerrainTypeMax) - 1));
+                [](BattleTile& battle_tile) { battle_tile.terrain_type_ = static_cast<terrain::Type>
+                    (get_random_number(static_cast<int>(terrain::Type::kPlain), static_cast<int>(terrain::Type::kTerrainTypeMax) - 1));
                 });
         });
 }
@@ -254,7 +255,7 @@ void TurnBasedGame::battle_map_show_landscape() {
             frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + coordinate_x_start;
             std::for_each(std::execution::seq, battle_tile_line.begin(), battle_tile_line.end(), [=, &frame_coordinate_x_ptr](BattleTile& battle_tile) {
                 frame_coordinate_x_ptr += kTileVisualWidth_;
-                *frame_coordinate_x_ptr = terrain_database_get_full_info(battle_tile.terrain_type_)->symbol_;
+                *frame_coordinate_x_ptr = get_full_terrain_info_from_database(battle_tile.terrain_type_)->symbol_;
                 });
         });
 }
@@ -682,7 +683,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
 
     // landscape
     add_string_to_ui(coordinate,
-        &terrain_database_get_full_info(target->terrain_type_)->type_name_,
+        &get_full_terrain_info_from_database(target->terrain_type_)->type_name_,
         static_cast<int>(battle_tile_database_get_parameter_name(BattleTileParameters::kLandscape)->size()) + 2);
     ++coordinate.y;
 

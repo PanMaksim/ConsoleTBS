@@ -135,7 +135,7 @@ void TurnBasedGame::start_new_battle() {
 void TurnBasedGame::battle_map_add_creature(std::shared_ptr<Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status) {
     (*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].creature_ = creature_ptr;
     const std::vector<creature::StatMultiplier>* new_terrain_effects{
-        terrain_database_get_effects((*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].terrain_type_) };
+        get_terrain_effects_from_database((*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].terrain_type_) };
 
     std::for_each(std::execution::par_unseq, new_terrain_effects->begin(), new_terrain_effects->end(), 
         [&creature_ptr](creature::StatMultiplier effect) { creature_ptr->apply_stat_multiplier(effect); });
@@ -349,11 +349,11 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_c
     // update applied terrain effects
     if (old_coordinate_ptr->terrain_type_ != new_coordinate_ptr->terrain_type_) {
         Creature* creature{ new_coordinate_ptr->creature_.get() };
-        const std::vector<creature::StatMultiplier>* terrain_effects{ terrain_database_get_effects(old_coordinate_ptr->terrain_type_) };
+        const std::vector<creature::StatMultiplier>* terrain_effects{ get_terrain_effects_from_database(old_coordinate_ptr->terrain_type_) };
         std::for_each(std::execution::par_unseq, terrain_effects->begin(), terrain_effects->end(),
             [&creature](creature::StatMultiplier effect) { creature->delete_stat_multiplier(effect); });
 
-        terrain_effects = terrain_database_get_effects(new_coordinate_ptr->terrain_type_);
+        terrain_effects = get_terrain_effects_from_database(new_coordinate_ptr->terrain_type_);
         std::for_each(std::execution::par_unseq, terrain_effects->begin(), terrain_effects->end(), 
             [&creature](creature::StatMultiplier effect) { creature->apply_stat_multiplier(effect); });
     }
@@ -392,7 +392,7 @@ bool TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInp
     float AP_cost_for_movement{};
 
     std::vector<std::vector<BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
-    const TerrainMovementCost* movement_cost{ terrain_database_get_movement_cost(
+    const terrain::MovementCost* movement_cost{ get_movement_cost_from_database(
                                                 (battle_tile_y_ptr->data() + player_coordinate_selection_old_.x)->terrain_type_) };
 
     for (std::vector<UserInputButton>::pointer direction_begin{ direction_log->data() }, direction_end{ direction_log->data() + direction_log->size() };
@@ -418,7 +418,7 @@ bool TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInp
         }
         //++moved_distance;
 
-        movement_cost = terrain_database_get_movement_cost(
+        movement_cost = get_movement_cost_from_database(
             ((*battle_map_info_)[player_coordinate_selection_old_.y + moved_distance_y])[player_coordinate_selection_old_.x + moved_distance_x].terrain_type_);
 
         AP_cost_for_movement += movement_cost->entry_value; // AP for going into tile
