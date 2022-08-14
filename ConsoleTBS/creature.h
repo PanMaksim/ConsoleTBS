@@ -8,13 +8,6 @@
 #include "file_database.h"
 #include "creature_stats.h"
 
-enum class CreatureTemplateID {
-	NoTemplate,
-	kHumanSpearman,
-	kOrcAxeman,
-	kCreatureTemplateMax
-};
-
 class Creature {
 public:
 	//Creature(CreatureRace creature_race, const std::array<int, static_cast<int>(StatId::kStatMax)>& target_creature_stats); // default creature_id = -1 because 0 can be used for first element
@@ -65,6 +58,12 @@ private:
 };
 
 namespace creature {
+	enum class CreatureTemplateID {
+		NoTemplate,
+		kHumanSpearman,
+		kOrcAxeman,
+		kCreatureTemplateMax
+	};
 
 	void load_database_into_memory(FileDatabaseId database_id);
 	void unload_database_from_memory(FileDatabaseId database_id);
