@@ -50,6 +50,7 @@ namespace tbs { // there are nested namespace in the end
         void print_frame();
 
         void start() {
+            using namespace u_input;
             const std::vector<UserInputButton> allowed_user_input{ // unoptimized because will hold allowed input for main_menu when there is currently battle in proccess
                 UserInputButton::kExit
             };
@@ -127,10 +128,10 @@ namespace tbs { // there are nested namespace in the end
         std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent);
         std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent);
         std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent);
-        std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr);
+        std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const u_input::UserInputDescription* user_input_description_ptr);
         void add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, creature::StatId creature_stat_id, int stat_value_current, int stat_value_max);
-        void ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input);
-        void ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input);
+        void ui_input_help_switch(const std::vector<u_input::UserInputButton>& allowed_user_input);
+        void ui_input_help_turn_on(const std::vector<u_input::UserInputButton>& allowed_user_input);
         void ui_input_help_turn_off(size_t allowed_user_input_size);
         void clear_ui_log();
 
@@ -159,13 +160,13 @@ namespace tbs { // there are nested namespace in the end
         void battle_map_clear_old_player_selection();
 
         bool player_coordinate_selection_move_by_coordinate_input();
-        std::shared_ptr<std::vector<UserInputButton>> player_coordinate_selection_move_by_direction_input();
+        std::shared_ptr<std::vector<u_input::UserInputButton>> player_coordinate_selection_move_by_direction_input();
 
         std::shared_ptr<Army> get_army_ptr_via_id(int army_id_);
 
         bool interact_with_creature();
-        bool calculate_moved_distance(std::shared_ptr<std::vector<UserInputButton>> direction_log, creature::Creature* creature_on_old_coordinate_ptr);
-        bool creature_move_by_input(UserInputButton input_method);
+        bool calculate_moved_distance(std::shared_ptr<std::vector<u_input::UserInputButton>> direction_log, creature::Creature* creature_on_old_coordinate_ptr);
+        bool creature_move_by_input(u_input::UserInputButton input_method);
         bool move_creature_by_coordinate(BattleMapCoordinate battle_map_coordinate_old, BattleMapCoordinate battle_map_coordinate_new);
 
         void check_possible_kill(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate creature_battle_map_coordinate);

@@ -23,6 +23,8 @@ void tbs::TurnBasedGame::battle_process() {
     // duration = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start);
     // std::cout << "Execution time: " << duration.count() << "ms.\n";
 
+    using namespace u_input;
+
     const std::vector<UserInputButton> allowed_user_input{
             UserInputButton::kExit,
             UserInputButton::kMoveSelectionByCoordinate,
@@ -198,7 +200,7 @@ bool tbs::TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() 
 
     std::cout << "Move by coordinate";
     std::cout << '\n' << "Enter x: ";
-    int coordinate_x = get_user_input(0, kBattleMapSizeWidth_);
+    int coordinate_x = u_input::get_user_input(0, kBattleMapSizeWidth_);
     if (coordinate_x == 0) {
         std::cout << "Close coordinate selection";
         return true;
@@ -206,7 +208,7 @@ bool tbs::TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() 
     std::cout << '\n';
 
     std::cout << "Enter y: ";
-    int coordinate_y = get_user_input(0, kBattleMapSizeHeight_);
+    int coordinate_y = u_input::get_user_input(0, kBattleMapSizeHeight_);
     if (coordinate_y == 0) {
         std::cout << "Close coordinate selection";
         return true;
@@ -218,7 +220,9 @@ bool tbs::TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() 
 }
 
 // cin >> string and then move coordinate_selection until string ends
-std::shared_ptr<std::vector<UserInputButton>> tbs::TurnBasedGame::player_coordinate_selection_move_by_direction_input() {
+std::shared_ptr<std::vector<u_input::UserInputButton>> tbs::TurnBasedGame::player_coordinate_selection_move_by_direction_input() {
+    using namespace u_input;
+    
     if (!ui_status[UI_Status::kBattleMap]) { return nullptr; }
 
     std::cout << "Move by direction\n";
@@ -379,7 +383,10 @@ bool tbs::TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_
 
 // in future maybe will return more that bool (for ex. moved distance that can be used as damage modifier)
 // also maybe will be used to check firing distance
-bool tbs::TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInputButton>> direction_log, creature::Creature* creature_on_old_coordinate_ptr) {
+bool tbs::TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<u_input::UserInputButton>> direction_log, creature::Creature* creature_on_old_coordinate_ptr) {
+    
+    using namespace u_input;
+    
     if (direction_log == nullptr) {
         return false;
     }
@@ -435,7 +442,9 @@ bool tbs::TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<Us
     return true;
 }
 
-bool tbs::TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
+bool tbs::TurnBasedGame::creature_move_by_input(u_input::UserInputButton input_method) {
+    using namespace u_input;
+    
     std::shared_ptr<creature::Creature> creature_on_old_coordinate_ptr{ (*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ };
 
     bool coordinate_input_result{ false }; // used only intil user_input moving by battle_map_coordinate not fixed 
@@ -519,6 +528,9 @@ bool tbs::TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
 }
 
 bool tbs::TurnBasedGame::interact_with_creature() {
+
+    using namespace u_input;
+
     std::cout << "Interact";
     if ((*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ == nullptr) {
         std::cerr << "\nNo target to interact with.\n";

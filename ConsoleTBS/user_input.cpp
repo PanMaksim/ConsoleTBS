@@ -11,10 +11,12 @@
 #include "file_database.h"
 #include "logger.h"
 
-const UserInputDescription description_to_show_input_help_button{ '`', "show input help"};
+using namespace u_input;
+
+const UserInputDescription u_input::description_to_show_input_help_button{ '`', "show input help"};
 std::unique_ptr<std::vector<UserInputDescription>> user_input_database_description;
 
-void load_user_input_database(FileDatabaseId database_id) {
+void u_input::load_user_input_database(FileDatabaseId database_id) {
 	if (file_databases_status[static_cast<int>(database_id)] == true) {
 		runtime_logger::log_in_file("ERROR, tried to open already opened database.", true);
 		return;
@@ -49,7 +51,7 @@ void load_user_input_database(FileDatabaseId database_id) {
 
 	file_databases_status[static_cast<int>(database_id)] = true;
 }
-void unload_user_input_database(FileDatabaseId database_id) {
+void u_input::unload_user_input_database(FileDatabaseId database_id) {
 	if (file_databases_status[static_cast<int>(database_id)] == false) {
 		runtime_logger::log_in_file("ERROR, tried to close unopened database.", true);
 		return;
@@ -66,7 +68,7 @@ void unload_user_input_database(FileDatabaseId database_id) {
 	file_databases_status[static_cast<int>(database_id)] = false;
 }
 
-int get_user_input(int min, int max) {
+int u_input::get_user_input(int min, int max) {
 	int value{};
 	while (!(std::cin >> value) || (value < min || value > max)) {
 		std::cerr << "Error, out of range or not number. Type again:\n";
@@ -77,7 +79,7 @@ int get_user_input(int min, int max) {
 }
 
 // not best variant, but enum char is better for input reading, description_ will be called only if player will ask for it
-const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol) {
+const UserInputDescription* u_input::user_input_database_get_main_description(UserInputButton user_input_symbol) {
 	if (file_databases_status[static_cast<int>(FileDatabaseId::kUserInputDescription)] == false) {
 		runtime_logger::log_in_file("ERROR, tried to get input description when database is not open.", true);
 	}
@@ -110,7 +112,7 @@ const UserInputDescription* user_input_database_get_main_description(UserInputBu
 	}
 }
 
-const std::vector<UserInputDescription>* user_input_database_get_all_description() {
+const std::vector<UserInputDescription>* u_input::user_input_database_get_all_description() {
 	if (file_databases_status[static_cast<int>(FileDatabaseId::kUserInputDescription) == false]) {
 		runtime_logger::log_in_file("ERROR, tried to get input description when database is not open.", true);
 	}
@@ -118,4 +120,4 @@ const std::vector<UserInputDescription>* user_input_database_get_all_description
 	return &(*user_input_database_description);
 }
 
-UserInputDescription::UserInputDescription(char button, std::string&& description) : button_{ static_cast<UserInputButton>(button) }, description_{ description }{}
+u_input::UserInputDescription::UserInputDescription(char button, std::string&& description) : button_{ static_cast<UserInputButton>(button) }, description_{ description }{}

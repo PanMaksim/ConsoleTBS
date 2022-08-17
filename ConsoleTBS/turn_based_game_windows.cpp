@@ -70,8 +70,8 @@ void tbs::TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
 
     // Hint to button_ that calls list of allowed for user input buttons
     FrameCoordinate coordinate{ ui_window_width_start_ + 2, ui_window_input_help_coordinate_height };
-    if (frame_[coordinate.y][coordinate.x] != UserInputButton::kShowInputHelp) {
-        add_string_to_ui(coordinate, &description_to_show_input_help_button);
+    if (frame_[coordinate.y][coordinate.x] != u_input::UserInputButton::kShowInputHelp) {
+        add_string_to_ui(coordinate, &u_input::description_to_show_input_help_button);
     }
 
     // border for log window
@@ -550,7 +550,7 @@ std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr) {
+std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const u_input::UserInputDescription* user_input_description_ptr) {
     std::string::iterator frame_coordinate_x_ptr{ frame_[frame_coordinate.y].begin() + frame_coordinate.x };
     const std::string* str{ &user_input_description_ptr->description_ };
 
@@ -573,19 +573,19 @@ std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame
     return frame_coordinate_x_ptr;
 }
 
-void tbs::TurnBasedGame::ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input) {
+void tbs::TurnBasedGame::ui_input_help_turn_on(const std::vector<u_input::UserInputButton>& allowed_user_input) {
     if (ui_status[UI_Status::kCreatureStats]) { create_new_ui_window(); } // clear from ui stats, can be changed to more optimized variant
 
-    load_user_input_database(FileDatabaseId::kUserInputDescription);
+    u_input::load_user_input_database(FileDatabaseId::kUserInputDescription);
 
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
     std::for_each(std::execution::seq, allowed_user_input.begin(), allowed_user_input.end(),
-        [=, &coordinate](const UserInputButton allowed_user_input_description) {
-            add_string_to_ui(coordinate, user_input_database_get_main_description(allowed_user_input_description));
+        [=, &coordinate](const u_input::UserInputButton allowed_user_input_description) {
+            add_string_to_ui(coordinate, u_input::user_input_database_get_main_description(allowed_user_input_description));
             ++coordinate.y;
         });
 
-    unload_user_input_database(FileDatabaseId::kUserInputDescription);
+    u_input::unload_user_input_database(FileDatabaseId::kUserInputDescription);
 
     tbs::global::add_string_to_ui_log("Turn in input help");
     ui_status[UI_Status::kUI_InputHelp] = true;
@@ -610,7 +610,7 @@ void tbs::TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) 
     }
 }
 
-void tbs::TurnBasedGame::ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input) {
+void tbs::TurnBasedGame::ui_input_help_switch(const std::vector<u_input::UserInputButton>& allowed_user_input) {
     (!ui_status[UI_Status::kUI_InputHelp]) ? ui_input_help_turn_on(allowed_user_input) : ui_input_help_turn_off(allowed_user_input.size());
 }
 
