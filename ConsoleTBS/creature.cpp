@@ -61,6 +61,8 @@ void creature::load_database_into_memory(file_database::ID database_id) { // ope
 		}
 
 		{
+			using namespace creature::stat;
+
 			creature_template_database = std::make_unique<std::vector<Creature>>();
 			std::array<Stat, static_cast<int>(StatId::kStatMax)> creature_stats;
 			for (int templates_counter{}, templates_max{ static_cast<int>(CreatureTemplateID::kCreatureTemplateMax) };
@@ -154,33 +156,33 @@ const Creature* creature::get_ptr_to_creature_template_from_database(CreatureTem
 //	creature_id_ = creature_id_counter++;
 //}
 
-creature::Creature::Creature(Race creature_race, std::array<Stat, static_cast<int>(StatId::kStatMax)>&& target_creature_stats) : race_{creature_race} {
+creature::Creature::Creature(stat::Race creature_race, std::array<stat::Stat, static_cast<int>(stat::StatId::kStatMax)>&& target_creature_stats) : race_{creature_race} {
 	std::move(target_creature_stats.begin(), target_creature_stats.end(), stats_.begin());
 	name_ = "No_Name";
 }
 
-creature::Creature::Creature(const Creature* creature_ptr, ComplexID&& creature_complex_id) : race_{ creature_ptr->get_race() }, complex_id_{ creature_complex_id } {
+creature::Creature::Creature(const Creature* creature_ptr, stat::ComplexID&& creature_complex_id) : race_{ creature_ptr->get_race() }, complex_id_{ creature_complex_id } {
 	std::copy(creature_ptr->stats_.begin(), creature_ptr->stats_.end(), stats_.begin());
 	name_ = generate_name();
 }
 
-Stat creature::Creature::get_stat_current_and_max(StatId stat_id_) const { return stats_[static_cast<int>(stat_id_)]; }
-int creature::Creature::get_stat_current_value(StatId stat_id_) const { return stats_[static_cast<int>(stat_id_)].current_; }
-Race creature::Creature::get_race() const { return race_; }
-ComplexID creature::Creature::get_complex_id() { return complex_id_; }
+creature::stat::Stat creature::Creature::get_stat_current_and_max(stat::StatId stat_id_) const { return stats_[static_cast<int>(stat_id_)]; }
+int creature::Creature::get_stat_current_value(stat::StatId stat_id_) const { return stats_[static_cast<int>(stat_id_)].current_; }
+creature::stat::Race creature::Creature::get_race() const { return race_; }
+creature::stat::ComplexID creature::Creature::get_complex_id() { return complex_id_; }
 int creature::Creature::get_army_id() const { return complex_id_.army_id_; }
 size_t creature::Creature::get_creature_id() const { return complex_id_.creature_id_; }
 const std::string* creature::Creature::get_name() const { return &name_; }
 
-void creature::Creature::change_stat_current_value(StatId stat_id_, float change_amount) {
+void creature::Creature::change_stat_current_value(stat::StatId stat_id_, float change_amount) {
 	stats_[static_cast<int>(stat_id_)].current_ = static_cast<int>(static_cast<float>(stats_[static_cast<int>(stat_id_)].current_) + change_amount); };
 
-void creature::Creature::change_stat_current_value(StatId stat_id_, int change_amount) {
+void creature::Creature::change_stat_current_value(stat::StatId stat_id_, int change_amount) {
 	stats_[static_cast<int>(stat_id_)].current_ += change_amount; };
 
 void creature::Creature::receive_new_creature_id(int new_creature_id) { complex_id_.creature_id_ = new_creature_id; }
 
-int creature::Creature::roll_stat_with_bonus(StatId stat_id_) const {
+int creature::Creature::roll_stat_with_bonus(stat::StatId stat_id_) const {
 	return static_cast<int>(
 		this->get_stat_current_value(stat_id_) * get_roll_result_multiplier_from_database(
 			static_cast<roll::RollResult>(random::get_random_number(static_cast<int>(roll::RollResult::kCriticalFail), static_cast<int>(roll::RollResult::kRollResultMax)))));
@@ -196,15 +198,15 @@ const std::string creature::Creature::generate_name() {
 
 // should add multipliers for different ATK chances (Critical, Success, Small hit)
 int creature::Creature::calculate_received_damage(const Creature* attacker_ptr, double damage_multiplier) {
-	return static_cast<int>(attacker_ptr->get_stat_current_value(StatId::kDAMAGE_ML_PHS) * damage_multiplier
-			- this->get_stat_current_value(StatId::kArmor_PHS));
+	return static_cast<int>(attacker_ptr->get_stat_current_value(stat::StatId::kDAMAGE_ML_PHS) * damage_multiplier
+			- this->get_stat_current_value(stat::StatId::kArmor_PHS));
 }
 
-void creature::Creature::apply_stat_multiplier(StatMultiplier stat_multiplier) {
+void creature::Creature::apply_stat_multiplier(stat::StatMultiplier stat_multiplier) {
 	stats_[static_cast<int>(stat_multiplier.stat_id_)].current_ = static_cast<int>(static_cast<float>(stats_[static_cast<int>(stat_multiplier.stat_id_)].max_) * stat_multiplier.multiplier_);
 }
 
-void creature::Creature::delete_stat_multiplier(StatMultiplier stat_multiplier) {
+void creature::Creature::delete_stat_multiplier(stat::StatMultiplier stat_multiplier) {
 	stats_[static_cast<int>(stat_multiplier.stat_id_)].current_ = static_cast<int>(static_cast<float>(stats_[static_cast<int>(stat_multiplier.stat_id_)].max_) / stat_multiplier.multiplier_);
 }
 

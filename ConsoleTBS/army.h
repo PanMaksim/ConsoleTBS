@@ -25,7 +25,7 @@ public:
 	//std::weak_ptr<std::vector<std::shared_ptr<Creature>>> get_army_weak_ptr(); // currently unused
 	std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> get_army_shared_ptr();
 
-	creature::ComplexID generate_creature_complex_id();
+	creature::stat::ComplexID generate_creature_complex_id();
 	void kill_creature(size_t creature_id_);
 
 	void clear();

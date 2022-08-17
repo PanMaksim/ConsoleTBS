@@ -136,11 +136,11 @@ void tbs::TurnBasedGame::start_new_battle() {
 
 void tbs::TurnBasedGame::battle_map_add_creature(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status) {
     (*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].creature_ = creature_ptr;
-    const std::vector<creature::StatMultiplier>* new_terrain_effects{
+    const std::vector<creature::stat::StatMultiplier>* new_terrain_effects{
         get_terrain_effects_from_database((*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].terrain_type_) };
 
     std::for_each(std::execution::par_unseq, new_terrain_effects->begin(), new_terrain_effects->end(), 
-        [&creature_ptr](creature::StatMultiplier effect) { creature_ptr->apply_stat_multiplier(effect); });
+        [&creature_ptr](creature::stat::StatMultiplier effect) { creature_ptr->apply_stat_multiplier(effect); });
 
     char creature_head_symbol = ((creature_ptr->get_army_id() == 0) ? kCreaturePlayerHeadSymbol_ : kCreatureEnemyHeadSymbol_);
     FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(battle_map_coordinate) };
@@ -322,7 +322,7 @@ void tbs::TurnBasedGame::battle_map_kill_creature(BattleMapCoordinate killed_cre
 }
 
 void tbs::TurnBasedGame::check_possible_kill(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate creature_battle_map_coordinate) {
-    if (creature_ptr->get_stat_current_value(creature::StatId::kHP) <= 0) {
+    if (creature_ptr->get_stat_current_value(creature::stat::StatId::kHP) <= 0) {
         tbs::global::add_string_to_ui_log(*creature_ptr->get_name() +
             ' ' + '(' + std::to_string(creature_battle_map_coordinate.y + 1) + ',' + ' ' + std::to_string(creature_battle_map_coordinate.x + 1) + ") died.");
 
@@ -353,13 +353,13 @@ bool tbs::TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_
     // update applied terrain effects
     if (old_coordinate_ptr->terrain_type_ != new_coordinate_ptr->terrain_type_) {
         creature::Creature* creature{ new_coordinate_ptr->creature_.get() };
-        const std::vector<creature::StatMultiplier>* terrain_effects{ terrain::get_terrain_effects_from_database(old_coordinate_ptr->terrain_type_) };
+        const std::vector<creature::stat::StatMultiplier>* terrain_effects{ terrain::get_terrain_effects_from_database(old_coordinate_ptr->terrain_type_) };
         std::for_each(std::execution::par_unseq, terrain_effects->begin(), terrain_effects->end(),
-            [&creature](creature::StatMultiplier effect) { creature->delete_stat_multiplier(effect); });
+            [&creature](creature::stat::StatMultiplier effect) { creature->delete_stat_multiplier(effect); });
 
         terrain_effects = get_terrain_effects_from_database(new_coordinate_ptr->terrain_type_);
         std::for_each(std::execution::par_unseq, terrain_effects->begin(), terrain_effects->end(), 
-            [&creature](creature::StatMultiplier effect) { creature->apply_stat_multiplier(effect); });
+            [&creature](creature::stat::StatMultiplier effect) { creature->apply_stat_multiplier(effect); });
     }
 
     battle_map_clear_tile_from_creature_image(battle_map_coordinate_old);
@@ -431,9 +431,9 @@ bool tbs::TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<u_
         AP_cost_for_movement += movement_cost->entry_value; // AP for going into tile
     }
 
-    if (AP_cost_for_movement > creature_on_old_coordinate_ptr->get_stat_current_value(creature::StatId::kMovementSpeed)) {
+    if (AP_cost_for_movement > creature_on_old_coordinate_ptr->get_stat_current_value(creature::stat::StatId::kMovementSpeed)) {
         std::cerr << "Error, tried to move too far. Used AP: " << AP_cost_for_movement <<
-            ". When creature SPD = " << creature_on_old_coordinate_ptr->get_stat_current_value(creature::StatId::kMovementSpeed) << '\n';
+            ". When creature SPD = " << creature_on_old_coordinate_ptr->get_stat_current_value(creature::stat::StatId::kMovementSpeed) << '\n';
         player_coordinate_selection_ = player_coordinate_selection_old_;
         return false;
     }

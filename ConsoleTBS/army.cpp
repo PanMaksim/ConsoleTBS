@@ -36,7 +36,7 @@ void Army::clear() { army_->clear(); }
 std::vector<std::shared_ptr<Creature>>::iterator Army::begin() { return army_->begin(); }
 std::vector<std::shared_ptr<Creature>>::iterator Army::end() { return army_->end(); }
 
-creature::ComplexID Army::generate_creature_complex_id() {
+creature::stat::ComplexID Army::generate_creature_complex_id() {
 	if (++creature_id_counter_ == int_max_value) {
 		// reassign creature_id_'s from start (free unused id's)
 		creature_id_counter_ = 0;
@@ -49,7 +49,7 @@ creature::ComplexID Army::generate_creature_complex_id() {
 
 Army generate_random_army() {
 	
-	using namespace f_db;
+	using namespace file_database;
 
 	Army army{};
 

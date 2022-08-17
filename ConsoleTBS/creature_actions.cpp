@@ -38,7 +38,7 @@ void creature::actions::log_action_result(const ActionResult* action_result, con
 ActionResult creature::actions::ability_default_attack(Creature* attacker, Creature* defender) {
 	using namespace roll;
 
-	RollResult roll_result{ compare_rolls(attacker, StatId::kATK_ML, defender, StatId::kDEF_ML) };
+	RollResult roll_result{ compare_rolls(attacker, stat::StatId::kATK_ML, defender, stat::StatId::kDEF_ML) };
 
 	int damage_dealed{ },
 		damage_received{ }; // received from counterattack
@@ -57,10 +57,10 @@ ActionResult creature::actions::ability_default_attack(Creature* attacker, Creat
 	// those checks not in same if check with calculate damage because of possible received damage even when attacked without receiving counterattack
 	// check to prevent healing when damage value debuffed to be lower than 0
 	if (damage_dealed > 0) {
-		defender->change_stat_current_value(StatId::kHP, (-1) * damage_dealed);
+		defender->change_stat_current_value(stat::StatId::kHP, (-1) * damage_dealed);
 	}
 	if (damage_received > 0) {
-		attacker->change_stat_current_value(StatId::kHP, (-1) * damage_received);
+		attacker->change_stat_current_value(stat::StatId::kHP, (-1) * damage_received);
 	}
 
 	return {roll_result, damage_dealed, damage_received};

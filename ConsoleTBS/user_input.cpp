@@ -16,8 +16,8 @@ using namespace u_input;
 const UserInputDescription u_input::description_to_show_input_help_button{ '`', "show input help"};
 std::unique_ptr<std::vector<UserInputDescription>> user_input_database_description;
 
-void u_input::load_user_input_database(f_db::ID database_id) {
-	using namespace f_db;
+void u_input::load_user_input_database(file_database::ID database_id) {
+	using namespace file_database;
 
 	if (status[static_cast<int>(database_id)] == true) {
 		runtime_logger::log_in_file("ERROR, tried to open already opened database.", true);
@@ -53,8 +53,8 @@ void u_input::load_user_input_database(f_db::ID database_id) {
 
 	status[static_cast<int>(database_id)] = true;
 }
-void u_input::unload_user_input_database(f_db::ID database_id) {
-	using namespace f_db;
+void u_input::unload_user_input_database(file_database::ID database_id) {
+	using namespace file_database;
 
 	if (status[static_cast<int>(database_id)] == false) {
 		runtime_logger::log_in_file("ERROR, tried to close unopened database.", true);
@@ -84,7 +84,7 @@ int u_input::get_user_input(int min, int max) {
 
 // not best variant, but enum char is better for input reading, description_ will be called only if player will ask for it
 const UserInputDescription* u_input::user_input_database_get_main_description(UserInputButton user_input_symbol) {
-	if (f_db::status[static_cast<int>(f_db::ID::kUserInputDescription)] == false) {
+	if (file_database::status[static_cast<int>(file_database::ID::kUserInputDescription)] == false) {
 		runtime_logger::log_in_file("ERROR, tried to get input description when database is not open.", true);
 	}
 
@@ -117,7 +117,7 @@ const UserInputDescription* u_input::user_input_database_get_main_description(Us
 }
 
 const std::vector<UserInputDescription>* u_input::user_input_database_get_all_description() {
-	if (f_db::status[static_cast<int>(f_db::ID::kUserInputDescription) == false]) {
+	if (file_database::status[static_cast<int>(file_database::ID::kUserInputDescription) == false]) {
 		runtime_logger::log_in_file("ERROR, tried to get input description when database is not open.", true);
 	}
 

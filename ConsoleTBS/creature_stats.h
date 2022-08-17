@@ -5,46 +5,49 @@
 
 namespace creature {
 
-	enum class Race {
-		kNoRace,
-		kHuman,
-		kOrc,
-		kRaceMax
-	};
+	namespace stat {
 
-	enum class StatId {
-		kHP,
-		kMovementSpeed,
-		kATK_ML,
-		kDEF_ML,
-		kArmor_PHS,
-		kDAMAGE_ML_PHS,
-		kStatMax
-	};
+		enum class Race {
+			kNoRace,
+			kHuman,
+			kOrc,
+			kRaceMax
+		};
 
-	struct Stat {
-		int current_;
-		int max_;
+		enum class StatId {
+			kHP,
+			kMovementSpeed,
+			kATK_ML,
+			kDEF_ML,
+			kArmor_PHS,
+			kDAMAGE_ML_PHS,
+			kStatMax
+		};
 
-		Stat() = default;
-		Stat(int stat_max);
-		~Stat() = default;
+		struct Stat {
+			int current_;
+			int max_;
 
-		friend std::ifstream& operator>> (std::ifstream& in, Stat& creature_stat);
-	};
+			Stat() = default;
+			Stat(int stat_max);
+			~Stat() = default;
 
-	struct StatMultiplier {
-		StatId stat_id_;
-		float multiplier_;
-	};
+			friend std::ifstream& operator>> (std::ifstream& in, Stat& creature_stat);
+		};
 
-	struct ComplexID {
-		//int faction_id;
-		short army_id_;
-		int creature_id_;
-	};
+		struct StatMultiplier {
+			StatId stat_id_;
+			float multiplier_;
+		};
 
-	const std::string_view* get_race_naming_from_database(Race race);
-	const std::string_view* get_stat_naming_from_database(StatId stat);
+		struct ComplexID {
+			//int faction_id;
+			short army_id_;
+			int creature_id_;
+		};
 
+		const std::string_view* get_race_naming_from_database(Race race);
+		const std::string_view* get_stat_naming_from_database(StatId stat);
+
+	}
 }

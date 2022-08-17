@@ -129,7 +129,7 @@ namespace tbs { // there are nested namespace in the end
         std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent);
         std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent);
         std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const u_input::UserInputDescription* user_input_description_ptr);
-        void add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, creature::StatId creature_stat_id, int stat_value_current, int stat_value_max);
+        void add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, creature::stat::StatId creature_stat_id, int stat_value_current, int stat_value_max);
         void ui_input_help_switch(const std::vector<u_input::UserInputButton>& allowed_user_input);
         void ui_input_help_turn_on(const std::vector<u_input::UserInputButton>& allowed_user_input);
         void ui_input_help_turn_off(size_t allowed_user_input_size);

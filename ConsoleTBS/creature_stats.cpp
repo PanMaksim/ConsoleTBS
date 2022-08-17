@@ -5,6 +5,7 @@
 #include <fstream>
 
 using namespace creature;
+using namespace creature::stat;
 
 const std::string_view race_naming_database[static_cast<int>(Race::kRaceMax)]{
 		"NoRace",
@@ -12,7 +13,7 @@ const std::string_view race_naming_database[static_cast<int>(Race::kRaceMax)]{
 		"Orc"
 };
 
-const std::string_view* creature::get_race_naming_from_database(Race race) {
+const std::string_view* creature::stat::get_race_naming_from_database(Race race) {
 	return &race_naming_database[static_cast<int>(race)];
 }
 
@@ -25,14 +26,14 @@ const std::string_view stat_naming_database[static_cast<int>(StatId::kStatMax)]{
 	"DMG ML PHS"
 };
 
-const std::string_view* creature::get_stat_naming_from_database(StatId stat) {
+const std::string_view* creature::stat::get_stat_naming_from_database(StatId stat) {
 	return &stat_naming_database[static_cast<int>(stat)];
 }
 
-creature::Stat::Stat(int stat_max) : current_{ stat_max }, max_{ stat_max } {}
+creature::stat::Stat::Stat(int stat_max) : current_{ stat_max }, max_{ stat_max } {}
 
 
-namespace creature {
+namespace creature::stat {
 	std::ifstream& operator>>(std::ifstream& in, Stat& creature_stat) {
 		in >> creature_stat.max_;
 		creature_stat.current_ = creature_stat.max_;
