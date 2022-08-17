@@ -16,17 +16,17 @@ using namespace u_input;
 const UserInputDescription u_input::description_to_show_input_help_button{ '`', "show input help"};
 std::unique_ptr<std::vector<UserInputDescription>> user_input_database_description;
 
-void u_input::load_user_input_database(f_db::FileDatabaseId database_id) {
+void u_input::load_user_input_database(f_db::ID database_id) {
 	using namespace f_db;
 
-	if (file_databases_status[static_cast<int>(database_id)] == true) {
+	if (status[static_cast<int>(database_id)] == true) {
 		runtime_logger::log_in_file("ERROR, tried to open already opened database.", true);
 		return;
 	}
 
 	std::ifstream txt_database;
 	switch (database_id) {
-	case FileDatabaseId::kUserInputDescription:
+	case ID::kUserInputDescription:
 		txt_database.open("TextDatabases/user_input_description_database.txt", std::ios::app);
 		if (!txt_database) {
 			runtime_logger::log_in_file("ERROR, database not found.", true);
@@ -51,25 +51,25 @@ void u_input::load_user_input_database(f_db::FileDatabaseId database_id) {
 		break;
 	}
 
-	file_databases_status[static_cast<int>(database_id)] = true;
+	status[static_cast<int>(database_id)] = true;
 }
-void u_input::unload_user_input_database(f_db::FileDatabaseId database_id) {
+void u_input::unload_user_input_database(f_db::ID database_id) {
 	using namespace f_db;
 
-	if (file_databases_status[static_cast<int>(database_id)] == false) {
+	if (status[static_cast<int>(database_id)] == false) {
 		runtime_logger::log_in_file("ERROR, tried to close unopened database.", true);
 		return;
 	}
 
 	switch (database_id) {
-	case FileDatabaseId::kUserInputDescription:
+	case ID::kUserInputDescription:
 		user_input_database_description.reset();
 		break;
 	default:
 		runtime_logger::log_in_file("Error, tried to close unknown database.", true);
 	}
 
-	file_databases_status[static_cast<int>(database_id)] = false;
+	status[static_cast<int>(database_id)] = false;
 }
 
 int u_input::get_user_input(int min, int max) {
@@ -84,7 +84,7 @@ int u_input::get_user_input(int min, int max) {
 
 // not best variant, but enum char is better for input reading, description_ will be called only if player will ask for it
 const UserInputDescription* u_input::user_input_database_get_main_description(UserInputButton user_input_symbol) {
-	if (f_db::file_databases_status[static_cast<int>(f_db::FileDatabaseId::kUserInputDescription)] == false) {
+	if (f_db::status[static_cast<int>(f_db::ID::kUserInputDescription)] == false) {
 		runtime_logger::log_in_file("ERROR, tried to get input description when database is not open.", true);
 	}
 
@@ -117,7 +117,7 @@ const UserInputDescription* u_input::user_input_database_get_main_description(Us
 }
 
 const std::vector<UserInputDescription>* u_input::user_input_database_get_all_description() {
-	if (f_db::file_databases_status[static_cast<int>(f_db::FileDatabaseId::kUserInputDescription) == false]) {
+	if (f_db::status[static_cast<int>(f_db::ID::kUserInputDescription) == false]) {
 		runtime_logger::log_in_file("ERROR, tried to get input description when database is not open.", true);
 	}
 

@@ -48,16 +48,19 @@ creature::ComplexID Army::generate_creature_complex_id() {
 }
 
 Army generate_random_army() {
+	
+	using namespace f_db;
+
 	Army army{};
 
-	creature::load_database_into_memory(FileDatabaseId::kCreatureNameDatabase);
-	creature::load_database_into_memory(FileDatabaseId::kCreatureTemplateDatabase);
+	creature::load_database_into_memory(ID::kCreatureNameDatabase);
+	creature::load_database_into_memory(ID::kCreatureTemplateDatabase);
 
 	std::generate_n(std::back_inserter(*army.army_), army_size_max_, [&army]() { return std::make_shared<Creature>(creature::get_ptr_to_creature_template_from_database(static_cast<creature::CreatureTemplateID>((
 		random::get_random_number(static_cast<int>(creature::CreatureTemplateID::kHumanSpearman), static_cast<int>(creature::CreatureTemplateID::kCreatureTemplateMax) - 1)))), army.generate_creature_complex_id());});
 
-	creature::unload_database_from_memory(FileDatabaseId::kCreatureNameDatabase);
-	creature::unload_database_from_memory(FileDatabaseId::kCreatureTemplateDatabase);
+	creature::unload_database_from_memory(ID::kCreatureNameDatabase);
+	creature::unload_database_from_memory(ID::kCreatureTemplateDatabase);
 
 	return army;
 }

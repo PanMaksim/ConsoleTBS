@@ -22,8 +22,9 @@ std::unique_ptr<std::vector<std::string>> creature_last_name_database;
 
 std::unique_ptr<std::vector<Creature>> creature_template_database;
 
-void creature::load_database_into_memory(FileDatabaseId database_id) { // open file and copy info into needed array
-	if (file_databases_status[static_cast<int>(database_id)] == true) {
+void creature::load_database_into_memory(file_database::ID database_id) { // open file and copy info into needed array
+	using namespace file_database;
+	if (status[static_cast<int>(database_id)] == true) {
 #ifdef debug_log
 		runtime_logger::log_in_file("ERROR, tried to open already opened database.", true);
 #endif
@@ -32,7 +33,7 @@ void creature::load_database_into_memory(FileDatabaseId database_id) { // open f
 
 	std::ifstream txt_database;
 	switch (database_id) {
-	case FileDatabaseId::kCreatureNameDatabase:
+	case ID::kCreatureNameDatabase:
 		txt_database.open("TextDatabases/creature_first_names_database.txt", std::ios::app);
 		if (!txt_database) {
 #ifdef debug_log
@@ -53,7 +54,7 @@ void creature::load_database_into_memory(FileDatabaseId database_id) { // open f
 		creature_last_name_database = std::make_unique<std::vector<std::string>>(
 			std::istream_iterator<std::string>(txt_database), std::istream_iterator<std::string>());
 		break;
-	case FileDatabaseId::kCreatureTemplateDatabase:
+	case ID::kCreatureTemplateDatabase:
 		txt_database.open("TextDatabases/creature_templates_database.txt", std::ios::app);
 		if (!txt_database) {
 			std::cerr << "ERROR, database not found.\n";
@@ -90,11 +91,13 @@ void creature::load_database_into_memory(FileDatabaseId database_id) { // open f
 		break;
 	}
 
-	file_databases_status[static_cast<int>(database_id)] = true;
+	status[static_cast<int>(database_id)] = true;
 }
 
-void creature::unload_database_from_memory(FileDatabaseId database_id) { // release memory
-	if (file_databases_status[static_cast<int>(database_id)] == false) {
+void creature::unload_database_from_memory(file_database::ID database_id) { // release memory
+	using namespace file_database;
+
+	if (status[static_cast<int>(database_id)] == false) {
 #ifdef debug_log
 		runtime_logger::log_in_file("ERROR, tried to close unopened database.", true);
 #endif
@@ -102,18 +105,18 @@ void creature::unload_database_from_memory(FileDatabaseId database_id) { // rele
 	}
 
 	switch (database_id) {
-	case FileDatabaseId::kCreatureNameDatabase:
+	case ID::kCreatureNameDatabase:
 		creature_first_name_database.reset();
 		creature_last_name_database.reset();
 		break;
-	case FileDatabaseId::kCreatureTemplateDatabase:
+	case ID::kCreatureTemplateDatabase:
 		creature_template_database.reset();
 		break;
 	default:
 		runtime_logger::log_in_file("Error, tried to close unknown database.", true);
 	}
 
-	file_databases_status[static_cast<int>(database_id)] = false;
+	status[static_cast<int>(database_id)] = false;
 }
 
 

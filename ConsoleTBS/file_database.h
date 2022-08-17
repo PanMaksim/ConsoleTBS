@@ -2,15 +2,15 @@
 
 #include <array>
 
-namespace f_db {
+namespace file_database {
 
-	enum class FileDatabaseId {
+	enum class ID {
 		kCreatureTemplateDatabase,
 		kCreatureNameDatabase,
 		kUserInputDescription,
-		FileDatabaseIdMax
+		ID_Max
 	};
 
-	extern std::array<bool, static_cast<int>(FileDatabaseId::FileDatabaseIdMax)> file_databases_status;
+	extern std::array<bool, static_cast<int>(ID::ID_Max)> status;
 
 }
