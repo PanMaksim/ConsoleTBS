@@ -8,10 +8,10 @@
 
 namespace battle_tile {
 
-	enum class BattleTileParameters {
+	enum class TileParameters {
 		kLandscape,
 		kCreature,
-		kBattleTileParametersMax
+		kTileParametersMax
 	};
 
 	//enum class BattleTileModifier {
@@ -69,7 +69,7 @@ namespace battle_tile {
 		//BattleTileModifier modifier_;
 	};
 
-	const std::string_view* battle_tile_database_get_parameter_name(BattleTileParameters battle_tile_parameter);
+	const std::string_view* get_tile_parameter_name_from_database(TileParameters battle_tile_parameter);
 	//void creature_update_battle_tile_effects(Creature* creature, const BattleTile* old_battle_tile, const BattleTile* new_battle_tile);
 
 }

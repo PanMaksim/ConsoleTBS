@@ -647,17 +647,17 @@ void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordin
 void TurnBasedGame::battle_map_create_basic_ui() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
-    for (int battle_tile_parameter_iter{}; battle_tile_parameter_iter != static_cast<int>(battle_tile::BattleTileParameters::kBattleTileParametersMax);
+    for (int battle_tile_parameter_iter{}; battle_tile_parameter_iter != static_cast<int>(battle_tile::TileParameters::kTileParametersMax);
         ++battle_tile_parameter_iter, ++coordinate.y) {
 
         *(add_string_to_ui(coordinate,
-            battle_tile::battle_tile_database_get_parameter_name(static_cast<battle_tile::BattleTileParameters>(battle_tile_parameter_iter)))) = ':';
+            battle_tile::get_tile_parameter_name_from_database(static_cast<battle_tile::TileParameters>(battle_tile_parameter_iter)))) = ':';
     }
 }
 
 void TurnBasedGame::battle_map_create_basic_ui_with_creature() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width,
-            ui_window_height_start_ + ui_visual_indent_height + static_cast<int>(battle_tile::BattleTileParameters::kBattleTileParametersMax) };
+            ui_window_height_start_ + ui_visual_indent_height + static_cast<int>(battle_tile::TileParameters::kTileParametersMax) };
 
     *(add_string_to_ui(coordinate, "Name")) = ':';
     ++coordinate.y;
@@ -684,14 +684,14 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
     // landscape
     add_string_to_ui(coordinate,
         &get_full_terrain_info_from_database(target->terrain_type_)->type_name_,
-        static_cast<int>(battle_tile::battle_tile_database_get_parameter_name(battle_tile::BattleTileParameters::kLandscape)->size()) + 2);
+        static_cast<int>(battle_tile::get_tile_parameter_name_from_database(battle_tile::TileParameters::kLandscape)->size()) + 2);
     ++coordinate.y;
 
     // TO DO creature or landscape "image"?
     // creature ownership
     if (target->creature_ == nullptr) {
         add_string_to_ui(coordinate, "None",
-            static_cast<int>(battle_tile_database_get_parameter_name(battle_tile::BattleTileParameters::kCreature)->size()) + 2);
+            static_cast<int>(get_tile_parameter_name_from_database(battle_tile::TileParameters::kCreature)->size()) + 2);
         ++coordinate.y;
 
         if (ui_status[UI_Status::kCreatureStats]) {
@@ -709,7 +709,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
 
     add_string_to_ui(coordinate,
         (target->creature_->get_army_id() == 0) ? "Player" : "Enemy",
-        static_cast<int>(battle_tile::battle_tile_database_get_parameter_name(battle_tile::BattleTileParameters::kCreature)->size()) + 2);
+        static_cast<int>(battle_tile::get_tile_parameter_name_from_database(battle_tile::TileParameters::kCreature)->size()) + 2);
     ++coordinate.y;
 
     if (!ui_status[UI_Status::kCreatureStats]) {
