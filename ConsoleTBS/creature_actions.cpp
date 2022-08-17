@@ -24,7 +24,7 @@ using namespace creature::actions;
 void creature::actions::log_action_result(const ActionResult* action_result, const Creature* action_dealer, const Creature* action_target) {
 	using namespace roll;
 
-	tbs::global::add_string_to_ui_log("Ability Result: " + *creature_database_get_roll_result_naming(action_result->ability_result));
+	tbs::global::add_string_to_ui_log("Ability Result: " + *get_roll_result_naming_from_database(action_result->ability_result));
 
 	// should be changed in future
 	if (action_result->ability_result >= RollResult::kSmallSuccess) {
@@ -47,10 +47,10 @@ ActionResult creature::actions::ability_default_attack(Creature* attacker, Creat
 		return ActionResult{ RollResult::kNoResult, 0, 0 };
 	}
 	else if (roll_result >= RollResult::kSmallSuccess) {
-		damage_dealed = defender->calculate_received_damage(attacker, creature_database_get_roll_result_multiplier(roll_result));
+		damage_dealed = defender->calculate_received_damage(attacker, get_roll_result_multiplier_from_database(roll_result));
 	}
 	else if (roll_result <= RollResult::kSmallFail){
-		damage_received = attacker->calculate_received_damage(defender, creature_database_get_roll_result_multiplier(
+		damage_received = attacker->calculate_received_damage(defender, get_roll_result_multiplier_from_database(
 				static_cast<RollResult>(static_cast<int>(RollResult::kCriticalSuccess) - static_cast<int>(roll_result))));
 	}
 

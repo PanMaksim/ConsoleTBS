@@ -8,7 +8,7 @@
 
 using namespace roll;
 
-const std::string creature_database_roll_result_naming[static_cast<int>(RollResult::kRollResultMax)]{
+const std::string roll_result_naming_database[static_cast<int>(RollResult::kRollResultMax)]{
 	"Critical Fail",
 	"Fail",
 	"Small Fail",
@@ -18,11 +18,11 @@ const std::string creature_database_roll_result_naming[static_cast<int>(RollResu
 	"Critical Success"
 };
 
-const std::string* roll::creature_database_get_roll_result_naming(RollResult roll_result) {
-	return &creature_database_roll_result_naming[static_cast<int>(roll_result)];
+const std::string* roll::get_roll_result_naming_from_database(RollResult roll_result) {
+	return &roll_result_naming_database[static_cast<int>(roll_result)];
 }
 
-const double creature_database_roll_result_multipliers[static_cast<int>(RollResult::kRollResultMax)]{
+const double roll_result_multipliers_database[static_cast<int>(RollResult::kRollResultMax)]{
 	0.5,
 	0.75,
 	1,
@@ -32,8 +32,8 @@ const double creature_database_roll_result_multipliers[static_cast<int>(RollResu
 	1.5
 };
 
-const double roll::creature_database_get_roll_result_multiplier(RollResult roll_result) {
-	return creature_database_roll_result_multipliers[static_cast<int>(roll_result)];
+const double roll::get_roll_result_multiplier_from_database(RollResult roll_result) {
+	return roll_result_multipliers_database[static_cast<int>(roll_result)];
 }
 
 RollResult roll::compare_rolls(const creature::Creature* action_dealer, creature::StatId action_dealer_stat_to_compare,
@@ -75,6 +75,6 @@ RollResult roll::compare_rolls(const creature::Creature* action_dealer, creature
 		roll_result = RollResult::kNoResult;
 	}
 
-	//game_ptr->add_string_to_ui_log( "Roll result: " + *creature_database_get_roll_result_naming(roll_result));
+	//game_ptr->add_string_to_ui_log( "Roll result: " + *get_roll_result_naming_from_database(roll_result));
 	return roll_result;
 }

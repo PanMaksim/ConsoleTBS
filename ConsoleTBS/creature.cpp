@@ -179,7 +179,7 @@ void creature::Creature::receive_new_creature_id(int new_creature_id) { complex_
 
 int creature::Creature::roll_stat_with_bonus(StatId stat_id_) const {
 	return static_cast<int>(
-		this->get_stat_current_value(stat_id_) * creature_database_get_roll_result_multiplier(
+		this->get_stat_current_value(stat_id_) * get_roll_result_multiplier_from_database(
 			static_cast<roll::RollResult>(random::get_random_number(static_cast<int>(roll::RollResult::kCriticalFail), static_cast<int>(roll::RollResult::kRollResultMax)))));
 }
 

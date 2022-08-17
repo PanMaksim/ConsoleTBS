@@ -6,17 +6,17 @@
 
 using namespace creature;
 
-const std::string_view database_race_naming[static_cast<int>(Race::kRaceMax)]{
+const std::string_view race_naming_database[static_cast<int>(Race::kRaceMax)]{
 		"NoRace",
 		"Human",
 		"Orc"
 };
 
 const std::string_view* creature::get_race_naming_from_database(Race race) {
-	return &database_race_naming[static_cast<int>(race)];
+	return &race_naming_database[static_cast<int>(race)];
 }
 
-const std::string_view database_stat_naming[static_cast<int>(StatId::kStatMax)]{
+const std::string_view stat_naming_database[static_cast<int>(StatId::kStatMax)]{
 	"HP",
 	"SPD",
 	"ATK ML",
@@ -26,7 +26,7 @@ const std::string_view database_stat_naming[static_cast<int>(StatId::kStatMax)]{
 };
 
 const std::string_view* creature::get_stat_naming_from_database(StatId stat) {
-	return &database_stat_naming[static_cast<int>(stat)];
+	return &stat_naming_database[static_cast<int>(stat)];
 }
 
 creature::Stat::Stat(int stat_max) : current_{ stat_max }, max_{ stat_max } {}
