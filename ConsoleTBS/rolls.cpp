@@ -42,8 +42,8 @@ RollResult compare_rolls(const creature::Creature* action_dealer, creature::Stat
 	int creature_roll{ action_dealer->roll_stat_with_bonus(action_dealer_stat_to_compare) },
 		target_roll{ target->roll_stat_with_bonus(target_stat_to_compare) };
 
-	add_string_to_ui_log(*(action_dealer->get_name()) + " rolled: " + std::to_string(creature_roll));
-	add_string_to_ui_log(*(target->get_name()) + " rolled: " + std::to_string(target_roll));
+	tbs_global::add_string_to_ui_log(*(action_dealer->get_name()) + " rolled: " + std::to_string(creature_roll));
+	tbs_global::add_string_to_ui_log(*(target->get_name()) + " rolled: " + std::to_string(target_roll));
 
 	if (creature_roll > target_roll) { // action success
 		int roll_difference{ creature_roll - target_roll };

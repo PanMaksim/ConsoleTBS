@@ -16,7 +16,9 @@
 #include "terrain.h"
 #include "battle_tile.h"
 
-void TurnBasedGame::create_new_main_game_window() {
+using namespace tbs;
+
+void tbs::TurnBasedGame::create_new_main_game_window() {
     // initializing strings (at first launch) and cleaning in other situations
     std::for_each(std::execution::par_unseq, frame_.begin(), frame_.end(), 
         [=](std::string& str) {
@@ -44,7 +46,7 @@ void TurnBasedGame::create_new_main_game_window() {
     std::fill(std::execution::par_unseq, frame_coordinate_y_ptr->begin() + 2, frame_coordinate_y_ptr->end() - 2, kGameWindowHorizontalSymbol_);
 }
 
-void TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
+void tbs::TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
     ui_status[UI_Status::kCreatureStats] = false;
     ui_status[UI_Status::kUI_InputHelp] = false;
 
@@ -80,7 +82,7 @@ void TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
     ui_status[UI_Status::kUI_WindowLog] = true;
 }
 
-void TurnBasedGame::create_new_pv_window() {
+void tbs::TurnBasedGame::create_new_pv_window() {
     std::for_each(std::execution::par_unseq, frame_.data() + pv_window_height_start_, frame_.data() + pv_window_height_end_,
         [=](std::string& str) {
             std::fill(std::execution::par_unseq, str.data() + pv_window_width_start_, str.data() + pv_window_width_end_, ' ');
@@ -89,11 +91,11 @@ void TurnBasedGame::create_new_pv_window() {
     ui_status[UI_Status::kPlayerViewWindow] = true;
 }
 
-void TurnBasedGame::set_ui_status_flags_to_default(){
+void tbs::TurnBasedGame::set_ui_status_flags_to_default(){
     std::fill(std::execution::par_unseq, ui_status.begin(), ui_status.end(), false);
 }
 
-void TurnBasedGame::calculate_window_borders() {
+void tbs::TurnBasedGame::calculate_window_borders() {
     pv_window_height_start_ = 1; // starting from 1 and ending at window_height - 3 cause of main game borders from both sides and numeration from 0
     pv_window_height_end_ = kWindowHeight_ - 1;
 
@@ -116,13 +118,13 @@ void TurnBasedGame::calculate_window_borders() {
     ui_log_window_height_start_ = ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
 }
 
-void TurnBasedGame::print_frame() {
+void tbs::TurnBasedGame::print_frame() {
     std::stringstream frame_stream;
     std::for_each(std::execution::seq, frame_.begin(), frame_.end(), [&](const std::string& str) { frame_stream << str; });
     std::cout << frame_stream.str();
 }
 
-void TurnBasedGame::clear_ui_log() {
+void tbs::TurnBasedGame::clear_ui_log() {
     std::for_each(std::execution::par_unseq, frame_.data() + ui_log_window_height_start_ + 1, frame_.data() + ui_log_window_height_start_ + ui_log_window_height_current_ + 1,
         [=](std::string& str) {
             std::string::pointer frame_coordinate_x_ptr{ str.data() + ui_window_width_start_ + ui_visual_indent_width };
@@ -134,7 +136,7 @@ void TurnBasedGame::clear_ui_log() {
     ui_log_window_height_current_ = 1;
 }
 
-void TurnBasedGame::battle_map_clear() {
+void tbs::TurnBasedGame::battle_map_clear() {
     if (battle_map_info_ != nullptr) {
         if (ui_status[UI_Status::kBattleMapTileNumeration]) { battle_map_tile_numeration_turn_off(); }
         player_coordinate_selection_ = { 0, 0 }; 
@@ -148,7 +150,7 @@ void TurnBasedGame::battle_map_clear() {
     }
 }
 
-void TurnBasedGame::generate_new_battle_map() {
+void tbs::TurnBasedGame::generate_new_battle_map() {
     using namespace terrain;
     battle_map_clear();
     battle_map_info_ = std::make_unique<std::vector<std::vector<battle_tile::BattleTile>>>(kBattleMapSizeHeight_, std::vector<battle_tile::BattleTile>(kBattleMapSizeWidth_));
@@ -163,7 +165,7 @@ void TurnBasedGame::generate_new_battle_map() {
         });
 }
 
-void TurnBasedGame::calculate_battle_map_visual() {
+void tbs::TurnBasedGame::calculate_battle_map_visual() {
     // + 1 after battle_map_indent_height for visual at the bottom
     if ((kBattleMapSizeHeight_ * kTileVisualHeight_) + 1 + pv_visual_indent_height_ + 1 > pv_window_height_end_ - pv_window_height_start_) {
 #ifdef debug_log
@@ -194,7 +196,7 @@ void TurnBasedGame::calculate_battle_map_visual() {
     }
 }
 
-void TurnBasedGame::show_battle_map() {
+void tbs::TurnBasedGame::show_battle_map() {
 
     std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{
         frame_.data() + pv_window_height_start_ + pv_visual_indent_height_ };
@@ -242,7 +244,7 @@ void TurnBasedGame::show_battle_map() {
     ui_status[UI_Status::kBattleMap] = true;
 }
 
-void TurnBasedGame::battle_map_show_landscape() {
+void tbs::TurnBasedGame::battle_map_show_landscape() {
     std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr{
         frame_.begin() + pv_window_height_start_ - 1 + pv_visual_indent_height_ };
 
@@ -260,8 +262,8 @@ void TurnBasedGame::battle_map_show_landscape() {
         });
 }
 
-bool TurnBasedGame::battle_map_tile_numeration_turn_on() {
-    add_string_to_ui_log("Turn on tile numeration");
+bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_on() {
+    tbs_global::add_string_to_ui_log("Turn on tile numeration");
     FrameCoordinate coordinate{ pv_window_width_start_ + pv_visual_indent_width_ + kTileVisualWidth_ / 2, pv_window_height_start_ + pv_visual_indent_height_ - 1 };
 
     // create numeration at top
@@ -335,8 +337,8 @@ bool TurnBasedGame::battle_map_tile_numeration_turn_on() {
     return true;
 }
 
-bool TurnBasedGame::battle_map_tile_numeration_turn_off() {
-    add_string_to_ui_log("Turn off tile numeration");
+bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_off() {
+    tbs_global::add_string_to_ui_log("Turn off tile numeration");
     FrameCoordinate coordinate{ pv_window_width_start_ + pv_visual_indent_width_ + kTileVisualWidth_ / 2, pv_window_height_start_ + pv_visual_indent_height_ - 1 };
 
     // delete numeration at top
@@ -380,11 +382,11 @@ bool TurnBasedGame::battle_map_tile_numeration_turn_off() {
     return true;
 }
 
-bool TurnBasedGame::battle_map_tile_numeration_switch() {
+bool tbs::TurnBasedGame::battle_map_tile_numeration_switch() {
     return (!ui_status[UI_Status::kBattleMapTileNumeration]) ? battle_map_tile_numeration_turn_on() : battle_map_tile_numeration_turn_off();
 }
 
-FrameCoordinate TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
+FrameCoordinate tbs::TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
     int first_tile_coordinate_x{ pv_window_width_start_ + pv_visual_indent_width_ + (kTileVisualWidth_ / 2) },
         first_tile_coordinate_y{ pv_window_height_start_ + pv_visual_indent_height_ + 2 };
 
@@ -398,7 +400,7 @@ FrameCoordinate TurnBasedGame::battle_map_find_tile_center_frame_coordinate(Batt
                 first_tile_coordinate_y + 1 + kTileVisualHeight_ * coordinate.y};
 }
 
-void TurnBasedGame::battle_map_update_player_selection() {
+void tbs::TurnBasedGame::battle_map_update_player_selection() {
     FrameCoordinate tile_center_coordinates{ battle_map_find_tile_center_frame_coordinate(player_coordinate_selection_) };
     
     int selection_visual_indent_height{ kPlayerSelectionVisualHeight_ / 2 },
@@ -443,7 +445,7 @@ void TurnBasedGame::battle_map_update_player_selection() {
         ((*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ != nullptr) ? true : false;
 }
 
-void TurnBasedGame::battle_map_clear_old_player_selection() {
+void tbs::TurnBasedGame::battle_map_clear_old_player_selection() {
     FrameCoordinate tile_center_coordinates;
     
     if (player_coordinate_selection_old_.x != -1 && player_coordinate_selection_old_.y != -1) { // possibly unneeded check for 2 values, only 1 is enough
@@ -492,12 +494,12 @@ void TurnBasedGame::battle_map_clear_old_player_selection() {
     }
 }
 
-void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_iter, std::string::iterator frame_coordinate_x_iter_end) { // can be overhead but raises readability
+void tbs::TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_iter, std::string::iterator frame_coordinate_x_iter_end) { // can be overhead but raises readability
     std::fill(std::execution::par_unseq, frame_coordinate_x_iter, frame_coordinate_x_iter_end, ' ');
 }
 
 // needs better system for transporting words from UI's right end
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent = 0) {
+std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent = 0) {
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
     if (str_rvalue.size() > ui_window_string_width_) {
@@ -514,7 +516,7 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent = 0) {
+std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent = 0) {
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
     if (str_ptr->size() > ui_window_string_width_) {
@@ -531,7 +533,7 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent = 0) {
+std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent = 0) {
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
     if (str_view_ptr->size() > ui_window_string_width_) {
@@ -548,7 +550,7 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr) {
+std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr) {
     std::string::iterator frame_coordinate_x_ptr{ frame_[frame_coordinate.y].begin() + frame_coordinate.x };
     const std::string* str{ &user_input_description_ptr->description_ };
 
@@ -571,7 +573,7 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
     return frame_coordinate_x_ptr;
 }
 
-void TurnBasedGame::ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input) {
+void tbs::TurnBasedGame::ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input) {
     if (ui_status[UI_Status::kCreatureStats]) { create_new_ui_window(); } // clear from ui stats, can be changed to more optimized variant
 
     load_user_input_database(FileDatabaseId::kUserInputDescription);
@@ -585,18 +587,18 @@ void TurnBasedGame::ui_input_help_turn_on(const std::vector<UserInputButton>& al
 
     unload_user_input_database(FileDatabaseId::kUserInputDescription);
 
-    add_string_to_ui_log("Turn in input help");
+    tbs_global::add_string_to_ui_log("Turn in input help");
     ui_status[UI_Status::kUI_InputHelp] = true;
 }
 
-void TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) {
+void tbs::TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) {
     std::array<std::string, kWindowHeight_>::iterator ui_begin_iter{ frame_.begin() + ui_window_height_start_ + 2 };
     std::for_each(std::execution::par_unseq, ui_begin_iter, ui_begin_iter + allowed_user_input_size, // +2 because of visual indent
         [=](std::string& str) {
             std::fill(std::execution::par_unseq, str.begin() + ui_window_width_start_ + 3, str.begin() + ui_window_width_end_, ' '); // +1 because of VerticalSymbol and +2 because of visual indent
         });
 
-    add_string_to_ui_log("Turn off input help");
+    tbs_global::add_string_to_ui_log("Turn off input help");
     ui_status[UI_Status::kUI_InputHelp] = false;
 
     if (ui_status[UI_Status::kBattleMap]) {
@@ -608,11 +610,11 @@ void TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) {
     }
 }
 
-void TurnBasedGame::ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input) {
+void tbs::TurnBasedGame::ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input) {
     (!ui_status[UI_Status::kUI_InputHelp]) ? ui_input_help_turn_on(allowed_user_input) : ui_input_help_turn_off(allowed_user_input.size());
 }
 
-void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, 
+void tbs::TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate,
     creature::StatId creature_stat_id, int stat_value_current, int stat_value_max = 0) {
 
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x
@@ -644,7 +646,7 @@ void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordin
     }
 }
 
-void TurnBasedGame::battle_map_create_basic_ui() {
+void tbs::TurnBasedGame::battle_map_create_basic_ui() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
     for (int battle_tile_parameter_iter{}; battle_tile_parameter_iter != static_cast<int>(battle_tile::TileParameters::kTileParametersMax);
@@ -655,7 +657,7 @@ void TurnBasedGame::battle_map_create_basic_ui() {
     }
 }
 
-void TurnBasedGame::battle_map_create_basic_ui_with_creature() {
+void tbs::TurnBasedGame::battle_map_create_basic_ui_with_creature() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width,
             ui_window_height_start_ + ui_visual_indent_height + static_cast<int>(battle_tile::TileParameters::kTileParametersMax) };
 
@@ -672,7 +674,7 @@ void TurnBasedGame::battle_map_create_basic_ui_with_creature() {
     }
 }
 
-void TurnBasedGame::update_ui() { // maybe should save in memory previus selection coordinates for possible action skips
+void tbs::TurnBasedGame::update_ui() { // maybe should save in memory previus selection coordinates for possible action skips
     if (ui_status[UI_Status::kUI_InputHelp] == true) {
         create_new_ui_window(); // not ui_help_turn_off because it asks for allowed_input_size
         battle_map_create_basic_ui();
@@ -741,7 +743,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
     }
 }
 
-void TurnBasedGame::battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_battle_map_coordinate) {
+void tbs::TurnBasedGame::battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_battle_map_coordinate) {
     FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(creature_battle_map_coordinate) };
 
     std::string::pointer frame_coordinate_x_ptr{
