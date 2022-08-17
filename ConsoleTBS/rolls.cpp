@@ -6,6 +6,8 @@
 #include "creature.h"
 #include "creature_stats.h"
 
+using namespace roll;
+
 const std::string creature_database_roll_result_naming[static_cast<int>(RollResult::kRollResultMax)]{
 	"Critical Fail",
 	"Fail",
@@ -16,7 +18,7 @@ const std::string creature_database_roll_result_naming[static_cast<int>(RollResu
 	"Critical Success"
 };
 
-const std::string* creature_database_get_roll_result_naming(RollResult roll_result) {
+const std::string* roll::creature_database_get_roll_result_naming(RollResult roll_result) {
 	return &creature_database_roll_result_naming[static_cast<int>(roll_result)];
 }
 
@@ -30,11 +32,11 @@ const double creature_database_roll_result_multipliers[static_cast<int>(RollResu
 	1.5
 };
 
-const double creature_database_get_roll_result_multiplier(RollResult roll_result) {
+const double roll::creature_database_get_roll_result_multiplier(RollResult roll_result) {
 	return creature_database_roll_result_multipliers[static_cast<int>(roll_result)];
 }
 
-RollResult compare_rolls(const creature::Creature* action_dealer, creature::StatId action_dealer_stat_to_compare,
+RollResult roll::compare_rolls(const creature::Creature* action_dealer, creature::StatId action_dealer_stat_to_compare,
 	const creature::Creature* target, creature::StatId target_stat_to_compare) {
 
 	RollResult roll_result;

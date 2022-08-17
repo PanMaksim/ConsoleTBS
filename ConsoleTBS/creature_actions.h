@@ -21,7 +21,7 @@ namespace creature {
 	//};
 
 	struct ActionResult {
-		RollResult ability_result;
+		roll::RollResult ability_result;
 		int damage_dealed;
 		int damage_received;
 	};
