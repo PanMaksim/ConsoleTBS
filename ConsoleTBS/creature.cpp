@@ -180,15 +180,15 @@ void creature::Creature::receive_new_creature_id(int new_creature_id) { complex_
 int creature::Creature::roll_stat_with_bonus(StatId stat_id_) const {
 	return static_cast<int>(
 		this->get_stat_current_value(stat_id_) * creature_database_get_roll_result_multiplier(
-			static_cast<RollResult>(get_random_number(static_cast<int>(RollResult::kCriticalFail), static_cast<int>(RollResult::kRollResultMax)))));
+			static_cast<RollResult>(random::get_random_number(static_cast<int>(RollResult::kCriticalFail), static_cast<int>(RollResult::kRollResultMax)))));
 }
 
 const std::string creature::Creature::generate_name() {
 	if (creature_first_name_database == nullptr || creature_last_name_database == nullptr) {
 		log_in_file("ERROR, tried to generate name when database is not open.", true);
 	}
-	return (*creature_first_name_database)[get_random_number(0, creature_first_name_database->size() - 1)] + ' ' +
-		(*creature_last_name_database)[get_random_number(0, creature_last_name_database->size() - 1)]; // maube should not calculate size every time
+	return (*creature_first_name_database)[random::get_random_number(0, creature_first_name_database->size() - 1)] + ' ' +
+		(*creature_last_name_database)[random::get_random_number(0, creature_last_name_database->size() - 1)]; // maube should not calculate size every time
 }
 
 // should add multipliers for different ATK chances (Critical, Success, Small hit)
