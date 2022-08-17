@@ -25,7 +25,7 @@ std::unique_ptr<std::vector<Creature>> creature_template_database;
 void creature::load_database_into_memory(FileDatabaseId database_id) { // open file and copy info into needed array
 	if (file_databases_status[static_cast<int>(database_id)] == true) {
 #ifdef debug_log
-		log_in_file("ERROR, tried to open already opened database.", true);
+		runtime_logger::log_in_file("ERROR, tried to open already opened database.", true);
 #endif
 		return;
 	}
@@ -36,7 +36,7 @@ void creature::load_database_into_memory(FileDatabaseId database_id) { // open f
 		txt_database.open("TextDatabases/creature_first_names_database.txt", std::ios::app);
 		if (!txt_database) {
 #ifdef debug_log
-			log_in_file("ERROR, database not found.", true);
+			runtime_logger::log_in_file("ERROR, database not found.", true);
 #endif
 		}
 
@@ -47,7 +47,7 @@ void creature::load_database_into_memory(FileDatabaseId database_id) { // open f
 		txt_database.open("TextDatabases/creature_last_names_database.txt", std::ios::app);
 		if (!txt_database) {
 #ifdef debug_log
-			log_in_file("ERROR, database not found.", true);
+			runtime_logger::log_in_file("ERROR, database not found.", true);
 #endif
 		}
 		creature_last_name_database = std::make_unique<std::vector<std::string>>(
@@ -85,7 +85,7 @@ void creature::load_database_into_memory(FileDatabaseId database_id) { // open f
 		break;
 	default:
 #ifdef debug_log
-		log_in_file("Error, tried to open unknown database.", true);
+		runtime_logger::log_in_file("Error, tried to open unknown database.", true);
 #endif
 		break;
 	}
@@ -96,7 +96,7 @@ void creature::load_database_into_memory(FileDatabaseId database_id) { // open f
 void creature::unload_database_from_memory(FileDatabaseId database_id) { // release memory
 	if (file_databases_status[static_cast<int>(database_id)] == false) {
 #ifdef debug_log
-		log_in_file("ERROR, tried to close unopened database.", true);
+		runtime_logger::log_in_file("ERROR, tried to close unopened database.", true);
 #endif
 		return;
 	}
@@ -110,7 +110,7 @@ void creature::unload_database_from_memory(FileDatabaseId database_id) { // rele
 		creature_template_database.reset();
 		break;
 	default:
-		log_in_file("Error, tried to close unknown database.", true);
+		runtime_logger::log_in_file("Error, tried to close unknown database.", true);
 	}
 
 	file_databases_status[static_cast<int>(database_id)] = false;
@@ -185,7 +185,7 @@ int creature::Creature::roll_stat_with_bonus(StatId stat_id_) const {
 
 const std::string creature::Creature::generate_name() {
 	if (creature_first_name_database == nullptr || creature_last_name_database == nullptr) {
-		log_in_file("ERROR, tried to generate name when database is not open.", true);
+		runtime_logger::log_in_file("ERROR, tried to generate name when database is not open.", true);
 	}
 	return (*creature_first_name_database)[random::get_random_number(0, creature_first_name_database->size() - 1)] + ' ' +
 		(*creature_last_name_database)[random::get_random_number(0, creature_last_name_database->size() - 1)]; // maube should not calculate size every time

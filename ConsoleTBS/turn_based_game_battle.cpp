@@ -42,7 +42,7 @@ void tbs::TurnBasedGame::battle_process() {
 #ifdef debug_log
                 std::stringstream sstr;
                 sstr << "Execution time: " << duration.count() << "ms.";
-                log_in_file(sstr);
+                runtime_logger::log_in_file(sstr);
 #endif
             }
         }
@@ -307,7 +307,7 @@ std::shared_ptr<Army> tbs::TurnBasedGame::get_army_ptr_via_id(int army_id_) {
         return ai_army_;
     }
 #ifdef debug_log
-    log_in_file("Not found an army by creature", true);
+    runtime_logger::log_in_file("Not found an army by creature", true);
 #endif
     return nullptr;
 }
@@ -333,7 +333,7 @@ bool tbs::TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_
 
     if (new_coordinate_ptr->creature_ != nullptr) { // sometimes can be unneeded because of check before function call
 #ifdef debug_log
-        log_in_file("Error, tried to move on already occupied coordinate.", true);
+        runtime_logger::log_in_file("Error, tried to move on already occupied coordinate.", true);
 #endif
         return false;
     }

@@ -108,7 +108,7 @@ void tbs::TurnBasedGame::calculate_window_borders() {
     ui_window_width_start_ = kWindowWidth_ - 3 - interface_main_actual_window_width;
     ui_window_width_end_ = kWindowWidth_ - 3;
     ui_window_string_width_ = ui_window_width_end_ - ui_window_width_start_;
-    log_in_file("UI size = " + std::to_string(ui_window_string_width_));
+    runtime_logger::log_in_file("UI size = " + std::to_string(ui_window_string_width_));
 
     pv_window_width_start_ = 2;
     pv_window_width_end_ = ui_window_width_start_ - 1;
@@ -169,13 +169,13 @@ void tbs::TurnBasedGame::calculate_battle_map_visual() {
     // + 1 after battle_map_indent_height for visual at the bottom
     if ((kBattleMapSizeHeight_ * kTileVisualHeight_) + 1 + pv_visual_indent_height_ + 1 > pv_window_height_end_ - pv_window_height_start_) {
 #ifdef debug_log
-        log_in_file("ERROR: battle_map_height is too large to be shown all at once.", true);
+        runtime_logger::log_in_file("ERROR: battle_map_height is too large to be shown all at once.", true);
 #endif
     }
     // + 2 after battle_map_indent_width for visual
     if ((kBattleMapSizeWidth_ * kTileVisualWidth_) + 1 + pv_visual_indent_width_ + 2 > pv_window_width_end_ - pv_window_width_start_) {
 #ifdef debug_log
-        log_in_file("ERROR: battle_map_width is too large to be shown all at once.", true);
+        runtime_logger::log_in_file("ERROR: battle_map_width is too large to be shown all at once.", true);
 #endif
     }
     // it is just cout no actual STOP!!!, program will be stopped by system error in the proccess of adding battle map to frame_
@@ -392,7 +392,7 @@ FrameCoordinate tbs::TurnBasedGame::battle_map_find_tile_center_frame_coordinate
 
     if (coordinate.y > kBattleMapSizeHeight_ || coordinate.x > kBattleMapSizeWidth_) {
 #ifdef debug_log
-        log_in_file("ERROR: battle_map_find_tile_center_coordinate out of range", true);
+        runtime_logger::log_in_file("ERROR: battle_map_find_tile_center_coordinate out of range", true);
 #endif
         return { first_tile_coordinate_x, first_tile_coordinate_y }; // return [0, 0] tile
     }
@@ -503,7 +503,7 @@ std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
     if (str_rvalue.size() > ui_window_string_width_) {
-        log_in_file("Error, string is too big to be added in one ui string", true);
+        runtime_logger::log_in_file("Error, string is too big to be added in one ui string", true);
         return frame_coordinate_x_ptr;
     }
 
@@ -520,7 +520,7 @@ std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
     if (str_ptr->size() > ui_window_string_width_) {
-        log_in_file("Error, string is too big to be added in one ui string", true);
+        runtime_logger::log_in_file("Error, string is too big to be added in one ui string", true);
         return frame_coordinate_x_ptr;
     }
 
@@ -537,7 +537,7 @@ std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
     if (str_view_ptr->size() > ui_window_string_width_) {
-        log_in_file("Error, string is too big to be added in one ui string", true);
+        runtime_logger::log_in_file("Error, string is too big to be added in one ui string", true);
         return frame_coordinate_x_ptr;
     }
 
@@ -555,7 +555,7 @@ std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame
     const std::string* str{ &user_input_description_ptr->description_ };
 
     if (str->size() > ui_window_string_width_) {
-        log_in_file("Error, string is too big to be added in one ui string", true);
+        runtime_logger::log_in_file("Error, string is too big to be added in one ui string", true);
         return frame_coordinate_x_ptr;
     }
 
