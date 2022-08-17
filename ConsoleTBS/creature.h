@@ -67,8 +67,8 @@ namespace creature {
 	};
 	
 
-	void load_database_into_memory(FileDatabaseId database_id);
-	void unload_database_from_memory(FileDatabaseId database_id);
+	void load_database_into_memory(f_db::FileDatabaseId database_id);
+	void unload_database_from_memory(f_db::FileDatabaseId database_id);
 
 	const creature::Creature* get_ptr_to_creature_template_from_database(CreatureTemplateID creature_template);
 
