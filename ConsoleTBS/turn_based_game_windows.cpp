@@ -151,14 +151,14 @@ void TurnBasedGame::battle_map_clear() {
 void TurnBasedGame::generate_new_battle_map() {
     using namespace terrain;
     battle_map_clear();
-    battle_map_info_ = std::make_unique<std::vector<std::vector<BattleTile>>>(kBattleMapSizeHeight_, std::vector<BattleTile>(kBattleMapSizeWidth_));
+    battle_map_info_ = std::make_unique<std::vector<std::vector<battle_tile::BattleTile>>>(kBattleMapSizeHeight_, std::vector<battle_tile::BattleTile>(kBattleMapSizeWidth_));
 
     //set random Terrain
     std::for_each(std::execution::par_unseq, battle_map_info_->data(), battle_map_info_->data() + kBattleMapSizeHeight_,
-        [](std::vector<BattleTile>& battle_tile_line) {
+        [](std::vector<battle_tile::BattleTile>& battle_tile_line) {
             std::for_each(std::execution::par_unseq, battle_tile_line.data(), battle_tile_line.data() + kBattleMapSizeWidth_, // not generate because we need to change only terrain
-                [](BattleTile& battle_tile) { battle_tile.terrain_type_ = static_cast<terrain::Type>
-                    (get_random_number(static_cast<int>(terrain::Type::kPlain), static_cast<int>(terrain::Type::kTerrainTypeMax) - 1));
+                [](battle_tile::BattleTile& battle_tile) { battle_tile.terrain_type_ = static_cast<terrain::Type>
+                    (random::get_random_number(static_cast<int>(terrain::Type::kPlain), static_cast<int>(terrain::Type::kTerrainTypeMax) - 1));
                 });
         });
 }
@@ -250,12 +250,12 @@ void TurnBasedGame::battle_map_show_landscape() {
     int coordinate_x_start{ pv_window_width_start_ + pv_visual_indent_width_ - 2 };
 
     std::for_each(std::execution::seq, battle_map_info_->begin(), battle_map_info_->end(),  // can be changed to unseq execution if there will be locks to prevent dataracing
-        [=, &frame_coordinate_y_ptr, &frame_coordinate_x_ptr](std::vector<BattleTile>& battle_tile_line) {
+        [=, &frame_coordinate_y_ptr, &frame_coordinate_x_ptr](std::vector<battle_tile::BattleTile>& battle_tile_line) {
             frame_coordinate_y_ptr += kTileVisualHeight_;
             frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + coordinate_x_start;
-            std::for_each(std::execution::seq, battle_tile_line.begin(), battle_tile_line.end(), [=, &frame_coordinate_x_ptr](BattleTile& battle_tile) {
+            std::for_each(std::execution::seq, battle_tile_line.begin(), battle_tile_line.end(), [=, &frame_coordinate_x_ptr](battle_tile::BattleTile& battle_tile) {
                 frame_coordinate_x_ptr += kTileVisualWidth_;
-                *frame_coordinate_x_ptr = get_full_terrain_info_from_database(battle_tile.terrain_type_)->symbol_;
+                *frame_coordinate_x_ptr = terrain::get_full_terrain_info_from_database(battle_tile.terrain_type_)->symbol_;
                 });
         });
 }
@@ -647,17 +647,17 @@ void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordin
 void TurnBasedGame::battle_map_create_basic_ui() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
-    for (int battle_tile_parameter_iter{}; battle_tile_parameter_iter != static_cast<int>(BattleTileParameters::kBattleTileParametersMax);
+    for (int battle_tile_parameter_iter{}; battle_tile_parameter_iter != static_cast<int>(battle_tile::BattleTileParameters::kBattleTileParametersMax);
         ++battle_tile_parameter_iter, ++coordinate.y) {
 
         *(add_string_to_ui(coordinate,
-           battle_tile_database_get_parameter_name(static_cast<BattleTileParameters>(battle_tile_parameter_iter)))) = ':';
+            battle_tile::battle_tile_database_get_parameter_name(static_cast<battle_tile::BattleTileParameters>(battle_tile_parameter_iter)))) = ':';
     }
 }
 
 void TurnBasedGame::battle_map_create_basic_ui_with_creature() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width,
-            ui_window_height_start_ + ui_visual_indent_height + static_cast<int>(BattleTileParameters::kBattleTileParametersMax) };
+            ui_window_height_start_ + ui_visual_indent_height + static_cast<int>(battle_tile::BattleTileParameters::kBattleTileParametersMax) };
 
     *(add_string_to_ui(coordinate, "Name")) = ':';
     ++coordinate.y;
@@ -678,20 +678,20 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
         battle_map_create_basic_ui();
     }
     
-    BattleTile* target{ &(*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x] };
+    battle_tile::BattleTile* target{ &(*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x] };
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
     // landscape
     add_string_to_ui(coordinate,
         &get_full_terrain_info_from_database(target->terrain_type_)->type_name_,
-        static_cast<int>(battle_tile_database_get_parameter_name(BattleTileParameters::kLandscape)->size()) + 2);
+        static_cast<int>(battle_tile::battle_tile_database_get_parameter_name(battle_tile::BattleTileParameters::kLandscape)->size()) + 2);
     ++coordinate.y;
 
     // TO DO creature or landscape "image"?
     // creature ownership
     if (target->creature_ == nullptr) {
         add_string_to_ui(coordinate, "None",
-            static_cast<int>(battle_tile_database_get_parameter_name(BattleTileParameters::kCreature)->size()) + 2);
+            static_cast<int>(battle_tile_database_get_parameter_name(battle_tile::BattleTileParameters::kCreature)->size()) + 2);
         ++coordinate.y;
 
         if (ui_status[UI_Status::kCreatureStats]) {
@@ -709,7 +709,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
 
     add_string_to_ui(coordinate,
         (target->creature_->get_army_id() == 0) ? "Player" : "Enemy",
-        static_cast<int>(battle_tile_database_get_parameter_name(BattleTileParameters::kCreature)->size()) + 2);
+        static_cast<int>(battle_tile::battle_tile_database_get_parameter_name(battle_tile::BattleTileParameters::kCreature)->size()) + 2);
     ++coordinate.y;
 
     if (!ui_status[UI_Status::kCreatureStats]) {

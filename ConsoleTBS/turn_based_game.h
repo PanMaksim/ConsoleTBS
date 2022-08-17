@@ -199,7 +199,7 @@ private:
 
     std::array<bool, UI_Status::kWindowsAndInterfacesStatusMax> ui_status{ false }; // represent opened windows/interfaces
 
-    std::unique_ptr<std::vector<std::vector<BattleTile>>> battle_map_info_ = nullptr; // used vector not array, cause for possibility in future to make dynamic map sizes (change it at generation or maybe even growing in started battle)
+    std::unique_ptr<std::vector<std::vector<battle_tile::BattleTile>>> battle_map_info_ = nullptr; // used vector not array, cause for possibility in future to make dynamic map sizes (change it at generation or maybe even growing in started battle)
     // (*battle_map_info_)[y][x]
 
     static constexpr int kBattleMapSizeHeight_{ 7 }, // tmp value for laptop

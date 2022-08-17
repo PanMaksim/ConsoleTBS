@@ -328,7 +328,7 @@ void TurnBasedGame::check_possible_kill(std::shared_ptr<creature::Creature> crea
 }
 
 bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_coordinate_old, BattleMapCoordinate battle_map_coordinate_new) {
-    std::vector<BattleTile>::pointer old_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_old.y].data() + battle_map_coordinate_old.x },
+    std::vector<battle_tile::BattleTile>::pointer old_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_old.y].data() + battle_map_coordinate_old.x },
                                         new_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_new.y].data() + battle_map_coordinate_new.x };
 
     if (new_coordinate_ptr->creature_ != nullptr) { // sometimes can be unneeded because of check before function call
@@ -349,7 +349,7 @@ bool TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_c
     // update applied terrain effects
     if (old_coordinate_ptr->terrain_type_ != new_coordinate_ptr->terrain_type_) {
         creature::Creature* creature{ new_coordinate_ptr->creature_.get() };
-        const std::vector<creature::StatMultiplier>* terrain_effects{ get_terrain_effects_from_database(old_coordinate_ptr->terrain_type_) };
+        const std::vector<creature::StatMultiplier>* terrain_effects{ terrain::get_terrain_effects_from_database(old_coordinate_ptr->terrain_type_) };
         std::for_each(std::execution::par_unseq, terrain_effects->begin(), terrain_effects->end(),
             [&creature](creature::StatMultiplier effect) { creature->delete_stat_multiplier(effect); });
 
@@ -391,7 +391,7 @@ bool TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<UserInp
     //int moved_distance{}; // for possible multiplier_
     float AP_cost_for_movement{};
 
-    std::vector<std::vector<BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
+    std::vector<std::vector<battle_tile::BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
     const terrain::MovementCost* movement_cost{ get_movement_cost_from_database(
                                                 (battle_tile_y_ptr->data() + player_coordinate_selection_old_.x)->terrain_type_) };
 

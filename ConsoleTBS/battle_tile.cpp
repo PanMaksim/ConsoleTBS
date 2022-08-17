@@ -3,12 +3,14 @@
 
 #include <string_view>
 
+using namespace battle_tile;
+
 const std::string_view battle_tile_database_parameters_naming[static_cast<int>(BattleTileParameters::kBattleTileParametersMax)]{
 	"Landscape",
 	"Ownership"
 };
 
-const std::string_view* battle_tile_database_get_parameter_name(BattleTileParameters battle_tile_parameter) {
+const std::string_view* battle_tile::battle_tile_database_get_parameter_name(BattleTileParameters battle_tile_parameter) {
 	return &battle_tile_database_parameters_naming[static_cast<int>(battle_tile_parameter)];
 }
 
