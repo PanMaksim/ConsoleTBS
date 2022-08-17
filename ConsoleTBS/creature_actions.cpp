@@ -22,14 +22,14 @@ using namespace creature;
 //}
 
 void creature::log_action_result(const ActionResult* action_result, const Creature* action_dealer, const Creature* action_target) {
-	tbs_global::add_string_to_ui_log("Ability Result: " + *creature_database_get_roll_result_naming(action_result->ability_result));
+	tbs::global::add_string_to_ui_log("Ability Result: " + *creature_database_get_roll_result_naming(action_result->ability_result));
 
 	// should be changed in future
 	if (action_result->ability_result >= RollResult::kSmallSuccess) {
-		tbs_global::add_string_to_ui_log(*action_target->get_name() + " received " + std::to_string(action_result->damage_dealed) + " damage.");
+		tbs::global::add_string_to_ui_log(*action_target->get_name() + " received " + std::to_string(action_result->damage_dealed) + " damage.");
 	}
 	else if (action_result->ability_result <= RollResult::kSmallFail) {
-		tbs_global::add_string_to_ui_log(*action_dealer->get_name() + " received " + std::to_string(action_result->damage_received) + " damage.");
+		tbs::global::add_string_to_ui_log(*action_dealer->get_name() + " received " + std::to_string(action_result->damage_received) + " damage.");
 	}
 }
 

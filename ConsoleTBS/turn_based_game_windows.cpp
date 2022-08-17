@@ -263,7 +263,7 @@ void tbs::TurnBasedGame::battle_map_show_landscape() {
 }
 
 bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_on() {
-    tbs_global::add_string_to_ui_log("Turn on tile numeration");
+    tbs::global::add_string_to_ui_log("Turn on tile numeration");
     FrameCoordinate coordinate{ pv_window_width_start_ + pv_visual_indent_width_ + kTileVisualWidth_ / 2, pv_window_height_start_ + pv_visual_indent_height_ - 1 };
 
     // create numeration at top
@@ -338,7 +338,7 @@ bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_on() {
 }
 
 bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_off() {
-    tbs_global::add_string_to_ui_log("Turn off tile numeration");
+    tbs::global::add_string_to_ui_log("Turn off tile numeration");
     FrameCoordinate coordinate{ pv_window_width_start_ + pv_visual_indent_width_ + kTileVisualWidth_ / 2, pv_window_height_start_ + pv_visual_indent_height_ - 1 };
 
     // delete numeration at top
@@ -587,7 +587,7 @@ void tbs::TurnBasedGame::ui_input_help_turn_on(const std::vector<UserInputButton
 
     unload_user_input_database(FileDatabaseId::kUserInputDescription);
 
-    tbs_global::add_string_to_ui_log("Turn in input help");
+    tbs::global::add_string_to_ui_log("Turn in input help");
     ui_status[UI_Status::kUI_InputHelp] = true;
 }
 
@@ -598,7 +598,7 @@ void tbs::TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) 
             std::fill(std::execution::par_unseq, str.begin() + ui_window_width_start_ + 3, str.begin() + ui_window_width_end_, ' '); // +1 because of VerticalSymbol and +2 because of visual indent
         });
 
-    tbs_global::add_string_to_ui_log("Turn off input help");
+    tbs::global::add_string_to_ui_log("Turn off input help");
     ui_status[UI_Status::kUI_InputHelp] = false;
 
     if (ui_status[UI_Status::kBattleMap]) {

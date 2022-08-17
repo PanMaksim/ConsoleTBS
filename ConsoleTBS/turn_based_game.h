@@ -30,10 +30,7 @@
 //    LARGE
 //};
 
-namespace tbs_global {} // only declaration to use it in TurnBasedGame class
-// tbs_global not subnamespace (tbs::global) because of unknown for me linkage errors that make declaring friend functions impossible
-
-namespace tbs {
+namespace tbs { // there are nested namespace in the end
 
     class TurnBasedGame {
     public:
@@ -100,8 +97,8 @@ namespace tbs {
             } while (true);
         }
         
-        friend void tbs_global::add_string_to_ui_log(const std::string* str_ptr);
-        friend void tbs_global::add_string_to_ui_log(const std::string str);
+        friend void tbs::global::add_string_to_ui_log(const std::string* str_ptr);
+        friend void tbs::global::add_string_to_ui_log(const std::string str);
 
     private:
         enum UI_Status {
@@ -245,10 +242,11 @@ namespace tbs {
 //std::vector<std::vector<char>>* battle_map_visual;
     };
 
-}
 
-namespace tbs_global {
+    namespace global {
 
-    void initialize_global_ptr_to_game_object(tbs::TurnBasedGame* game_ptr_tmp);
+        void initialize_global_ptr_to_game_object(tbs::TurnBasedGame* game_ptr_tmp);
+
+    }
 
 }

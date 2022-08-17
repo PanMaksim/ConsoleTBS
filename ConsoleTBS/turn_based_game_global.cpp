@@ -6,11 +6,11 @@
 
 tbs::TurnBasedGame* game_ptr; // for log strings
 
-void tbs_global::initialize_global_ptr_to_game_object(tbs::TurnBasedGame* game_ptr_tmp) {
+void tbs::global::initialize_global_ptr_to_game_object(tbs::TurnBasedGame* game_ptr_tmp) {
 	game_ptr = game_ptr_tmp;
 }
 
-void tbs_global::add_string_to_ui_log(const std::string* str_ptr) {
+void tbs::global::add_string_to_ui_log(const std::string* str_ptr) {
     if (game_ptr->ui_log_window_height_current_ == game_ptr->kUserInterfaceLogWindowHeight_) {
 #ifdef debug_log
         runtime_logger::log_in_file("ERROR, log is too big.", true); // lazy check
@@ -43,7 +43,7 @@ void tbs_global::add_string_to_ui_log(const std::string* str_ptr) {
     }
 }
 
-void tbs_global::add_string_to_ui_log(const std::string str) {
+void tbs::global::add_string_to_ui_log(const std::string str) {
 #ifdef debug_log
     runtime_logger::log_in_file("UI_Log: " + str);
 #endif

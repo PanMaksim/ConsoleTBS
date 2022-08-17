@@ -17,7 +17,7 @@ int main()
     //std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_start);
     //std::cout << "Execution time: " << duration.count() << "ms.\n";
 
-    tbs_global::initialize_global_ptr_to_game_object(game);
+    tbs::global::initialize_global_ptr_to_game_object(game);
     game->start();
 #ifdef debug_log
     runtime_logger::log_in_file("Close game");
