@@ -5,7 +5,7 @@
 #include "creature_stats.h"
 #include "rolls.h"
 
-using namespace creature;
+using namespace creature::actions;
 
 //const std::string creature_database_ability_result_naming[static_cast<int>(AbilityResult::kAbilityResultMax)]{
 //	"Got Dead",
@@ -21,7 +21,7 @@ using namespace creature;
 //	return &creature_database_ability_result_naming[static_cast<int>(ability_result)];
 //}
 
-void creature::log_action_result(const ActionResult* action_result, const Creature* action_dealer, const Creature* action_target) {
+void creature::actions::log_action_result(const ActionResult* action_result, const Creature* action_dealer, const Creature* action_target) {
 	using namespace roll;
 
 	tbs::global::add_string_to_ui_log("Ability Result: " + *creature_database_get_roll_result_naming(action_result->ability_result));
@@ -35,7 +35,7 @@ void creature::log_action_result(const ActionResult* action_result, const Creatu
 	}
 }
 
-ActionResult creature::ability_default_attack(Creature* attacker, Creature* defender) {
+ActionResult creature::actions::ability_default_attack(Creature* attacker, Creature* defender) {
 	using namespace roll;
 
 	RollResult roll_result{ compare_rolls(attacker, StatId::kATK_ML, defender, StatId::kDEF_ML) };

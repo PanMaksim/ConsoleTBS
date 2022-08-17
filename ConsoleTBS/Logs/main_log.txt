@@ -1,0 +1,2 @@
+14:3:1 -  UI size = 50
+14:3:2 -  Close game

@@ -487,10 +487,10 @@ bool tbs::TurnBasedGame::creature_move_by_input(UserInputButton input_method) {
                 " (" + std::to_string(player_coordinate_selection_.x + 1) +
                 ", " + std::to_string(player_coordinate_selection_.y + 1) + ')');
 
-            creature::ActionResult attack_result{
-                creature::ability_default_attack(creature_on_old_coordinate_ptr.get(), creature_on_new_coordinate_ptr.get()) };
+            creature::actions::ActionResult attack_result{
+                creature::actions::ability_default_attack(creature_on_old_coordinate_ptr.get(), creature_on_new_coordinate_ptr.get()) };
 
-            log_action_result(&attack_result, creature_on_old_coordinate_ptr.get(), creature_on_new_coordinate_ptr.get());
+            creature::actions::log_action_result(&attack_result, creature_on_old_coordinate_ptr.get(), creature_on_new_coordinate_ptr.get());
             check_possible_kill(creature_on_new_coordinate_ptr, player_coordinate_selection_);
             check_possible_kill(creature_on_old_coordinate_ptr, player_coordinate_selection_old_);
 
