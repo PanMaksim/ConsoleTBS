@@ -1,27 +1,6 @@
-19:20:56 -  UI size = 50
-19:21:1 -  Execution time: 156ms.
-19:21:3 -  UI_Log: AP used for movement: 5.000000
-19:21:3 -  UI_Log: Taras Benner (1, 1) moved on ally.
-19:21:4 -  Execution time: 221ms.
-19:21:5 -  UI_Log: Taras Hastner(1, 0) moved to coordinate (14, 1)
-19:21:5 -  Execution time: 1029ms.
-19:21:6 -  UI_Log: AP used for movement: 2.000000
-19:21:6 -  UI_Log: Taras Hastner (14, 1) attacked Adner Lionheart (15, 1)
-19:21:6 -  UI_Log: Taras Hastner rolled: 10
-19:21:6 -  UI_Log: Adner Lionheart rolled: 10
-19:21:6 -  UI_Log: Ability Result: No Result
-19:21:6 -  Execution time: 171ms.
-19:21:7 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
-19:21:7 -  Execution time: 168ms.
-19:21:8 -  UI_Log: AP used for movement: 2.000000
-19:21:8 -  UI_Log: Taras Hastner (14, 1) attacked Adner Lionheart (15, 1)
-19:21:8 -  UI_Log: Taras Hastner rolled: 0
-19:21:8 -  UI_Log: Adner Lionheart rolled: 0
-19:21:8 -  UI_Log: Ability Result: No Result
-19:21:8 -  Execution time: 174ms.
-19:21:9 -  UI_Log: Player seletion moved to coordinate (14, 1) from (14,0)
-19:21:9 -  Execution time: 157ms.
-19:21:9 -  UI_Log: AP used for movement: 3.000000
-19:21:9 -  UI_Log: Taras Hastner(13, 0) moved to coordinate (13, 1)
-19:21:10 -  Execution time: 174ms.
-19:21:10 -  Close game
+11:38:20 -  UI size = 50
+11:38:22 -  Execution time: 339ms.
+11:38:23 -  UI_Log: AP used for movement: 6.000000
+11:38:23 -  UI_Log: Lourence Benner(0, 0) moved to coordinate (3, 1)
+11:38:24 -  Execution time: 1044ms.
+11:38:25 -  Close game

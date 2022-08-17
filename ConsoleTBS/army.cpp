@@ -13,6 +13,8 @@
 
 #include <chrono>
 
+using namespace creature;
+
 const int army_size_max_{ 14 }; // changed from 18 to 14 for laptop
 int int_max_value{ std::numeric_limits<int>::max() };
 
@@ -52,7 +54,7 @@ Army generate_random_army() {
 	creature::load_database_into_memory(FileDatabaseId::kCreatureTemplateDatabase);
 
 	std::generate_n(std::back_inserter(*army.army_), army_size_max_, [&army]() { return std::make_shared<Creature>(creature::get_ptr_to_creature_template_from_database(static_cast<creature::CreatureTemplateID>((
-		get_random_number(static_cast<int>(creature::CreatureTemplateID::kHumanSpearman), static_cast<int>(creature::CreatureTemplateID::kCreatureTemplateMax) - 1)))), army.generate_creature_complex_id());});
+		random::get_random_number(static_cast<int>(creature::CreatureTemplateID::kHumanSpearman), static_cast<int>(creature::CreatureTemplateID::kCreatureTemplateMax) - 1)))), army.generate_creature_complex_id());});
 
 	creature::unload_database_from_memory(FileDatabaseId::kCreatureNameDatabase);
 	creature::unload_database_from_memory(FileDatabaseId::kCreatureTemplateDatabase);

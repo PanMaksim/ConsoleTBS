@@ -7,7 +7,6 @@
 #include "creature.h"
 
 
-
 enum class BattleTileParameters {
 	kLandscape,
 	kCreature,
@@ -63,7 +62,7 @@ struct BattleTile {
 
 	// what it contains : unit, landscape, effects, etc
 	terrain::Type terrain_type_{ terrain::Type::kPlain };
-	std::shared_ptr<Creature> creature_{ nullptr }; // owned by Army AND BattleTile
+	std::shared_ptr<creature::Creature> creature_{ nullptr }; // owned by Army AND BattleTile
 	
 	//std::vector<BattleTileModifier> modifiers_;
 	//BattleTileModifier modifier_;
