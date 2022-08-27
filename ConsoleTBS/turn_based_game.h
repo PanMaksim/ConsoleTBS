@@ -206,10 +206,10 @@ namespace tbs { // there are nested namespace in the end
         std::unique_ptr<std::vector<std::vector<battle_tile::BattleTile>>> battle_map_info_ = nullptr; // used vector not array, cause for possibility in future to make dynamic map sizes (change it at generation or maybe even growing in started battle)
         // (*battle_map_info_)[y][x]
 
-        static constexpr int kBattleMapSizeHeight_{ 7 }, // tmp value for laptop
-            kBattleMapSizeWidth_{ 16 };
-        //static constexpr int kBattleMapSizeHeight_{ 9 }, // size in tiles
-        //    kBattleMapSizeWidth_{ 19 };
+        static constexpr int kBattleMapSizeHeight_{ 9 }, // size in tiles
+                                kBattleMapSizeWidth_{ 19 };
+        //static constexpr int kBattleMapSizeHeight_{ 7 }, // tmp value for laptop
+        //                        kBattleMapSizeWidth_{ 16 };
 
         int pv_visual_indent_height_{}, // for output at center of player view
             pv_visual_indent_width_{},
