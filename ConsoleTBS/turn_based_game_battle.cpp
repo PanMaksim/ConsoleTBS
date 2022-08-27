@@ -165,6 +165,19 @@ void tbs::TurnBasedGame::battle_map_add_creature(std::shared_ptr<creature::Creat
         *(frame_coordinate_ptr + 1) = kCreatureBackSymbol_;
         break;
     }
+
+    // add creature ownership
+    switch (creature_ptr->get_army_id()) { // must be changed to faction id in future (if factions will be added)
+    case 0: // !!!!!!!!!!!!!!! tmp, owned by player
+        frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'p';
+        break;
+    case 1: // !!!!!!!!!!!!!!! tmp, not player
+        frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'e';
+        break;
+    default:
+        frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'o';
+        break;
+    }
 }
 
 void tbs::TurnBasedGame::battle_map_add_army(std::shared_ptr<army::Army> army_ptr, army::BattleStartStatus battle_status) {
@@ -384,6 +397,18 @@ bool tbs::TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_
         *(frame_coordinate_x_ptr - 1) = kCreatureEnemyHeadSymbol_;
         *frame_coordinate_x_ptr = kCreatureMiddleSymbol_;
         *(frame_coordinate_x_ptr + 1) = kCreatureBackSymbol_;
+    }
+
+    switch (new_coordinate_ptr->creature_->get_army_id()) { // must be changed to faction id in future (if factions will be added)
+    case 0: // !!!!!!!!!!!!!!! tmp, owned by player
+        frame_[tile_center_of_new_coordinate.y - 2][tile_center_of_new_coordinate.x + 4] = 'p';
+        break;
+    case 1: // !!!!!!!!!!!!!!! tmp, not player
+        frame_[tile_center_of_new_coordinate.y - 2][tile_center_of_new_coordinate.x + 4] = 'e';
+        break;
+    default:
+        frame_[tile_center_of_new_coordinate.y - 2][tile_center_of_new_coordinate.x + 4] = 'o';
+        break;
     }
 
     return true;
