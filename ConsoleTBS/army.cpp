@@ -16,7 +16,7 @@
 using namespace creature;
 using namespace army;
 
-const int army::army_size_max_{ 14 }; // changed from 18 to 14 for laptop
+const int army::army_size_max_{ 18 }; // 18 for PC and 14 for laptop
 
 army::Army::Army() {
 	army_ = std::make_shared<std::vector<std::shared_ptr<Creature>>>();
