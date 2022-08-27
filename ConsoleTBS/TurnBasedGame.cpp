@@ -4,6 +4,8 @@
 #include "turn_based_game_global.h"
 #include "logger.h"
 
+// window resolution can be corrected in turn_based_game.h (kWindowWidth_ and kWindowHeight_)
+
 int main()
 {
     // std::ios_base::sync_with_stdio(false);
