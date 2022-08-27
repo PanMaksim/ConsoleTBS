@@ -253,10 +253,10 @@ void tbs::TurnBasedGame::battle_map_show_landscape() {
     int coordinate_x_start{ pv_window_width_start_ + pv_visual_indent_width_ - 2 };
 
     std::for_each(std::execution::seq, battle_map_info_->begin(), battle_map_info_->end(),  // can be changed to unseq execution if there will be locks to prevent dataracing
-        [=, &frame_coordinate_y_ptr, &frame_coordinate_x_ptr](std::vector<battle_tile::BattleTile>& battle_tile_line) {
+        [=, &frame_coordinate_y_ptr, &frame_coordinate_x_ptr](std::vector<terrain::battle_tile::BattleTile>& battle_tile_line) {
             frame_coordinate_y_ptr += kTileVisualHeight_;
             frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + coordinate_x_start;
-            std::for_each(std::execution::seq, battle_tile_line.begin(), battle_tile_line.end(), [=, &frame_coordinate_x_ptr](battle_tile::BattleTile& battle_tile) {
+            std::for_each(std::execution::seq, battle_tile_line.begin(), battle_tile_line.end(), [=, &frame_coordinate_x_ptr](terrain::battle_tile::BattleTile& battle_tile) {
                 frame_coordinate_x_ptr += kTileVisualWidth_;
                 *frame_coordinate_x_ptr = terrain::get_full_terrain_info_from_database(battle_tile.terrain_type_)->symbol_;
                 });
@@ -650,17 +650,17 @@ void tbs::TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_co
 void tbs::TurnBasedGame::battle_map_create_basic_ui() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
-    for (int battle_tile_parameter_iter{}; battle_tile_parameter_iter != static_cast<int>(battle_tile::TileParameters::kTileParametersMax);
+    for (int battle_tile_parameter_iter{}; battle_tile_parameter_iter != static_cast<int>(terrain::battle_tile::TileParameters::kTileParametersMax);
         ++battle_tile_parameter_iter, ++coordinate.y) {
 
         *(add_string_to_ui(coordinate,
-            battle_tile::get_tile_parameter_name_from_database(static_cast<battle_tile::TileParameters>(battle_tile_parameter_iter)))) = ':';
+            terrain::battle_tile::get_tile_parameter_name_from_database(static_cast<terrain::battle_tile::TileParameters>(battle_tile_parameter_iter)))) = ':';
     }
 }
 
 void tbs::TurnBasedGame::battle_map_create_basic_ui_with_creature() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width,
-            ui_window_height_start_ + ui_visual_indent_height + static_cast<int>(battle_tile::TileParameters::kTileParametersMax) };
+            ui_window_height_start_ + ui_visual_indent_height + static_cast<int>(terrain::battle_tile::TileParameters::kTileParametersMax) };
 
     *(add_string_to_ui(coordinate, "Name")) = ':';
     ++coordinate.y;
@@ -681,20 +681,20 @@ void tbs::TurnBasedGame::update_ui() { // maybe should save in memory previus se
         battle_map_create_basic_ui();
     }
     
-    battle_tile::BattleTile* target{ &(*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x] };
+    terrain::battle_tile::BattleTile* target{ &(*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x] };
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
     // landscape
     add_string_to_ui(coordinate,
         &get_full_terrain_info_from_database(target->terrain_type_)->type_name_,
-        static_cast<int>(battle_tile::get_tile_parameter_name_from_database(battle_tile::TileParameters::kLandscape)->size()) + 2);
+        static_cast<int>(terrain::battle_tile::get_tile_parameter_name_from_database(terrain::battle_tile::TileParameters::kLandscape)->size()) + 2);
     ++coordinate.y;
 
     // TO DO creature or landscape "image"?
     // creature ownership
     if (target->creature_ == nullptr) {
         add_string_to_ui(coordinate, "None",
-            static_cast<int>(get_tile_parameter_name_from_database(battle_tile::TileParameters::kCreature)->size()) + 2);
+            static_cast<int>(terrain::battle_tile::get_tile_parameter_name_from_database(terrain::battle_tile::TileParameters::kCreature)->size()) + 2);
         ++coordinate.y;
 
         if (ui_status[UI_Status::kCreatureStats]) {
@@ -712,7 +712,7 @@ void tbs::TurnBasedGame::update_ui() { // maybe should save in memory previus se
 
     add_string_to_ui(coordinate,
         (target->creature_->get_army_id() == 0) ? "Player" : "Enemy",
-        static_cast<int>(battle_tile::get_tile_parameter_name_from_database(battle_tile::TileParameters::kCreature)->size()) + 2);
+        static_cast<int>(terrain::battle_tile::get_tile_parameter_name_from_database(terrain::battle_tile::TileParameters::kCreature)->size()) + 2);
     ++coordinate.y;
 
     if (!ui_status[UI_Status::kCreatureStats]) {

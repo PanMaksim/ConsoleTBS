@@ -340,7 +340,7 @@ void tbs::TurnBasedGame::check_possible_kill(std::shared_ptr<creature::Creature>
 }
 
 bool tbs::TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_map_coordinate_old, BattleMapCoordinate battle_map_coordinate_new) {
-    std::vector<battle_tile::BattleTile>::pointer old_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_old.y].data() + battle_map_coordinate_old.x },
+    std::vector<terrain::battle_tile::BattleTile>::pointer old_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_old.y].data() + battle_map_coordinate_old.x },
                                         new_coordinate_ptr{ (*battle_map_info_)[battle_map_coordinate_new.y].data() + battle_map_coordinate_new.x };
 
     if (new_coordinate_ptr->creature_ != nullptr) { // sometimes can be unneeded because of check before function call
@@ -406,7 +406,7 @@ bool tbs::TurnBasedGame::calculate_moved_distance(std::shared_ptr<std::vector<u_
     //int moved_distance{}; // for possible multiplier_
     float AP_cost_for_movement{};
 
-    std::vector<std::vector<battle_tile::BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
+    std::vector<std::vector<terrain::battle_tile::BattleTile>>::pointer battle_tile_y_ptr{ battle_map_info_->data() + player_coordinate_selection_old_.y };
     const terrain::MovementCost* movement_cost{ get_movement_cost_from_database(
                                                 (battle_tile_y_ptr->data() + player_coordinate_selection_old_.x)->terrain_type_) };
 
