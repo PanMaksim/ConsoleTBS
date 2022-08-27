@@ -113,6 +113,8 @@ void tbs::TurnBasedGame::battle_process() {
 }
 
 void tbs::TurnBasedGame::start_new_battle() {
+    using namespace army;
+
     std::cout << "Start new Battle\n";
     if (ui_status[UI_Status::kBattleMap]) {
         battle_map_clear();
@@ -136,7 +138,9 @@ void tbs::TurnBasedGame::start_new_battle() {
     battle_map_update_player_selection();
 }
 
-void tbs::TurnBasedGame::battle_map_add_creature(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status) {
+void tbs::TurnBasedGame::battle_map_add_creature(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, army::BattleStartStatus battle_status) {
+    using namespace army;
+    
     (*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].creature_ = creature_ptr;
     const std::vector<creature::stat::StatMultiplier>* new_terrain_effects{
         get_terrain_effects_from_database((*battle_map_info_)[battle_map_coordinate.y][battle_map_coordinate.x].terrain_type_) };
@@ -163,7 +167,9 @@ void tbs::TurnBasedGame::battle_map_add_creature(std::shared_ptr<creature::Creat
     }
 }
 
-void tbs::TurnBasedGame::battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status) {
+void tbs::TurnBasedGame::battle_map_add_army(std::shared_ptr<army::Army> army_ptr, army::BattleStartStatus battle_status) {
+    using namespace army;
+
     std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> army_vector_ptr{ army_ptr->get_army_shared_ptr() };
     std::vector<std::shared_ptr<creature::Creature>>::pointer army_vector_ptr_current{ army_vector_ptr->data() },
         army_vector_ptr_end{ army_vector_ptr->data() + army_vector_ptr->size() };
@@ -305,7 +311,7 @@ std::shared_ptr<std::vector<u_input::UserInputButton>> tbs::TurnBasedGame::playe
 }
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!TMP
-std::shared_ptr<Army> tbs::TurnBasedGame::get_army_ptr_via_id(int army_id_) {
+std::shared_ptr<army::Army> tbs::TurnBasedGame::get_army_ptr_via_id(int army_id_) {
     if (army_id_ == player_army_->get_army_id()) {
         return player_army_;
     }

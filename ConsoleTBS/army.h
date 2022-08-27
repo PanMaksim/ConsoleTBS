@@ -5,42 +5,46 @@
 
 #include "creature.h"
 
-extern const int army_size_max_;
+namespace army {
 
-enum class BattleStartStatus {
-	kAttaking,
-	kDefending,
-	kBattleStartStatusMax
-};
+	extern const int army_size_max_;
 
-class Army {
-public:
+	enum class BattleStartStatus {
+		kAttaking,
+		kDefending,
+		kBattleStartStatusMax
+	};
 
-	Army();
-	~Army() = default;
+	class Army {
+	public:
 
-	short get_army_id() const;
-	int get_army_size() const; // not size_t because there can't be so much creatures, max creature_id_ is limited to max int value.
+		Army();
+		~Army() = default;
 
-	//std::weak_ptr<std::vector<std::shared_ptr<Creature>>> get_army_weak_ptr(); // currently unused
-	std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> get_army_shared_ptr();
+		short get_army_id() const;
+		int get_army_size() const; // not size_t because there can't be so much creatures, max creature_id_ is limited to max int value.
 
-	creature::stat::ComplexID generate_creature_complex_id();
-	void kill_creature(size_t creature_id_);
+		//std::weak_ptr<std::vector<std::shared_ptr<Creature>>> get_army_weak_ptr(); // currently unused
+		std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> get_army_shared_ptr();
 
-	void clear();
+		creature::stat::ComplexID generate_creature_complex_id();
+		void kill_creature(size_t creature_id_);
 
-	std::vector<std::shared_ptr<creature::Creature>>::iterator begin();
-	std::vector<std::shared_ptr<creature::Creature>>::iterator end();
+		void clear();
 
-	friend Army generate_random_army();
-private:
+		std::vector<std::shared_ptr<creature::Creature>>::iterator begin();
+		std::vector<std::shared_ptr<creature::Creature>>::iterator end();
 
-private:
-	short army_id_;
-	std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> army_; // owned by Army AND BattleTile
+		friend Army generate_random_army();
+	private:
 
-	int creature_id_counter_{};
-};
+	private:
+		short army_id_;
+		std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> army_; // owned by Army AND BattleTile
 
-Army generate_random_army();
+		int creature_id_counter_{};
+	};
+
+	Army generate_random_army();
+
+}

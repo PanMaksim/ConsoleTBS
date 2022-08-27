@@ -144,8 +144,8 @@ namespace tbs { // there are nested namespace in the end
         void calculate_battle_map_visual();
         void show_battle_map();
         void battle_map_show_landscape();
-        void battle_map_add_creature(std::shared_ptr<creature::Creature> creature_ptr, coord::BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
-        void battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status);
+        void battle_map_add_creature(std::shared_ptr<creature::Creature> creature_ptr, coord::BattleMapCoordinate battle_map_coordinate, army::BattleStartStatus battle_status);
+        void battle_map_add_army(std::shared_ptr<army::Army> army_ptr, army::BattleStartStatus battle_status);
         bool battle_map_tile_numeration_switch();
         bool battle_map_tile_numeration_turn_on();
         bool battle_map_tile_numeration_turn_off();
@@ -162,7 +162,7 @@ namespace tbs { // there are nested namespace in the end
         bool player_coordinate_selection_move_by_coordinate_input();
         std::shared_ptr<std::vector<u_input::UserInputButton>> player_coordinate_selection_move_by_direction_input();
 
-        std::shared_ptr<Army> get_army_ptr_via_id(int army_id_);
+        std::shared_ptr<army::Army> get_army_ptr_via_id(int army_id_);
 
         bool interact_with_creature();
         bool calculate_moved_distance(std::shared_ptr<std::vector<u_input::UserInputButton>> direction_log, creature::Creature* creature_on_old_coordinate_ptr);
@@ -225,7 +225,7 @@ namespace tbs { // there are nested namespace in the end
             kTileCornerSymbol1_{ '/' },
             kTileCornerSymbol2_{ '\\' };
 
-        std::shared_ptr<Army> player_army_, // should be changed in future to factions if there will be global map (with building, etc)
+        std::shared_ptr<army::Army> player_army_, // should be changed in future to factions if there will be global map (with building, etc)
             ai_army_;
 
         static constexpr char kCreatureMiddleSymbol_{ '-' },
