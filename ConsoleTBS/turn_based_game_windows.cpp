@@ -17,6 +17,7 @@
 #include "battle_tile.h"
 
 using namespace tbs;
+using namespace coord;
 
 void tbs::TurnBasedGame::create_new_main_game_window() {
     // initializing strings (at first launch) and cleaning in other situations

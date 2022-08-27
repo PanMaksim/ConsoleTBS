@@ -125,11 +125,11 @@ namespace tbs { // there are nested namespace in the end
         void frame_clear_string(std::string::iterator frame_coordinate_x_iter, std::string::iterator frame_coordinate_x_iter_end);
 
         void update_ui();
-        std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent);
-        std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent);
-        std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent);
-        std::string::iterator add_string_to_ui(FrameCoordinate frame_coordinate, const u_input::UserInputDescription* user_input_description_ptr);
-        void add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, creature::stat::StatId creature_stat_id, int stat_value_current, int stat_value_max);
+        std::string::iterator add_string_to_ui(coord::FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent);
+        std::string::iterator add_string_to_ui(coord::FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent);
+        std::string::iterator add_string_to_ui(coord::FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent);
+        std::string::iterator add_string_to_ui(coord::FrameCoordinate frame_coordinate, const u_input::UserInputDescription* user_input_description_ptr);
+        void add_creature_stat_string_to_ui(coord::FrameCoordinate frame_coordinate, creature::stat::StatId creature_stat_id, int stat_value_current, int stat_value_max);
         void ui_input_help_switch(const std::vector<u_input::UserInputButton>& allowed_user_input);
         void ui_input_help_turn_on(const std::vector<u_input::UserInputButton>& allowed_user_input);
         void ui_input_help_turn_off(size_t allowed_user_input_size);
@@ -144,17 +144,17 @@ namespace tbs { // there are nested namespace in the end
         void calculate_battle_map_visual();
         void show_battle_map();
         void battle_map_show_landscape();
-        void battle_map_add_creature(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
+        void battle_map_add_creature(std::shared_ptr<creature::Creature> creature_ptr, coord::BattleMapCoordinate battle_map_coordinate, BattleStartStatus battle_status);
         void battle_map_add_army(std::shared_ptr<Army> army_ptr, BattleStartStatus battle_status);
         bool battle_map_tile_numeration_switch();
         bool battle_map_tile_numeration_turn_on();
         bool battle_map_tile_numeration_turn_off();
         void battle_map_create_basic_ui();
         void battle_map_create_basic_ui_with_creature();
-        void battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_battle_map_coordinate);
-        void battle_map_kill_creature(BattleMapCoordinate killed_creature_battle_map_coordinate);
+        void battle_map_clear_tile_from_creature_image(coord::BattleMapCoordinate creature_battle_map_coordinate);
+        void battle_map_kill_creature(coord::BattleMapCoordinate killed_creature_battle_map_coordinate);
 
-        FrameCoordinate battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate battle_map_coordinate); // returns frame_[y,x] where creature_middle_symbol would be
+        coord::FrameCoordinate battle_map_find_tile_center_frame_coordinate(coord::BattleMapCoordinate battle_map_coordinate); // returns frame_[y,x] where creature_middle_symbol would be
 
         void battle_map_update_player_selection();
         void battle_map_clear_old_player_selection();
@@ -167,9 +167,9 @@ namespace tbs { // there are nested namespace in the end
         bool interact_with_creature();
         bool calculate_moved_distance(std::shared_ptr<std::vector<u_input::UserInputButton>> direction_log, creature::Creature* creature_on_old_coordinate_ptr);
         bool creature_move_by_input(u_input::UserInputButton input_method);
-        bool move_creature_by_coordinate(BattleMapCoordinate battle_map_coordinate_old, BattleMapCoordinate battle_map_coordinate_new);
+        bool move_creature_by_coordinate(coord::BattleMapCoordinate battle_map_coordinate_old, coord::BattleMapCoordinate battle_map_coordinate_new);
 
-        void check_possible_kill(std::shared_ptr<creature::Creature> creature_ptr, BattleMapCoordinate creature_battle_map_coordinate);
+        void check_possible_kill(std::shared_ptr<creature::Creature> creature_ptr, coord::BattleMapCoordinate creature_battle_map_coordinate);
 
     private:
         //static constexpr int kWindowWidth_{ 317 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input
@@ -233,7 +233,7 @@ namespace tbs { // there are nested namespace in the end
             kCreaturePlayerHeadSymbol_{ '0' },
             kCreatureEnemyHeadSymbol_{ 'X' };
 
-        BattleMapCoordinate player_coordinate_selection_{ 0, 0 },
+        coord::BattleMapCoordinate player_coordinate_selection_{ 0, 0 },
             player_coordinate_selection_old_{ 0, 0 };
 
         static constexpr int kPlayerSelectionVisualHeight_{ 4 }, // must % 2 == 0

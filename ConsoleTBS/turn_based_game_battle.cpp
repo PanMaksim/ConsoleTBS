@@ -15,6 +15,8 @@
 #include "creature_actions.h"
 #include "terrain.h"
 
+using namespace coord;
+
 void tbs::TurnBasedGame::battle_process() {
     // for testing
     std::chrono::time_point time_start{ std::chrono::high_resolution_clock::now() };
