@@ -56,7 +56,7 @@ namespace creature {
 	private:
 		creature::stat::ComplexID complex_id_{};
 
-		int level_{};
+		short level_{};
 		std::string name_{}; // name selection can be modified by system with character modifiers (something like "likes jokes", "proud for family tree", etc)
 		creature::stat::Race race_;
 		// in future should add sex(male/female) too, and differency in names for them
