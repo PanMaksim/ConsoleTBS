@@ -6,27 +6,30 @@
 
 #include "creature_stats.h"
 
-enum class TerrainType {
-	kPlain,
-	kHill,
-	kMountain,
-	kTerrainTypeMax
-	//DEEPENING,
-	//PIT
-};
+namespace terrain {
 
-struct TerrainMovementCost {
-	float entry_value;
-	float leaving_value;
-};
+	enum class Type {
+		kPlain,
+		kHill,
+		kMountain,
+		kTerrainTypeMax
+		//DEEPENING,
+		//PIT
+	};
 
-struct Terrain {
-	char symbol_;
-	std::string type_name_;
-	TerrainMovementCost movement_cost_; // first for going into BattleTile, second for leaving BattleTile
-	std::vector<CreatureStatMultiplier> effects_;
-};
+	struct MovementCost {
+		float entry_value;
+		float leaving_value;
+	};
 
-const Terrain* terrain_database_get_full_info(TerrainType type);
-const TerrainMovementCost* terrain_database_get_movement_cost(TerrainType terrain);
-const std::vector<CreatureStatMultiplier>* terrain_database_get_effects(TerrainType terrain);
+	struct Terrain {
+		char symbol_;
+		std::string type_name_;
+		MovementCost movement_cost_; // first for going into BattleTile, second for leaving BattleTile
+		std::vector<creature::stat::StatMultiplier> effects_;
+	};
+
+	const Terrain* get_full_terrain_info_from_database(Type type);
+	const MovementCost* get_movement_cost_from_database(Type terrain);
+	const std::vector<creature::stat::StatMultiplier>* get_terrain_effects_from_database(Type terrain);
+}

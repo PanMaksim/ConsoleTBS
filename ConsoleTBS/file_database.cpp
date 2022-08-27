@@ -2,4 +2,4 @@
 
 #include <array>
 
-std::array<bool, static_cast<int>(FileDatabaseId::FileDatabaseIdMax)> file_databases_status{ 0, 0, 0 };
+std::array<bool, static_cast<int>(file_database::ID::ID_Max)> file_database::status{ 0, 0, 0 };

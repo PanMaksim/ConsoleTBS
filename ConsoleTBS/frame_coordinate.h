@@ -1,6 +1,10 @@
 #pragma once
 
-struct FrameCoordinate {
-	int x;
-	int y;
-};
+namespace coord {
+
+	struct FrameCoordinate {
+		int x;
+		int y;
+	};
+
+}

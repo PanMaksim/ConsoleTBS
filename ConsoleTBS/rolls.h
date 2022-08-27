@@ -5,19 +5,23 @@
 #include "creature.h"
 #include "creature_stats.h"
 
-enum class RollResult {
-	kCriticalFail,
-	kFail,
-	kSmallFail, // no bonus
-	kNoResult,
-	kSmallSuccess, // no bonus
-	kSuccess,
-	kCriticalSuccess,
-	kRollResultMax
-};
+namespace roll {
 
-const std::string* creature_database_get_roll_result_naming(RollResult roll_result);
-const double creature_database_get_roll_result_multiplier(RollResult roll_result);
+	enum class RollResult {
+		kCriticalFail,
+		kFail,
+		kSmallFail, // no bonus
+		kNoResult,
+		kSmallSuccess, // no bonus
+		kSuccess,
+		kCriticalSuccess,
+		kRollResultMax
+	};
 
-RollResult compare_rolls(const Creature* action_dealer, CreatureStatId action_dealer_stat_to_compare,
-	const Creature* target, CreatureStatId target_stat_to_compare);
+	const std::string* get_roll_result_naming_from_database(RollResult roll_result);
+	const double get_roll_result_multiplier_from_database(RollResult roll_result);
+
+	RollResult compare_rolls(const creature::Creature* action_dealer, creature::stat::StatId action_dealer_stat_to_compare,
+		const creature::Creature* target, creature::stat::StatId target_stat_to_compare);
+
+}

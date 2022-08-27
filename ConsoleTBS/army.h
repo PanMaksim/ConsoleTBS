@@ -5,39 +5,46 @@
 
 #include "creature.h"
 
-extern const int army_size_max_;
+namespace army {
 
-enum class BattleStartStatus {
-	kAttaking,
-	kDefending,
-	kBattleStartStatusMax
-};
+	extern const int army_size_max_;
 
-class Army {
-public:
+	enum class BattleStartStatus {
+		kAttaking,
+		kDefending,
+		kBattleStartStatusMax
+	};
 
-	Army();
-	~Army() = default;
+	class Army {
+	public:
 
-	int get_army_id() const;
-	size_t get_army_size() const;
+		Army();
+		~Army() = default;
 
-	//std::weak_ptr<std::vector<std::shared_ptr<Creature>>> get_army_weak_ptr(); // currently unused
-	std::shared_ptr<std::vector<std::shared_ptr<Creature>>> get_army_shared_ptr();
+		short get_army_id() const;
+		int get_army_size() const; // not size_t because there can't be so much creatures, max creature_id_ is limited to max int value.
 
-	void kill_creature(size_t creature_id);
+		//std::weak_ptr<std::vector<std::shared_ptr<Creature>>> get_army_weak_ptr(); // currently unused
+		std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> get_army_shared_ptr();
 
-	void clear();
+		creature::stat::ComplexID generate_creature_complex_id();
+		void kill_creature(size_t creature_id_);
 
-	std::vector<std::shared_ptr<Creature>>::iterator begin();
-	std::vector<std::shared_ptr<Creature>>::iterator end();
+		void clear();
 
-private:
-	friend Army generate_random_army();
+		std::vector<std::shared_ptr<creature::Creature>>::iterator begin();
+		std::vector<std::shared_ptr<creature::Creature>>::iterator end();
 
-private:
-	int army_id_;
-	std::shared_ptr<std::vector<std::shared_ptr<Creature>>> army_; // owned by Army AND BattleTile
-};
+		friend Army generate_random_army();
+	private:
 
-Army generate_random_army();
+	private:
+		short army_id_;
+		std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> army_; // owned by Army AND BattleTile
+
+		int creature_id_counter_{};
+	};
+
+	Army generate_random_army();
+
+}

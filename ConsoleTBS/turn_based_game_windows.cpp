@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <array>
 #include <vector>
@@ -17,7 +16,10 @@
 #include "terrain.h"
 #include "battle_tile.h"
 
-void TurnBasedGame::create_new_main_game_window() {
+using namespace tbs;
+using namespace coord;
+
+void tbs::TurnBasedGame::create_new_main_game_window() {
     // initializing strings (at first launch) and cleaning in other situations
     std::for_each(std::execution::par_unseq, frame_.begin(), frame_.end(), 
         [=](std::string& str) {
@@ -45,7 +47,7 @@ void TurnBasedGame::create_new_main_game_window() {
     std::fill(std::execution::par_unseq, frame_coordinate_y_ptr->begin() + 2, frame_coordinate_y_ptr->end() - 2, kGameWindowHorizontalSymbol_);
 }
 
-void TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
+void tbs::TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
     ui_status[UI_Status::kCreatureStats] = false;
     ui_status[UI_Status::kUI_InputHelp] = false;
 
@@ -69,8 +71,8 @@ void TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
 
     // Hint to button_ that calls list of allowed for user input buttons
     FrameCoordinate coordinate{ ui_window_width_start_ + 2, ui_window_input_help_coordinate_height };
-    if (frame_[coordinate.y][coordinate.x] != UserInputButton::kShowInputHelp) {
-        add_string_to_ui(coordinate, &description_to_show_input_help_button);
+    if (frame_[coordinate.y][coordinate.x] != u_input::UserInputButton::kShowInputHelp) {
+        add_string_to_ui(coordinate, &u_input::description_to_show_input_help_button);
     }
 
     // border for log window
@@ -81,7 +83,7 @@ void TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
     ui_status[UI_Status::kUI_WindowLog] = true;
 }
 
-void TurnBasedGame::create_new_pv_window() {
+void tbs::TurnBasedGame::create_new_pv_window() {
     std::for_each(std::execution::par_unseq, frame_.data() + pv_window_height_start_, frame_.data() + pv_window_height_end_,
         [=](std::string& str) {
             std::fill(std::execution::par_unseq, str.data() + pv_window_width_start_, str.data() + pv_window_width_end_, ' ');
@@ -90,11 +92,11 @@ void TurnBasedGame::create_new_pv_window() {
     ui_status[UI_Status::kPlayerViewWindow] = true;
 }
 
-void TurnBasedGame::set_ui_status_flags_to_default(){
+void tbs::TurnBasedGame::set_ui_status_flags_to_default(){
     std::fill(std::execution::par_unseq, ui_status.begin(), ui_status.end(), false);
 }
 
-void TurnBasedGame::calculate_window_borders() {
+void tbs::TurnBasedGame::calculate_window_borders() {
     pv_window_height_start_ = 1; // starting from 1 and ending at window_height - 3 cause of main game borders from both sides and numeration from 0
     pv_window_height_end_ = kWindowHeight_ - 1;
 
@@ -107,7 +109,7 @@ void TurnBasedGame::calculate_window_borders() {
     ui_window_width_start_ = kWindowWidth_ - 3 - interface_main_actual_window_width;
     ui_window_width_end_ = kWindowWidth_ - 3;
     ui_window_string_width_ = ui_window_width_end_ - ui_window_width_start_;
-    log_in_file("UI size = " + std::to_string(ui_window_string_width_));
+    runtime_logger::log_in_file("UI size = " + std::to_string(ui_window_string_width_));
 
     pv_window_width_start_ = 2;
     pv_window_width_end_ = ui_window_width_start_ - 1;
@@ -117,13 +119,13 @@ void TurnBasedGame::calculate_window_borders() {
     ui_log_window_height_start_ = ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
 }
 
-void TurnBasedGame::print_frame() {
+void tbs::TurnBasedGame::print_frame() {
     std::stringstream frame_stream;
     std::for_each(std::execution::seq, frame_.begin(), frame_.end(), [&](const std::string& str) { frame_stream << str; });
     std::cout << frame_stream.str();
 }
 
-void TurnBasedGame::clear_ui_log() {
+void tbs::TurnBasedGame::clear_ui_log() {
     std::for_each(std::execution::par_unseq, frame_.data() + ui_log_window_height_start_ + 1, frame_.data() + ui_log_window_height_start_ + ui_log_window_height_current_ + 1,
         [=](std::string& str) {
             std::string::pointer frame_coordinate_x_ptr{ str.data() + ui_window_width_start_ + ui_visual_indent_width };
@@ -135,7 +137,7 @@ void TurnBasedGame::clear_ui_log() {
     ui_log_window_height_current_ = 1;
 }
 
-void TurnBasedGame::battle_map_clear() {
+void tbs::TurnBasedGame::battle_map_clear() {
     if (battle_map_info_ != nullptr) {
         if (ui_status[UI_Status::kBattleMapTileNumeration]) { battle_map_tile_numeration_turn_off(); }
         player_coordinate_selection_ = { 0, 0 }; 
@@ -149,31 +151,32 @@ void TurnBasedGame::battle_map_clear() {
     }
 }
 
-void TurnBasedGame::generate_new_battle_map() {
+void tbs::TurnBasedGame::generate_new_battle_map() {
+    using namespace terrain;
     battle_map_clear();
-    battle_map_info_ = std::make_unique<std::vector<std::vector<BattleTile>>>(kBattleMapSizeHeight_, std::vector<BattleTile>(kBattleMapSizeWidth_));
+    battle_map_info_ = std::make_unique<std::vector<std::vector<battle_tile::BattleTile>>>(kBattleMapSizeHeight_, std::vector<battle_tile::BattleTile>(kBattleMapSizeWidth_));
 
     //set random Terrain
     std::for_each(std::execution::par_unseq, battle_map_info_->data(), battle_map_info_->data() + kBattleMapSizeHeight_,
-        [](std::vector<BattleTile>& battle_tile_line) {
+        [](std::vector<battle_tile::BattleTile>& battle_tile_line) {
             std::for_each(std::execution::par_unseq, battle_tile_line.data(), battle_tile_line.data() + kBattleMapSizeWidth_, // not generate because we need to change only terrain
-                [](BattleTile& battle_tile) { battle_tile.terrain_type_ = static_cast<TerrainType>
-                    (get_random_number(static_cast<int>(TerrainType::kPlain), static_cast<int>(TerrainType::kTerrainTypeMax) - 1));
+                [](battle_tile::BattleTile& battle_tile) { battle_tile.terrain_type_ = static_cast<terrain::Type>
+                    (random::get_random_number(static_cast<int>(terrain::Type::kPlain), static_cast<int>(terrain::Type::kTerrainTypeMax) - 1));
                 });
         });
 }
 
-void TurnBasedGame::calculate_battle_map_visual() {
+void tbs::TurnBasedGame::calculate_battle_map_visual() {
     // + 1 after battle_map_indent_height for visual at the bottom
     if ((kBattleMapSizeHeight_ * kTileVisualHeight_) + 1 + pv_visual_indent_height_ + 1 > pv_window_height_end_ - pv_window_height_start_) {
 #ifdef debug_log
-        log_in_file("ERROR: battle_map_height is too large to be shown all at once.", true);
+        runtime_logger::log_in_file("ERROR: battle_map_height is too large to be shown all at once.", true);
 #endif
     }
     // + 2 after battle_map_indent_width for visual
     if ((kBattleMapSizeWidth_ * kTileVisualWidth_) + 1 + pv_visual_indent_width_ + 2 > pv_window_width_end_ - pv_window_width_start_) {
 #ifdef debug_log
-        log_in_file("ERROR: battle_map_width is too large to be shown all at once.", true);
+        runtime_logger::log_in_file("ERROR: battle_map_width is too large to be shown all at once.", true);
 #endif
     }
     // it is just cout no actual STOP!!!, program will be stopped by system error in the proccess of adding battle map to frame_
@@ -194,7 +197,7 @@ void TurnBasedGame::calculate_battle_map_visual() {
     }
 }
 
-void TurnBasedGame::show_battle_map() {
+void tbs::TurnBasedGame::show_battle_map() {
 
     std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{
         frame_.data() + pv_window_height_start_ + pv_visual_indent_height_ };
@@ -242,7 +245,7 @@ void TurnBasedGame::show_battle_map() {
     ui_status[UI_Status::kBattleMap] = true;
 }
 
-void TurnBasedGame::battle_map_show_landscape() {
+void tbs::TurnBasedGame::battle_map_show_landscape() {
     std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr{
         frame_.begin() + pv_window_height_start_ - 1 + pv_visual_indent_height_ };
 
@@ -250,18 +253,18 @@ void TurnBasedGame::battle_map_show_landscape() {
     int coordinate_x_start{ pv_window_width_start_ + pv_visual_indent_width_ - 2 };
 
     std::for_each(std::execution::seq, battle_map_info_->begin(), battle_map_info_->end(),  // can be changed to unseq execution if there will be locks to prevent dataracing
-        [=, &frame_coordinate_y_ptr, &frame_coordinate_x_ptr](std::vector<BattleTile>& battle_tile_line) {
+        [=, &frame_coordinate_y_ptr, &frame_coordinate_x_ptr](std::vector<terrain::battle_tile::BattleTile>& battle_tile_line) {
             frame_coordinate_y_ptr += kTileVisualHeight_;
             frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + coordinate_x_start;
-            std::for_each(std::execution::seq, battle_tile_line.begin(), battle_tile_line.end(), [=, &frame_coordinate_x_ptr](BattleTile& battle_tile) {
+            std::for_each(std::execution::seq, battle_tile_line.begin(), battle_tile_line.end(), [=, &frame_coordinate_x_ptr](terrain::battle_tile::BattleTile& battle_tile) {
                 frame_coordinate_x_ptr += kTileVisualWidth_;
-                *frame_coordinate_x_ptr = terrain_database_get_full_info(battle_tile.terrain_type_)->symbol_;
+                *frame_coordinate_x_ptr = terrain::get_full_terrain_info_from_database(battle_tile.terrain_type_)->symbol_;
                 });
         });
 }
 
-bool TurnBasedGame::battle_map_tile_numeration_turn_on() {
-    add_string_to_ui_log("Turn on tile numeration");
+bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_on() {
+    tbs::global::add_string_to_ui_log("Turn on tile numeration");
     FrameCoordinate coordinate{ pv_window_width_start_ + pv_visual_indent_width_ + kTileVisualWidth_ / 2, pv_window_height_start_ + pv_visual_indent_height_ - 1 };
 
     // create numeration at top
@@ -335,8 +338,8 @@ bool TurnBasedGame::battle_map_tile_numeration_turn_on() {
     return true;
 }
 
-bool TurnBasedGame::battle_map_tile_numeration_turn_off() {
-    add_string_to_ui_log("Turn off tile numeration");
+bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_off() {
+    tbs::global::add_string_to_ui_log("Turn off tile numeration");
     FrameCoordinate coordinate{ pv_window_width_start_ + pv_visual_indent_width_ + kTileVisualWidth_ / 2, pv_window_height_start_ + pv_visual_indent_height_ - 1 };
 
     // delete numeration at top
@@ -380,17 +383,17 @@ bool TurnBasedGame::battle_map_tile_numeration_turn_off() {
     return true;
 }
 
-bool TurnBasedGame::battle_map_tile_numeration_switch() {
+bool tbs::TurnBasedGame::battle_map_tile_numeration_switch() {
     return (!ui_status[UI_Status::kBattleMapTileNumeration]) ? battle_map_tile_numeration_turn_on() : battle_map_tile_numeration_turn_off();
 }
 
-FrameCoordinate TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
+FrameCoordinate tbs::TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
     int first_tile_coordinate_x{ pv_window_width_start_ + pv_visual_indent_width_ + (kTileVisualWidth_ / 2) },
         first_tile_coordinate_y{ pv_window_height_start_ + pv_visual_indent_height_ + 2 };
 
     if (coordinate.y > kBattleMapSizeHeight_ || coordinate.x > kBattleMapSizeWidth_) {
 #ifdef debug_log
-        log_in_file("ERROR: battle_map_find_tile_center_coordinate out of range", true);
+        runtime_logger::log_in_file("ERROR: battle_map_find_tile_center_coordinate out of range", true);
 #endif
         return { first_tile_coordinate_x, first_tile_coordinate_y }; // return [0, 0] tile
     }
@@ -398,7 +401,7 @@ FrameCoordinate TurnBasedGame::battle_map_find_tile_center_frame_coordinate(Batt
                 first_tile_coordinate_y + 1 + kTileVisualHeight_ * coordinate.y};
 }
 
-void TurnBasedGame::battle_map_update_player_selection() {
+void tbs::TurnBasedGame::battle_map_update_player_selection() {
     FrameCoordinate tile_center_coordinates{ battle_map_find_tile_center_frame_coordinate(player_coordinate_selection_) };
     
     int selection_visual_indent_height{ kPlayerSelectionVisualHeight_ / 2 },
@@ -443,7 +446,7 @@ void TurnBasedGame::battle_map_update_player_selection() {
         ((*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ != nullptr) ? true : false;
 }
 
-void TurnBasedGame::battle_map_clear_old_player_selection() {
+void tbs::TurnBasedGame::battle_map_clear_old_player_selection() {
     FrameCoordinate tile_center_coordinates;
     
     if (player_coordinate_selection_old_.x != -1 && player_coordinate_selection_old_.y != -1) { // possibly unneeded check for 2 values, only 1 is enough
@@ -492,16 +495,16 @@ void TurnBasedGame::battle_map_clear_old_player_selection() {
     }
 }
 
-void TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_iter, std::string::iterator frame_coordinate_x_iter_end) { // can be overhead but raises readability
+void tbs::TurnBasedGame::frame_clear_string(std::string::iterator frame_coordinate_x_iter, std::string::iterator frame_coordinate_x_iter_end) { // can be overhead but raises readability
     std::fill(std::execution::par_unseq, frame_coordinate_x_iter, frame_coordinate_x_iter_end, ' ');
 }
 
 // needs better system for transporting words from UI's right end
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent = 0) {
+std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string&& str_rvalue, int indent = 0) {
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
     if (str_rvalue.size() > ui_window_string_width_) {
-        log_in_file("Error, string is too big to be added in one ui string", true);
+        runtime_logger::log_in_file("Error, string is too big to be added in one ui string", true);
         return frame_coordinate_x_ptr;
     }
 
@@ -514,11 +517,11 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent = 0) {
+std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string* str_ptr, int indent = 0) {
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
     if (str_ptr->size() > ui_window_string_width_) {
-        log_in_file("Error, string is too big to be added in one ui string", true);
+        runtime_logger::log_in_file("Error, string is too big to be added in one ui string", true);
         return frame_coordinate_x_ptr;
     }
 
@@ -531,11 +534,11 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent = 0) {
+std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent = 0) {
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x + indent };
 
     if (str_view_ptr->size() > ui_window_string_width_) {
-        log_in_file("Error, string is too big to be added in one ui string", true);
+        runtime_logger::log_in_file("Error, string is too big to be added in one ui string", true);
         return frame_coordinate_x_ptr;
     }
 
@@ -548,12 +551,12 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
     return frame_coordinate_x_ptr;
 }
 
-std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const UserInputDescription* user_input_description_ptr) {
+std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coordinate, const u_input::UserInputDescription* user_input_description_ptr) {
     std::string::iterator frame_coordinate_x_ptr{ frame_[frame_coordinate.y].begin() + frame_coordinate.x };
     const std::string* str{ &user_input_description_ptr->description_ };
 
     if (str->size() > ui_window_string_width_) {
-        log_in_file("Error, string is too big to be added in one ui string", true);
+        runtime_logger::log_in_file("Error, string is too big to be added in one ui string", true);
         return frame_coordinate_x_ptr;
     }
 
@@ -571,32 +574,32 @@ std::string::iterator TurnBasedGame::add_string_to_ui(FrameCoordinate frame_coor
     return frame_coordinate_x_ptr;
 }
 
-void TurnBasedGame::ui_input_help_turn_on(const std::vector<UserInputButton>& allowed_user_input) {
+void tbs::TurnBasedGame::ui_input_help_turn_on(const std::vector<u_input::UserInputButton>& allowed_user_input) {
     if (ui_status[UI_Status::kCreatureStats]) { create_new_ui_window(); } // clear from ui stats, can be changed to more optimized variant
 
-    load_user_input_database(FileDatabaseId::kUserInputDescription);
+    u_input::load_user_input_database(file_database::ID::kUserInputDescription);
 
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
     std::for_each(std::execution::seq, allowed_user_input.begin(), allowed_user_input.end(),
-        [=, &coordinate](const UserInputButton allowed_user_input_description) {
-            add_string_to_ui(coordinate, user_input_database_get_main_description(allowed_user_input_description));
+        [=, &coordinate](const u_input::UserInputButton allowed_user_input_description) {
+            add_string_to_ui(coordinate, u_input::user_input_database_get_main_description(allowed_user_input_description));
             ++coordinate.y;
         });
 
-    unload_user_input_database(FileDatabaseId::kUserInputDescription);
+    u_input::unload_user_input_database(file_database::ID::kUserInputDescription);
 
-    add_string_to_ui_log("Turn in input help");
+    tbs::global::add_string_to_ui_log("Turn in input help");
     ui_status[UI_Status::kUI_InputHelp] = true;
 }
 
-void TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) {
+void tbs::TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) {
     std::array<std::string, kWindowHeight_>::iterator ui_begin_iter{ frame_.begin() + ui_window_height_start_ + 2 };
     std::for_each(std::execution::par_unseq, ui_begin_iter, ui_begin_iter + allowed_user_input_size, // +2 because of visual indent
         [=](std::string& str) {
             std::fill(std::execution::par_unseq, str.begin() + ui_window_width_start_ + 3, str.begin() + ui_window_width_end_, ' '); // +1 because of VerticalSymbol and +2 because of visual indent
         });
 
-    add_string_to_ui_log("Turn off input help");
+    tbs::global::add_string_to_ui_log("Turn off input help");
     ui_status[UI_Status::kUI_InputHelp] = false;
 
     if (ui_status[UI_Status::kBattleMap]) {
@@ -608,15 +611,15 @@ void TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) {
     }
 }
 
-void TurnBasedGame::ui_input_help_switch(const std::vector<UserInputButton>& allowed_user_input) {
+void tbs::TurnBasedGame::ui_input_help_switch(const std::vector<u_input::UserInputButton>& allowed_user_input) {
     (!ui_status[UI_Status::kUI_InputHelp]) ? ui_input_help_turn_on(allowed_user_input) : ui_input_help_turn_off(allowed_user_input.size());
 }
 
-void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate, 
-        CreatureStatId creature_stat_id, int stat_value_current, int stat_value_max = 0) {
+void tbs::TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate,
+    creature::stat::StatId creature_stat_id, int stat_value_current, int stat_value_max = 0) {
 
     std::string::iterator frame_coordinate_x_ptr = { frame_[frame_coordinate.y].begin() + frame_coordinate.x
-        + static_cast<int>(creature_database_get_stat_naming(creature_stat_id)->size()) + 2 }; // +2 for indent from stat naming to stat numeric values
+        + static_cast<int>(creature::stat::get_stat_naming_from_database(creature_stat_id)->size()) + 2 }; // +2 for indent from stat naming to stat numeric values
     
     std::string::iterator frame_coordinate_x_ptr_end{ frame_[frame_coordinate.y].begin() + ui_window_width_end_ };
 
@@ -644,54 +647,54 @@ void TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordin
     }
 }
 
-void TurnBasedGame::battle_map_create_basic_ui() {
+void tbs::TurnBasedGame::battle_map_create_basic_ui() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
-    for (int battle_tile_parameter_iter{}; battle_tile_parameter_iter != static_cast<int>(BattleTileParameters::kBattleTileParametersMax);
+    for (int battle_tile_parameter_iter{}; battle_tile_parameter_iter != static_cast<int>(terrain::battle_tile::TileParameters::kTileParametersMax);
         ++battle_tile_parameter_iter, ++coordinate.y) {
 
         *(add_string_to_ui(coordinate,
-           battle_tile_database_get_parameter_name(static_cast<BattleTileParameters>(battle_tile_parameter_iter)))) = ':';
+            terrain::battle_tile::get_tile_parameter_name_from_database(static_cast<terrain::battle_tile::TileParameters>(battle_tile_parameter_iter)))) = ':';
     }
 }
 
-void TurnBasedGame::battle_map_create_basic_ui_with_creature() {
+void tbs::TurnBasedGame::battle_map_create_basic_ui_with_creature() {
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width,
-            ui_window_height_start_ + ui_visual_indent_height + static_cast<int>(BattleTileParameters::kBattleTileParametersMax) };
+            ui_window_height_start_ + ui_visual_indent_height + static_cast<int>(terrain::battle_tile::TileParameters::kTileParametersMax) };
 
     *(add_string_to_ui(coordinate, "Name")) = ':';
     ++coordinate.y;
     *(add_string_to_ui(coordinate, "Race")) = ':';
     ++coordinate.y;
 
-    for (int creature_stat_iter{}, creature_stat_iter_max{ static_cast<int>(CreatureStatId::kCreatureStatMax) };
+    for (int creature_stat_iter{}, creature_stat_iter_max{ static_cast<int>(creature::stat::StatId::kStatMax) };
         creature_stat_iter != creature_stat_iter_max; ++creature_stat_iter, ++coordinate.y) {
 
         *(add_string_to_ui(coordinate,
-            creature_database_get_stat_naming(static_cast<CreatureStatId>(creature_stat_iter)))) = ':';
+            creature::stat::get_stat_naming_from_database(static_cast<creature::stat::StatId>(creature_stat_iter)))) = ':';
     }
 }
 
-void TurnBasedGame::update_ui() { // maybe should save in memory previus selection coordinates for possible action skips
+void tbs::TurnBasedGame::update_ui() { // maybe should save in memory previus selection coordinates for possible action skips
     if (ui_status[UI_Status::kUI_InputHelp] == true) {
         create_new_ui_window(); // not ui_help_turn_off because it asks for allowed_input_size
         battle_map_create_basic_ui();
     }
     
-    BattleTile* target{ &(*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x] };
+    terrain::battle_tile::BattleTile* target{ &(*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x] };
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
 
     // landscape
     add_string_to_ui(coordinate,
-        &terrain_database_get_full_info(target->terrain_type_)->type_name_,
-        static_cast<int>(battle_tile_database_get_parameter_name(BattleTileParameters::kLandscape)->size()) + 2);
+        &get_full_terrain_info_from_database(target->terrain_type_)->type_name_,
+        static_cast<int>(terrain::battle_tile::get_tile_parameter_name_from_database(terrain::battle_tile::TileParameters::kLandscape)->size()) + 2);
     ++coordinate.y;
 
     // TO DO creature or landscape "image"?
     // creature ownership
     if (target->creature_ == nullptr) {
         add_string_to_ui(coordinate, "None",
-            static_cast<int>(battle_tile_database_get_parameter_name(BattleTileParameters::kCreature)->size()) + 2);
+            static_cast<int>(terrain::battle_tile::get_tile_parameter_name_from_database(terrain::battle_tile::TileParameters::kCreature)->size()) + 2);
         ++coordinate.y;
 
         if (ui_status[UI_Status::kCreatureStats]) {
@@ -709,7 +712,7 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
 
     add_string_to_ui(coordinate,
         (target->creature_->get_army_id() == 0) ? "Player" : "Enemy",
-        static_cast<int>(battle_tile_database_get_parameter_name(BattleTileParameters::kCreature)->size()) + 2);
+        static_cast<int>(terrain::battle_tile::get_tile_parameter_name_from_database(terrain::battle_tile::TileParameters::kCreature)->size()) + 2);
     ++coordinate.y;
 
     if (!ui_status[UI_Status::kCreatureStats]) {
@@ -723,25 +726,25 @@ void TurnBasedGame::update_ui() { // maybe should save in memory previus selecti
 
     // creature race
     add_string_to_ui(coordinate,
-        creature_database_get_race_naming(target->creature_->get_race()), 6);
+        creature::stat::get_race_naming_from_database(target->creature_->get_race()), 6);
     ++coordinate.y;
 
     // creature stats
     { 
-        CreatureStat creature_stat;
-        for (int stat_iter{}, stat_iter_end{ static_cast<int>(CreatureStatId::kCreatureStatMax) };
+        creature::stat::Stat creature_stat;
+        for (int stat_iter{}, stat_iter_end{ static_cast<int>(creature::stat::StatId::kStatMax) };
             stat_iter != stat_iter_end; ++stat_iter, ++coordinate.y) {
 
-            creature_stat = target->creature_->get_certain_stat_current_and_max(static_cast<CreatureStatId>(stat_iter));
+            creature_stat = target->creature_->get_stat_current_and_max(static_cast<creature::stat::StatId>(stat_iter));
 
             add_creature_stat_string_to_ui(coordinate,
-                static_cast<CreatureStatId>(stat_iter),
-                creature_stat.current, (creature_stat.current != creature_stat.max) ? creature_stat.max : 0);
+                static_cast<creature::stat::StatId>(stat_iter),
+                creature_stat.current_, (creature_stat.current_ != creature_stat.max_) ? creature_stat.max_ : 0);
         }
     }
 }
 
-void TurnBasedGame::battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_battle_map_coordinate) {
+void tbs::TurnBasedGame::battle_map_clear_tile_from_creature_image(BattleMapCoordinate creature_battle_map_coordinate) {
     FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(creature_battle_map_coordinate) };
 
     std::string::pointer frame_coordinate_x_ptr{

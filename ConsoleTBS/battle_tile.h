@@ -6,66 +6,74 @@
 #include "terrain.h"
 #include "creature.h"
 
-enum class BattleTileParameters {
-	kLandscape,
-	kCreature,
-	kBattleTileParametersMax
-};
+namespace terrain {
 
-//enum class BattleTileModifier {
-//	kNoModifier,
-//	kForest,
-//	kRiver,
-//	kTileModifierMax
-//};
+	namespace battle_tile {
 
-//enum class Effect {
-//	kNoEffect,
-//	kEffectMax
-//};
+		enum class TileParameters {
+			kLandscape,
+			kCreature,
+			kTileParametersMax
+		};
 
-//void create_in_length(int print_times, char symbol = ' ') {
-//    for (int num{ 0 }; num != print_times; ++num) {
-//        std::cout << symbol;
-//    }
-//}
+		//enum class BattleTileModifier {
+		//	kNoModifier,
+		//	kForest,
+		//	kRiver,
+		//	kTileModifierMax
+		//};
 
-//void create_tile_horizontal_edge() {
-//    std::cout << ' ';
-//    create_in_length(tile_size + 6, tile_horizontal_symbol);
-//    std::cout << '\n';
-//}
+		//enum class Effect {
+		//	kNoEffect,
+		//	kEffectMax
+		//};
 
-//void create_tile_vertical_edge() {
-//    std::cout << tile_vertical_symbol;
-//    create_in_length(tile_size + 6);
-//    std::cout << tile_vertical_symbol;
-//
-//    //!!!!!!!!!!!!!!! for test
-//    std::cout << '\n';
-//}
+		//void create_in_length(int print_times, char symbol = ' ') {
+		//    for (int num{ 0 }; num != print_times; ++num) {
+		//        std::cout << symbol;
+		//    }
+		//}
 
-//void print_cell() {
-//    // box "hex"
-//    // print top edge
-//    create_tile_horizontal_edge();
-//    // print side edges
-//    for (int num{ 0 }; num != tile_size; ++num) {
-//        create_tile_vertical_edge();
-//    }
-//    // print bottom edge
-//    create_tile_horizontal_edge();
-//}
+		//void create_tile_horizontal_edge() {
+		//    std::cout << ' ';
+		//    create_in_length(tile_size + 6, tile_horizontal_symbol);
+		//    std::cout << '\n';
+		//}
 
-struct BattleTile {
+		//void create_tile_vertical_edge() {
+		//    std::cout << tile_vertical_symbol;
+		//    create_in_length(tile_size + 6);
+		//    std::cout << tile_vertical_symbol;
+		//
+		//    //!!!!!!!!!!!!!!! for test
+		//    std::cout << '\n';
+		//}
 
-	// what it contains : unit, landscape, effects, etc
-	TerrainType terrain_type_{ TerrainType::kPlain };
-	std::shared_ptr<Creature> creature_{ nullptr }; // owned by Army AND BattleTile
-	
-	//std::vector<BattleTileModifier> modifiers_;
-	//BattleTileModifier modifier_;
-};
+		//void print_cell() {
+		//    // box "hex"
+		//    // print top edge
+		//    create_tile_horizontal_edge();
+		//    // print side edges
+		//    for (int num{ 0 }; num != tile_size; ++num) {
+		//        create_tile_vertical_edge();
+		//    }
+		//    // print bottom edge
+		//    create_tile_horizontal_edge();
+		//}
 
-const std::string_view* battle_tile_database_get_parameter_name(BattleTileParameters battle_tile_parameter);
-//void creature_update_battle_tile_effects(Creature* creature, const BattleTile* old_battle_tile, const BattleTile* new_battle_tile);
+		struct BattleTile {
+
+			// what it contains : unit, landscape, effects, etc
+			terrain::Type terrain_type_{ terrain::Type::kPlain };
+			std::shared_ptr<creature::Creature> creature_{ nullptr }; // owned by Army AND BattleTile
+
+			//std::vector<BattleTileModifier> modifiers_;
+			//BattleTileModifier modifier_;
+		};
+
+		const std::string_view* get_tile_parameter_name_from_database(TileParameters battle_tile_parameter);
+		//void creature_update_battle_tile_effects(Creature* creature, const BattleTile* old_battle_tile, const BattleTile* new_battle_tile);
+
+	}
+
+}

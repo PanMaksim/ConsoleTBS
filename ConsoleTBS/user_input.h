@@ -5,33 +5,37 @@
 
 #include "file_database.h"
 
-enum UserInputButton {
-    kExit = '~', // kUserInputMin
-    kShowInputHelp = '`', // not key binding, because it shows only available input
-    kMoveUp = 'w',
-    kMoveDown = 's',
-    kMoveLeft = 'a',
-    kMoveRight = 'd',
-    kInteract = 'e',
-    kMoveSelectionByDirection = 'q',
-    kMoveSelectionByCoordinate = 'Q',
-    kStartBattle = 'b',
-    kTileNumerationSwitch = 'z',
-};
+namespace u_input {
 
-struct UserInputDescription {
-    UserInputButton button_;
-    std::string description_;
+    enum UserInputButton {
+        kExit = '~', // kUserInputMin
+        kShowInputHelp = '`', // not key binding, because it shows only available input
+        kMoveUp = 'w',
+        kMoveDown = 's',
+        kMoveLeft = 'a',
+        kMoveRight = 'd',
+        kInteract = 'e',
+        kMoveSelectionByDirection = 'q',
+        kMoveSelectionByCoordinate = 'Q',
+        kStartBattle = 'b',
+        kTileNumerationSwitch = 'z',
+    };
 
-    UserInputDescription(char button, std::string&& description);
-    ~UserInputDescription() = default;
-};
+    struct UserInputDescription {
+        UserInputButton button_;
+        std::string description_;
 
-extern const UserInputDescription description_to_show_input_help_button; // always holded in memory to prevent opening the database each time ui is cleaned (cleaning can be changed to not touch help_button, but in future sometimes there can be potencial another window over ui)
+        UserInputDescription(char button, std::string&& description);
+        ~UserInputDescription() = default;
+    };
 
-int get_user_input(int min, int max);
-const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol);
-const std::vector<UserInputDescription>* user_input_database_get_all_description();
+    extern const UserInputDescription description_to_show_input_help_button; // always holded in memory to prevent opening the database each time ui is cleaned (cleaning can be changed to not touch help_button, but in future sometimes there can be potencial another window over ui)
 
-void load_user_input_database(FileDatabaseId database_id);
-void unload_user_input_database(FileDatabaseId database_id);
+    int get_user_input(int min, int max);
+    const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol);
+    const std::vector<UserInputDescription>* user_input_database_get_all_description();
+
+    void load_user_input_database(file_database::ID database_id);
+    void unload_user_input_database(file_database::ID database_id);
+
+}
