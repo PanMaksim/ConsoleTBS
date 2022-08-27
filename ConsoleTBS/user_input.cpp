@@ -111,6 +111,8 @@ const UserInputDescription* u_input::user_input_database_get_main_description(Us
 		return &(*user_input_database_description)[8];
 	case UserInputButton::kTileNumerationSwitch:
 		return &(*user_input_database_description)[9];
+	case UserInputButton::kCreatureOwnershipSwitch:
+		return &(*user_input_database_description)[10];
 	default:
 		return &(*user_input_database_description)[0];
 	}

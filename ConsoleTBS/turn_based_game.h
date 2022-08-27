@@ -102,9 +102,9 @@ namespace tbs { // there are nested namespace in the end
         friend void tbs::global::add_string_to_ui_log(const std::string str);
 
     private:
-        enum UI_Status {
-            kWindowsAndInterfacesStatusMin,
-            kPlayerViewWindow = kWindowsAndInterfacesStatusMin,
+        enum UI_Status { // idk how to resolve unreadability UIStatus without '_'
+            kUI_StatusMin,
+            kPlayerViewWindow = kUI_StatusMin,
             kUI_Window,
             kUI_WindowLog,
             kUI_InputHelp,
@@ -113,7 +113,8 @@ namespace tbs { // there are nested namespace in the end
             kCreatureStats,
             kCreatureSelected, // for situations when something will be shown over creature_ptr stats
             // kCreatureInteracted, // for future, example when interaction creates new "windows"
-            kWindowsAndInterfacesStatusMax,
+            kCreatureOwnership,
+            kUI_StatusMax,
         };
 
         void create_new_main_game_window();
@@ -149,6 +150,9 @@ namespace tbs { // there are nested namespace in the end
         bool battle_map_tile_numeration_switch();
         bool battle_map_tile_numeration_turn_on();
         bool battle_map_tile_numeration_turn_off();
+        bool battle_map_creature_ownership_switch();
+        bool battle_map_creature_ownership_turn_on();
+        bool battle_map_creature_ownership_turn_off();
         void battle_map_create_basic_ui();
         void battle_map_create_basic_ui_with_creature();
         void battle_map_clear_tile_from_creature_image(coord::BattleMapCoordinate creature_battle_map_coordinate);
@@ -201,7 +205,7 @@ namespace tbs { // there are nested namespace in the end
         static constexpr int kUserInterfaceLogWindowHeight_{ 14 };
         int ui_log_window_height_current_{ 1 };
 
-        std::array<bool, UI_Status::kWindowsAndInterfacesStatusMax> ui_status{ false }; // represent opened windows/interfaces
+        std::array<bool, UI_Status::kUI_StatusMax> ui_status{ false }; // represent opened windows/interfaces
 
         std::unique_ptr<std::vector<std::vector<terrain::battle_tile::BattleTile>>> battle_map_info_ = nullptr; // used vector not array, cause for possibility in future to make dynamic map sizes (change it at generation or maybe even growing in started battle)
         // (*battle_map_info_)[y][x]

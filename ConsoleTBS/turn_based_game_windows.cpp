@@ -387,6 +387,60 @@ bool tbs::TurnBasedGame::battle_map_tile_numeration_switch() {
     return (!ui_status[UI_Status::kBattleMapTileNumeration]) ? battle_map_tile_numeration_turn_on() : battle_map_tile_numeration_turn_off();
 }
 
+bool tbs::TurnBasedGame::battle_map_creature_ownership_turn_on() {
+    // realized by battle coordinates (not battle_map iterators) because tile_center search requires those coordinates
+
+    for (coord::BattleMapCoordinate battle_map_coordinate{}; battle_map_coordinate.y != kBattleMapSizeHeight_; ++battle_map_coordinate.y) {
+        battle_map_coordinate.x = 0; // restart cycle (minor overhead, but for navigation used coord structs)
+        coord::FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(battle_map_coordinate) };
+
+        for (std::vector<terrain::battle_tile::BattleTile>::iterator battle_map_iter_x{ (*battle_map_info_)[battle_map_coordinate.y].begin() };
+            battle_map_coordinate.x != kBattleMapSizeWidth_; ++battle_map_coordinate.x, ++battle_map_iter_x) {
+
+            if (battle_map_iter_x->creature_ != nullptr) {
+                switch (battle_map_iter_x->creature_->get_army_id()) { // must be changed to faction id in future (if factions will be added)
+                case 0: // !!!!!!!!!!!!!!! tmp, owned by player
+                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'p';
+                    break;
+                case 1: // !!!!!!!!!!!!!!! tmp, not player
+                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'e';
+                    break;
+                default:
+                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'o';
+                    break;
+                }
+            }
+            tile_center_coordinate.x += kTileVisualWidth_;
+        }
+    }
+
+    ui_status[UI_Status::kCreatureOwnership] = true;
+    return true;
+}
+
+bool tbs::TurnBasedGame::battle_map_creature_ownership_turn_off() {
+    for (coord::BattleMapCoordinate battle_map_coordinate{}; battle_map_coordinate.y != kBattleMapSizeHeight_; ++battle_map_coordinate.y) {
+        battle_map_coordinate.x = 0; // restart cycle (minor overhead over raw num's, but for navigation used coord structs)
+        coord::FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(battle_map_coordinate) };
+
+        for (std::vector<terrain::battle_tile::BattleTile>::iterator battle_map_iter_x{ (*battle_map_info_)[battle_map_coordinate.y].begin() };
+            battle_map_coordinate.x != kBattleMapSizeWidth_; ++battle_map_coordinate.x, ++battle_map_iter_x) {
+
+            if (battle_map_iter_x->creature_ != nullptr) {
+                frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = ' ';
+            }
+            tile_center_coordinate.x += kTileVisualWidth_;
+        }
+    }
+    
+    ui_status[UI_Status::kCreatureOwnership] = false;
+    return true;
+}
+
+bool tbs::TurnBasedGame::battle_map_creature_ownership_switch() {
+    return (!ui_status[UI_Status::kCreatureOwnership]) ? battle_map_creature_ownership_turn_on() : battle_map_creature_ownership_turn_off();
+}
+
 FrameCoordinate tbs::TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
     int first_tile_coordinate_x{ pv_window_width_start_ + pv_visual_indent_width_ + (kTileVisualWidth_ / 2) },
         first_tile_coordinate_y{ pv_window_height_start_ + pv_visual_indent_height_ + 2 };
