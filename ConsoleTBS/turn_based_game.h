@@ -172,10 +172,10 @@ namespace tbs { // there are nested namespace in the end
         void check_possible_kill(std::shared_ptr<creature::Creature> creature_ptr, coord::BattleMapCoordinate creature_battle_map_coordinate);
 
     private:
-        //static constexpr int kWindowWidth_{ 317 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input
-        //                    kWindowHeight_{ 82 };
-        static constexpr int kWindowWidth_{ 264 },  // tmp value for laptop
-            kWindowHeight_{ 66 };
+        static constexpr int kWindowWidth_{ 317 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input
+                            kWindowHeight_{ 82 };
+        //static constexpr int kWindowWidth_{ 264 },  // tmp value for laptop
+        //    kWindowHeight_{ 66 };
 
         std::array<std::string, kWindowHeight_> frame_;
         // when accessing it frame[y][x]
