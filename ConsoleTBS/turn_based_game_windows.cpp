@@ -199,11 +199,11 @@ void tbs::TurnBasedGame::calculate_battle_map_visual() {
 
 void tbs::TurnBasedGame::show_battle_map() {
 
-    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{
-        frame_.data() + pv_window_height_start_ + pv_visual_indent_height_ };
+    std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr{
+        frame_.begin() + pv_window_height_start_ + pv_visual_indent_height_ };
 
-    std::string::pointer frame_coordinate_x_ptr{
-        frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_ + 1 };
+    std::string::iterator frame_coordinate_x_ptr{
+        frame_coordinate_y_ptr->begin() + pv_window_width_start_ + pv_visual_indent_width_ + 1 };
 
     int shown_tiles_width, 
         tile_border_visual_size_current;
@@ -214,7 +214,7 @@ void tbs::TurnBasedGame::show_battle_map() {
     }
 
     ++frame_coordinate_y_ptr;
-    frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_;
+    frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + pv_window_width_start_ + pv_visual_indent_width_;
 
     for (int shown_tiles_height = 0; shown_tiles_height != kBattleMapSizeHeight_; ++shown_tiles_height) {
 
@@ -222,7 +222,7 @@ void tbs::TurnBasedGame::show_battle_map() {
         for (tile_border_visual_size_current = 0; tile_border_visual_size_current != kTileVisualHeight_ - 1;
             ++tile_border_visual_size_current, ++frame_coordinate_y_ptr) {
 
-            frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_;
+            frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + pv_window_width_start_ + pv_visual_indent_width_;
             for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_ + 1; // to create right border for last tile
                 ++shown_tiles_width, frame_coordinate_x_ptr += kTileVisualWidth_) {
 
@@ -231,7 +231,7 @@ void tbs::TurnBasedGame::show_battle_map() {
         }
 
         // create bottom edges
-        frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_;
+        frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + pv_window_width_start_ + pv_visual_indent_width_;
 
         for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_; ++shown_tiles_width, frame_coordinate_x_ptr += kTileVisualWidth_ - 1) {
             *frame_coordinate_x_ptr++ = kTileVerticalSymbol_;

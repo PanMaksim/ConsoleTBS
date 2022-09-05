@@ -176,9 +176,12 @@ namespace tbs { // there are nested namespace in the end
         void check_possible_kill(std::shared_ptr<creature::Creature> creature_ptr, coord::BattleMapCoordinate creature_battle_map_coordinate);
 
     private:
-        static constexpr int kWindowWidth_{ 317 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input
-                            kWindowHeight_{ 82 };
-        //static constexpr int kWindowWidth_{ 264 },  // tmp value for laptop
+        // for my main monitor
+        static constexpr int kWindowWidth_{ 238 },  // two strings are not included in height: first positioned below window frame and used for user input, second positioned above window frame and used for commenting what is done by user input
+                            kWindowHeight_{ 62 };
+        //static constexpr int kWindowWidth_{ 211 },  // for 15.6' laptop
+        //    kWindowHeight_{ 48 };
+        //static constexpr int kWindowWidth_{ 264 },  // for 17.1' laptop
         //    kWindowHeight_{ 66 };
 
         std::array<std::string, kWindowHeight_> frame_;
@@ -210,8 +213,10 @@ namespace tbs { // there are nested namespace in the end
         std::unique_ptr<std::vector<std::vector<terrain::battle_tile::BattleTile>>> battle_map_info_ = nullptr; // used vector not array, cause for possibility in future to make dynamic map sizes (change it at generation or maybe even growing in started battle)
         // (*battle_map_info_)[y][x]
 
-        static constexpr int kBattleMapSizeHeight_{ 9 }, // size in tiles
-                                kBattleMapSizeWidth_{ 19 };
+        static constexpr int kBattleMapSizeHeight_{ 6 }, // size in tiles // main
+                                kBattleMapSizeWidth_{ 14 };
+        //static constexpr int kBattleMapSizeHeight_{ 9 }, // for my PC
+        //                        kBattleMapSizeWidth_{ 19 };
         //static constexpr int kBattleMapSizeHeight_{ 7 }, // tmp value for laptop
         //                        kBattleMapSizeWidth_{ 16 };
 
