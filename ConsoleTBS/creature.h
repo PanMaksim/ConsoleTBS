@@ -26,9 +26,8 @@ namespace creature {
 
 		~Creature() = default;
 
-		//bool operator==(const Creature& another_creature) {
-		//	return creature_id_ == another_creature.get_creature_id();
-		//}
+		//bool operator==(const Creature& another_creature);
+		bool operator<(const Creature& another_creature); // for storing creatures in set
 
 
 

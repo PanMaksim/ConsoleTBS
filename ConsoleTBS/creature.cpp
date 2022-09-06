@@ -166,6 +166,14 @@ creature::Creature::Creature(const Creature* creature_ptr, stat::ComplexID&& cre
 	name_ = generate_name();
 }
 
+//bool creature::Creature::operator==(const Creature& another_creature) {
+//	return this->get_creature_id() == another_creature.get_creature_id();
+//}
+
+bool creature::Creature::operator<(const Creature& another_creature){
+	return this->get_creature_id() < another_creature.get_creature_id();
+}
+
 creature::stat::Stat creature::Creature::get_stat_current_and_max(stat::StatId stat_id_) const { return stats_[static_cast<int>(stat_id_)]; }
 int creature::Creature::get_stat_current_value(stat::StatId stat_id_) const { return stats_[static_cast<int>(stat_id_)].current_; }
 creature::stat::Race creature::Creature::get_race() const { return race_; }
