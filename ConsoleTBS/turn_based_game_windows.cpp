@@ -100,8 +100,8 @@ void tbs::TurnBasedGame::calculate_window_borders() {
     pv_window_height_start_ = 1; // starting from 1 and ending at window_height - 3 cause of main game borders from both sides and numeration from 0
     pv_window_height_end_ = kWindowHeight_ - 1;
 
-    ui_window_height_start_ = 1;
-    ui_window_height_end_ = kWindowHeight_ - 1;
+    ui_window_height_start_ = pv_window_height_start_;
+    ui_window_height_end_ = pv_window_height_end_;
 
     int interface_main_actual_window_width = static_cast<int>((kWindowWidth_ * 0.20) - 2);
     //int player_view_actual_window_width = window_width - interface_main_actual_window_width - 2;
@@ -187,6 +187,10 @@ void tbs::TurnBasedGame::calculate_battle_map_visual() {
 
         pv_visual_indent_height_ = ((kWindowHeight_ - battle_map_visual_size_height) / 2);
         pv_visual_indent_width_ = ((pv_window_width_end_ - pv_window_width_start_ - battle_map_visual_size_width) / 2);
+
+        if (pv_visual_indent_width_ % 2 != 0) { // give priority to left indend
+            ++pv_visual_indent_width_;
+        }
 
         if (pv_window_height_end_ - pv_window_height_start_ - battle_map_visual_size_height - pv_visual_indent_height_ != pv_visual_indent_height_) {
             --pv_visual_indent_height_;
@@ -284,11 +288,10 @@ bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_on() {
     }
 
     // create numeration at left and right
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! - 1 only for laptop
     coordinate.y = pv_window_height_start_ + pv_visual_indent_height_ + kTileVisualHeight_ / 2 - 1;
     {
         int frame_coordinate_x_left{ pv_window_width_start_ + pv_visual_indent_width_ - 2 },
-            frame_coordinate_x_right{ pv_window_width_end_ - pv_visual_indent_width_ + 2 };
+            frame_coordinate_x_right{ pv_window_width_end_ - pv_visual_indent_width_ + 1}; // there was + 2
         int shown_tiles_height{};
 
         for (char tile_number_height_first{ '0' }, tile_number_height_second{ '1' };

@@ -214,7 +214,7 @@ namespace tbs { // there are nested namespace in the end
         // (*battle_map_info_)[y][x]
 
         static constexpr int kBattleMapSizeHeight_{ 6 }, // size in tiles // main
-                                kBattleMapSizeWidth_{ 14 };
+                                kBattleMapSizeWidth_{ 15 };
         //static constexpr int kBattleMapSizeHeight_{ 9 }, // for my PC
         //                        kBattleMapSizeWidth_{ 19 };
         //static constexpr int kBattleMapSizeHeight_{ 7 }, // tmp value for laptop
