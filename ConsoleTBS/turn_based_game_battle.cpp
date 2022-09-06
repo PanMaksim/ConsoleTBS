@@ -189,9 +189,9 @@ void tbs::TurnBasedGame::battle_map_add_creature(std::shared_ptr<creature::Creat
 void tbs::TurnBasedGame::battle_map_add_army(std::shared_ptr<army::Army> army_ptr, army::BattleStartStatus battle_status) {
     using namespace army;
 
-    std::shared_ptr<std::vector<std::shared_ptr<creature::Creature>>> army_vector_ptr{ army_ptr->get_army_shared_ptr() };
-    std::vector<std::shared_ptr<creature::Creature>>::pointer army_vector_ptr_current{ army_vector_ptr->data() },
-        army_vector_ptr_end{ army_vector_ptr->data() + army_vector_ptr->size() };
+    std::shared_ptr<std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>> army_vector_ptr{ army_ptr->get_army_shared_ptr() };
+    std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>::iterator army_vector_ptr_current{ army_vector_ptr->begin() },
+        army_vector_ptr_end{ army_vector_ptr->end() };
 
     switch (battle_status) {
     case BattleStartStatus::kAttaking: // ATK from left

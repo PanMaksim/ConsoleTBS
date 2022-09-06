@@ -19,8 +19,7 @@ using namespace army;
 const int army::army_size_max_{ 12 }; // 18 for PC and 14 for laptop
 
 army::Army::Army() {
-	army_ = std::make_shared<std::vector<std::shared_ptr<Creature>>>();
-	army_->reserve(army_size_max_);
+	army_ = std::make_shared<std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>>(compare_shared_ptrs_to_creature);
 
 	static int army_id_counter_{};
 	army_id_ = army_id_counter_++;
@@ -29,12 +28,12 @@ army::Army::Army() {
 short army::Army::get_army_id() const { return army_id_; }
 int army::Army::get_army_size() const { return static_cast<int>(army_->size()); }
 //std::weak_ptr<std::vector<std::shared_ptr<Creature>>> Army::get_army_weak_ptr() { return army_; }
-std::shared_ptr<std::vector<std::shared_ptr<Creature>>> Army::get_army_shared_ptr() { return army_; }
+std::shared_ptr<std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>> Army::get_army_shared_ptr() { return army_; }
 
 void army::Army::clear() { army_->clear(); }
 
-std::vector<std::shared_ptr<Creature>>::iterator army::Army::begin() { return army_->begin(); }
-std::vector<std::shared_ptr<Creature>>::iterator army::Army::end() { return army_->end(); }
+std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>::iterator army::Army::begin() { return army_->begin(); }
+std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>::iterator army::Army::end() { return army_->end(); }
 
 creature::stat::ComplexID army::Army::generate_creature_complex_id() {
 	if (++creature_id_counter_ == std::numeric_limits<int>::max()) {
@@ -55,7 +54,7 @@ army::Army army::generate_random_army() {
 	creature::load_database_into_memory(ID::kCreatureNameDatabase);
 	creature::load_database_into_memory(ID::kCreatureTemplateDatabase);
 
-	std::generate_n(std::back_inserter(*army.army_), army_size_max_, [&army]() { return std::make_shared<Creature>(creature::get_ptr_to_creature_template_from_database(static_cast<creature::CreatureTemplateID>((
+	std::generate_n(std::inserter(*army.army_, army.army_->begin()), army_size_max_, [&army]() { return std::make_shared<Creature>(creature::get_ptr_to_creature_template_from_database(static_cast<creature::CreatureTemplateID>((
 		random::get_random_number(static_cast<int>(creature::CreatureTemplateID::kHumanSpearman), static_cast<int>(creature::CreatureTemplateID::kCreatureTemplateMax) - 1)))), army.generate_creature_complex_id());});
 
 	creature::unload_database_from_memory(ID::kCreatureNameDatabase);

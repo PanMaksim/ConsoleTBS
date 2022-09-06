@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <string>
 #include <utility>
+#include <functional>
 
 #include "file_database.h"
 #include "creature_stats.h"
@@ -64,7 +65,8 @@ namespace creature {
 
 		const std::string generate_name(); // in future should use creature_race and culture
 	};
-	
+
+	extern std::function<bool(const std::shared_ptr<Creature>&, const std::shared_ptr<Creature>&)> compare_shared_ptrs_to_creature;
 
 	void load_database_into_memory(file_database::ID database_id);
 	void unload_database_from_memory(file_database::ID database_id);
