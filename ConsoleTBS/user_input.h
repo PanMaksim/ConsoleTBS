@@ -19,6 +19,7 @@ namespace u_input {
         kMoveSelectionByCoordinate = 'Q',
         kStartBattle = 'b',
         kTileNumerationSwitch = 'z',
+        kCreatureOwnershipSwitch = 'x'
     };
 
     struct UserInputDescription {

@@ -1,4 +1,4 @@
-10
+11
 ~ return
 w move up
 d move down
@@ -9,3 +9,4 @@ q move selection by direction
 Q move selection by coordinate
 b start battle
 z tile numeration switch
+x creature ownership switch

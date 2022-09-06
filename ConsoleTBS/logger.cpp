@@ -1,5 +1,6 @@
 #include "logger.h"
 
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -30,7 +31,7 @@ void runtime_logger::log_in_file(std::string str_log, bool critical_error) {
 		main_logger << "!!!!!!!!!!!!!!!!!!!!!CRITICAL ERROR!!!!!!!!!!!!!!!!!!!!!\n";
 	}
 
-	main_logger << "  " << str_log << std::endl;
+	main_logger << "  " << str_log << std::endl; // flushed every string to actually point where error occured
 }
 
 void runtime_logger::log_in_file(const std::stringstream& sstr_log, bool critical_error) {
@@ -39,7 +40,7 @@ void runtime_logger::log_in_file(const std::stringstream& sstr_log, bool critica
 		main_logger << "!!!!!!!!!!!!!!!!!!!!!CRITICAL ERROR!!!!!!!!!!!!!!!!!!!!!\n";
 	}
 
-	main_logger << "  " << sstr_log.str() << std::endl;
+	main_logger << "  " << sstr_log.str() << std::endl; // flushed every string to actually point where error occured
 }
 
 void runtime_logger::initialize_logger() {

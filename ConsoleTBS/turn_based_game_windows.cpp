@@ -100,8 +100,8 @@ void tbs::TurnBasedGame::calculate_window_borders() {
     pv_window_height_start_ = 1; // starting from 1 and ending at window_height - 3 cause of main game borders from both sides and numeration from 0
     pv_window_height_end_ = kWindowHeight_ - 1;
 
-    ui_window_height_start_ = 1;
-    ui_window_height_end_ = kWindowHeight_ - 1;
+    ui_window_height_start_ = pv_window_height_start_;
+    ui_window_height_end_ = pv_window_height_end_;
 
     int interface_main_actual_window_width = static_cast<int>((kWindowWidth_ * 0.20) - 2);
     //int player_view_actual_window_width = window_width - interface_main_actual_window_width - 2;
@@ -188,6 +188,10 @@ void tbs::TurnBasedGame::calculate_battle_map_visual() {
         pv_visual_indent_height_ = ((kWindowHeight_ - battle_map_visual_size_height) / 2);
         pv_visual_indent_width_ = ((pv_window_width_end_ - pv_window_width_start_ - battle_map_visual_size_width) / 2);
 
+        if (pv_visual_indent_width_ % 2 != 0) { // give priority to left indend
+            ++pv_visual_indent_width_;
+        }
+
         if (pv_window_height_end_ - pv_window_height_start_ - battle_map_visual_size_height - pv_visual_indent_height_ != pv_visual_indent_height_) {
             --pv_visual_indent_height_;
         }
@@ -199,11 +203,11 @@ void tbs::TurnBasedGame::calculate_battle_map_visual() {
 
 void tbs::TurnBasedGame::show_battle_map() {
 
-    std::array<std::string, kWindowHeight_>::pointer frame_coordinate_y_ptr{
-        frame_.data() + pv_window_height_start_ + pv_visual_indent_height_ };
+    std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr{
+        frame_.begin() + pv_window_height_start_ + pv_visual_indent_height_ };
 
-    std::string::pointer frame_coordinate_x_ptr{
-        frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_ + 1 };
+    std::string::iterator frame_coordinate_x_ptr{
+        frame_coordinate_y_ptr->begin() + pv_window_width_start_ + pv_visual_indent_width_ + 1 };
 
     int shown_tiles_width, 
         tile_border_visual_size_current;
@@ -214,7 +218,7 @@ void tbs::TurnBasedGame::show_battle_map() {
     }
 
     ++frame_coordinate_y_ptr;
-    frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_;
+    frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + pv_window_width_start_ + pv_visual_indent_width_;
 
     for (int shown_tiles_height = 0; shown_tiles_height != kBattleMapSizeHeight_; ++shown_tiles_height) {
 
@@ -222,7 +226,7 @@ void tbs::TurnBasedGame::show_battle_map() {
         for (tile_border_visual_size_current = 0; tile_border_visual_size_current != kTileVisualHeight_ - 1;
             ++tile_border_visual_size_current, ++frame_coordinate_y_ptr) {
 
-            frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_;
+            frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + pv_window_width_start_ + pv_visual_indent_width_;
             for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_ + 1; // to create right border for last tile
                 ++shown_tiles_width, frame_coordinate_x_ptr += kTileVisualWidth_) {
 
@@ -231,7 +235,7 @@ void tbs::TurnBasedGame::show_battle_map() {
         }
 
         // create bottom edges
-        frame_coordinate_x_ptr = frame_coordinate_y_ptr->data() + pv_window_width_start_ + pv_visual_indent_width_;
+        frame_coordinate_x_ptr = frame_coordinate_y_ptr->begin() + pv_window_width_start_ + pv_visual_indent_width_;
 
         for (shown_tiles_width = 0; shown_tiles_width != kBattleMapSizeWidth_; ++shown_tiles_width, frame_coordinate_x_ptr += kTileVisualWidth_ - 1) {
             *frame_coordinate_x_ptr++ = kTileVerticalSymbol_;
@@ -284,11 +288,10 @@ bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_on() {
     }
 
     // create numeration at left and right
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! - 1 only for laptop
     coordinate.y = pv_window_height_start_ + pv_visual_indent_height_ + kTileVisualHeight_ / 2 - 1;
     {
         int frame_coordinate_x_left{ pv_window_width_start_ + pv_visual_indent_width_ - 2 },
-            frame_coordinate_x_right{ pv_window_width_end_ - pv_visual_indent_width_ + 2 };
+            frame_coordinate_x_right{ pv_window_width_end_ - pv_visual_indent_width_ + 1}; // there was + 2
         int shown_tiles_height{};
 
         for (char tile_number_height_first{ '0' }, tile_number_height_second{ '1' };
@@ -385,6 +388,60 @@ bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_off() {
 
 bool tbs::TurnBasedGame::battle_map_tile_numeration_switch() {
     return (!ui_status[UI_Status::kBattleMapTileNumeration]) ? battle_map_tile_numeration_turn_on() : battle_map_tile_numeration_turn_off();
+}
+
+bool tbs::TurnBasedGame::battle_map_creature_ownership_turn_on() {
+    // realized by battle coordinates (not battle_map iterators) because tile_center search requires those coordinates
+
+    for (coord::BattleMapCoordinate battle_map_coordinate{}; battle_map_coordinate.y != kBattleMapSizeHeight_; ++battle_map_coordinate.y) {
+        battle_map_coordinate.x = 0; // restart cycle (minor overhead, but for navigation used coord structs)
+        coord::FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(battle_map_coordinate) };
+
+        for (std::vector<terrain::battle_tile::BattleTile>::iterator battle_map_iter_x{ (*battle_map_info_)[battle_map_coordinate.y].begin() };
+            battle_map_coordinate.x != kBattleMapSizeWidth_; ++battle_map_coordinate.x, ++battle_map_iter_x) {
+
+            if (battle_map_iter_x->creature_ != nullptr) {
+                switch (battle_map_iter_x->creature_->get_army_id()) { // must be changed to faction id in future (if factions will be added)
+                case 0: // !!!!!!!!!!!!!!! tmp, owned by player
+                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'p';
+                    break;
+                case 1: // !!!!!!!!!!!!!!! tmp, not player
+                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'e';
+                    break;
+                default:
+                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'o';
+                    break;
+                }
+            }
+            tile_center_coordinate.x += kTileVisualWidth_;
+        }
+    }
+
+    ui_status[UI_Status::kCreatureOwnership] = true;
+    return true;
+}
+
+bool tbs::TurnBasedGame::battle_map_creature_ownership_turn_off() {
+    for (coord::BattleMapCoordinate battle_map_coordinate{}; battle_map_coordinate.y != kBattleMapSizeHeight_; ++battle_map_coordinate.y) {
+        battle_map_coordinate.x = 0; // restart cycle (minor overhead over raw num's, but for navigation used coord structs)
+        coord::FrameCoordinate tile_center_coordinate{ battle_map_find_tile_center_frame_coordinate(battle_map_coordinate) };
+
+        for (std::vector<terrain::battle_tile::BattleTile>::iterator battle_map_iter_x{ (*battle_map_info_)[battle_map_coordinate.y].begin() };
+            battle_map_coordinate.x != kBattleMapSizeWidth_; ++battle_map_coordinate.x, ++battle_map_iter_x) {
+
+            if (battle_map_iter_x->creature_ != nullptr) {
+                frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = ' ';
+            }
+            tile_center_coordinate.x += kTileVisualWidth_;
+        }
+    }
+    
+    ui_status[UI_Status::kCreatureOwnership] = false;
+    return true;
+}
+
+bool tbs::TurnBasedGame::battle_map_creature_ownership_switch() {
+    return (!ui_status[UI_Status::kCreatureOwnership]) ? battle_map_creature_ownership_turn_on() : battle_map_creature_ownership_turn_off();
 }
 
 FrameCoordinate tbs::TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
