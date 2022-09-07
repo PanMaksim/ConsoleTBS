@@ -120,11 +120,10 @@ void tbs::TurnBasedGame::start_new_battle() {
     using namespace army;
 
     std::cout << "Start new Battle\n";
-    if (ui_status[UI_Status::kBattleMap]) {
-        battle_map_clear();
-        create_new_pv_window();
-
-    }
+    //if (ui_status.test(UI_Status::kBattleMap)) { // deprecated, because now to start new battle 'b' player must leave previous by '~'
+    //    battle_map_clear();
+    //    create_new_pv_window();
+    //}
 
     generate_new_battle_map();
     calculate_battle_map_visual();
@@ -170,7 +169,7 @@ void tbs::TurnBasedGame::battle_map_add_creature(std::shared_ptr<creature::Creat
         break;
     }
 
-    if (ui_status[UI_Status::kCreatureOwnership] == true) {
+    if (ui_status.test(UI_Status::kCreatureOwnership)) {
         // add creature ownership
         switch (creature_ptr->get_army_id()) { // must be changed to faction id in future (if factions will be added)
         case 0: // !!!!!!!!!!!!!!! tmp, owned by player
@@ -223,7 +222,7 @@ void tbs::TurnBasedGame::battle_map_add_army(std::shared_ptr<army::Army> army_pt
 }
 
 bool tbs::TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() {
-    if (!ui_status[UI_Status::kBattleMap]) { return false; }
+    if (!ui_status.test(UI_Status::kBattleMap)) { return false; }
 
     std::cout << "Move by coordinate";
     std::cout << '\n' << "Enter x: ";
@@ -250,7 +249,7 @@ bool tbs::TurnBasedGame::player_coordinate_selection_move_by_coordinate_input() 
 std::shared_ptr<std::vector<u_input::UserInputButton>> tbs::TurnBasedGame::player_coordinate_selection_move_by_direction_input() {
     using namespace u_input;
     
-    if (!ui_status[UI_Status::kBattleMap]) { return nullptr; }
+    if (!ui_status.test(UI_Status::kBattleMap)) { return nullptr; }
 
     std::cout << "Move by direction\n";
     BattleMapCoordinate player_coordinate_selection_tmp{};
@@ -405,7 +404,7 @@ bool tbs::TurnBasedGame::move_creature_by_coordinate(BattleMapCoordinate battle_
         *(frame_coordinate_x_ptr + 1) = kCreatureBackSymbol_;
     }
 
-    if (ui_status[UI_Status::kCreatureOwnership] == true) {
+    if (ui_status.test(UI_Status::kCreatureOwnership)) {
         switch (new_coordinate_ptr->creature_->get_army_id()) { // must be changed to faction id in future (if factions will be added)
         case 0: // !!!!!!!!!!!!!!! tmp, owned by player
             frame_[tile_center_of_new_coordinate.y - 2][tile_center_of_new_coordinate.x + 4] = 'p';

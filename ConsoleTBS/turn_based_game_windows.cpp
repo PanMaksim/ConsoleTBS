@@ -48,8 +48,8 @@ void tbs::TurnBasedGame::create_new_main_game_window() {
 }
 
 void tbs::TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
-    ui_status[UI_Status::kCreatureStats] = false;
-    ui_status[UI_Status::kUI_InputHelp] = false;
+    ui_status.reset(UI_Status::kCreatureStats);
+    ui_status.reset(UI_Status::kUI_InputHelp);
 
     if (called_on_free_space) {
         std::for_each(std::execution::par_unseq, frame_.begin() + ui_window_height_start_, frame_.begin() + ui_window_height_end_,
@@ -79,8 +79,8 @@ void tbs::TurnBasedGame::create_new_ui_window(bool called_on_free_space) {
     std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr = frame_.begin() + ui_window_height_end_ - kUserInterfaceLogWindowHeight_;
     std::fill(std::execution::par_unseq, frame_coordinate_y_ptr->data() + ui_window_width_start_ + 1, frame_coordinate_y_ptr->data() + ui_window_width_end_, kGameWindowHorizontalSymbol_);
 
-    ui_status[UI_Status::kUI_Window] = true;
-    ui_status[UI_Status::kUI_WindowLog] = true;
+    ui_status.set(UI_Status::kUI_Window);
+    ui_status.set(UI_Status::kUI_WindowLog);
 }
 
 void tbs::TurnBasedGame::create_new_pv_window() {
@@ -89,11 +89,7 @@ void tbs::TurnBasedGame::create_new_pv_window() {
             std::fill(std::execution::par_unseq, str.data() + pv_window_width_start_, str.data() + pv_window_width_end_, ' ');
         });
 
-    ui_status[UI_Status::kPlayerViewWindow] = true;
-}
-
-void tbs::TurnBasedGame::set_ui_status_flags_to_default(){
-    std::fill(std::execution::par_unseq, ui_status.begin(), ui_status.end(), false);
+    ui_status.set(UI_Status::kPlayerViewWindow);
 }
 
 void tbs::TurnBasedGame::calculate_window_borders() {
@@ -139,15 +135,15 @@ void tbs::TurnBasedGame::clear_ui_log() {
 
 void tbs::TurnBasedGame::battle_map_clear() {
     if (battle_map_info_ != nullptr) {
-        if (ui_status[UI_Status::kBattleMapTileNumeration]) { battle_map_tile_numeration_turn_off(); }
+        if (ui_status.test(UI_Status::kBattleMapTileNumeration)) { battle_map_tile_numeration_turn_off(); }
         player_coordinate_selection_ = { 0, 0 }; 
 
         pv_visual_indent_height_ = 0;
         pv_visual_indent_width_ = 0;
 
         battle_map_info_.reset();
-        ui_status[UI_Status::kBattleMap] = false;
-        ui_status[UI_Status::kUI_WindowLog] = false;
+        ui_status.reset(UI_Status::kBattleMap);
+        ui_status.reset(UI_Status::kUI_WindowLog);
     }
 }
 
@@ -246,7 +242,7 @@ void tbs::TurnBasedGame::show_battle_map() {
         ++frame_coordinate_y_ptr;
     }
 
-    ui_status[UI_Status::kBattleMap] = true;
+    ui_status.set(UI_Status::kBattleMap);
 }
 
 void tbs::TurnBasedGame::battle_map_show_landscape() {
@@ -337,7 +333,7 @@ bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_on() {
         frame_[coordinate.y][coordinate.x] = tile_number_width_second;
     }
 
-    ui_status[UI_Status::kBattleMapTileNumeration] = true;
+    ui_status.set(UI_Status::kBattleMapTileNumeration);
     return true;
 }
 
@@ -382,12 +378,12 @@ bool tbs::TurnBasedGame::battle_map_tile_numeration_turn_off() {
         frame_[coordinate.y][coordinate.x] = ' ';
     }
 
-    ui_status[UI_Status::kBattleMapTileNumeration] = false;
+    ui_status.reset(UI_Status::kBattleMapTileNumeration);
     return true;
 }
 
 bool tbs::TurnBasedGame::battle_map_tile_numeration_switch() {
-    return (!ui_status[UI_Status::kBattleMapTileNumeration]) ? battle_map_tile_numeration_turn_on() : battle_map_tile_numeration_turn_off();
+    return (!ui_status.test(UI_Status::kBattleMapTileNumeration)) ? battle_map_tile_numeration_turn_on() : battle_map_tile_numeration_turn_off();
 }
 
 bool tbs::TurnBasedGame::battle_map_creature_ownership_turn_on() {
@@ -417,7 +413,7 @@ bool tbs::TurnBasedGame::battle_map_creature_ownership_turn_on() {
         }
     }
 
-    ui_status[UI_Status::kCreatureOwnership] = true;
+    ui_status.set(UI_Status::kCreatureOwnership);
     return true;
 }
 
@@ -436,12 +432,12 @@ bool tbs::TurnBasedGame::battle_map_creature_ownership_turn_off() {
         }
     }
     
-    ui_status[UI_Status::kCreatureOwnership] = false;
+    ui_status.reset(UI_Status::kCreatureOwnership);
     return true;
 }
 
 bool tbs::TurnBasedGame::battle_map_creature_ownership_switch() {
-    return (!ui_status[UI_Status::kCreatureOwnership]) ? battle_map_creature_ownership_turn_on() : battle_map_creature_ownership_turn_off();
+    return (!ui_status.test(UI_Status::kCreatureOwnership)) ? battle_map_creature_ownership_turn_on() : battle_map_creature_ownership_turn_off();
 }
 
 FrameCoordinate tbs::TurnBasedGame::battle_map_find_tile_center_frame_coordinate(BattleMapCoordinate coordinate) { // enter val numeration from 0
@@ -499,8 +495,9 @@ void tbs::TurnBasedGame::battle_map_update_player_selection() {
         *(frame_coordinate_y_ptr->data() + tile_center_coordinates.x + selection_visual_indent_width) = kTileVerticalSymbol_;
     }
     update_ui();
-    ui_status[UI_Status::kCreatureSelected] =
-        ((*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ != nullptr) ? true : false;
+
+    ((*battle_map_info_)[player_coordinate_selection_.y][player_coordinate_selection_.x].creature_ != nullptr) ? 
+        ui_status.set(UI_Status::kCreatureSelected) : ui_status.reset(UI_Status::kCreatureSelected);
 }
 
 void tbs::TurnBasedGame::battle_map_clear_old_player_selection() {
@@ -632,7 +629,7 @@ std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame
 }
 
 void tbs::TurnBasedGame::ui_input_help_turn_on(const std::vector<u_input::UserInputButton>& allowed_user_input) {
-    if (ui_status[UI_Status::kCreatureStats]) { create_new_ui_window(); } // clear from ui stats, can be changed to more optimized variant
+    if (ui_status.test(UI_Status::kCreatureStats)) { create_new_ui_window(); } // clear from ui stats, can be changed to more optimized variant
 
     u_input::load_user_input_database(file_database::ID::kUserInputDescription);
 
@@ -646,7 +643,7 @@ void tbs::TurnBasedGame::ui_input_help_turn_on(const std::vector<u_input::UserIn
     u_input::unload_user_input_database(file_database::ID::kUserInputDescription);
 
     tbs::global::add_string_to_ui_log("Turn in input help");
-    ui_status[UI_Status::kUI_InputHelp] = true;
+    ui_status.set(UI_Status::kUI_InputHelp) = true;
 }
 
 void tbs::TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) {
@@ -657,11 +654,11 @@ void tbs::TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) 
         });
 
     tbs::global::add_string_to_ui_log("Turn off input help");
-    ui_status[UI_Status::kUI_InputHelp] = false;
+    ui_status.reset(UI_Status::kUI_InputHelp);
 
-    if (ui_status[UI_Status::kBattleMap]) {
+    if (ui_status.test(UI_Status::kBattleMap)) {
         battle_map_create_basic_ui();
-        if (ui_status[UI_Status::kCreatureSelected]) {
+        if (ui_status.test(UI_Status::kCreatureSelected)) {
             battle_map_create_basic_ui_with_creature();
             update_ui();
         }
@@ -669,7 +666,7 @@ void tbs::TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) 
 }
 
 void tbs::TurnBasedGame::ui_input_help_switch(const std::vector<u_input::UserInputButton>& allowed_user_input) {
-    (!ui_status[UI_Status::kUI_InputHelp]) ? ui_input_help_turn_on(allowed_user_input) : ui_input_help_turn_off(allowed_user_input.size());
+    (!ui_status.test(UI_Status::kUI_InputHelp)) ? ui_input_help_turn_on(allowed_user_input) : ui_input_help_turn_off(allowed_user_input.size());
 }
 
 void tbs::TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate,
@@ -733,7 +730,7 @@ void tbs::TurnBasedGame::battle_map_create_basic_ui_with_creature() {
 }
 
 void tbs::TurnBasedGame::update_ui() { // maybe should save in memory previus selection coordinates for possible action skips
-    if (ui_status[UI_Status::kUI_InputHelp] == true) {
+    if (ui_status.test(UI_Status::kUI_InputHelp)) {
         create_new_ui_window(); // not ui_help_turn_off because it asks for allowed_input_size
         battle_map_create_basic_ui();
     }
@@ -754,7 +751,7 @@ void tbs::TurnBasedGame::update_ui() { // maybe should save in memory previus se
             static_cast<int>(terrain::battle_tile::get_tile_parameter_name_from_database(terrain::battle_tile::TileParameters::kCreature)->size()) + 2);
         ++coordinate.y;
 
-        if (ui_status[UI_Status::kCreatureStats]) {
+        if (ui_status.test(UI_Status::kCreatureStats)) {
             for (std::array<std::string, kWindowHeight_>::iterator frame_coordinate_y_ptr { frame_.begin() + coordinate.y },
                 frame_coordinate_y_ptr_end{ frame_.begin() + ui_window_height_end_ };
                 (*frame_coordinate_y_ptr)[coordinate.x] != ' ' && frame_coordinate_y_ptr != frame_coordinate_y_ptr_end; ++frame_coordinate_y_ptr) {
@@ -762,7 +759,7 @@ void tbs::TurnBasedGame::update_ui() { // maybe should save in memory previus se
                 frame_clear_string(frame_coordinate_y_ptr->begin() + coordinate.x,
                     frame_coordinate_y_ptr->begin() + ui_window_width_end_);
             }
-            ui_status[UI_Status::kCreatureStats] = false;
+            ui_status.reset(UI_Status::kCreatureStats);
         }
         return;
     }
@@ -772,9 +769,9 @@ void tbs::TurnBasedGame::update_ui() { // maybe should save in memory previus se
         static_cast<int>(terrain::battle_tile::get_tile_parameter_name_from_database(terrain::battle_tile::TileParameters::kCreature)->size()) + 2);
     ++coordinate.y;
 
-    if (!ui_status[UI_Status::kCreatureStats]) {
+    if (!ui_status.test(UI_Status::kCreatureStats)) {
         battle_map_create_basic_ui_with_creature();
-        ui_status[UI_Status::kCreatureStats] = true;
+        ui_status.set(UI_Status::kCreatureStats);
     }
 
     // creature name

@@ -5,7 +5,7 @@
 #include <array>
 #include <vector>
 #include <utility>
-
+#include <bitset>
 #include <chrono>
 
 #include "turn_based_game_global.h"
@@ -32,6 +32,21 @@
 
 namespace tbs { // there are nested namespace in the end
 
+    enum UI_Status { // idk how to resolve unreadability UIStatus without '_'
+        kUI_StatusMin = 1, // used in bitset that starts from 1
+        kPlayerViewWindow = kUI_StatusMin,
+        kUI_Window,
+        kUI_WindowLog,
+        kUI_InputHelp,
+        kBattleMap,
+        kBattleMapTileNumeration,
+        kCreatureStats,
+        kCreatureSelected, // for situations when something will be shown over creature_ptr stats
+        // kCreatureInteracted, // for future, example when interaction creates new "windows"
+        kCreatureOwnership,
+        kUI_StatusMax,
+    };
+
     class TurnBasedGame {
     public:
 
@@ -40,7 +55,7 @@ namespace tbs { // there are nested namespace in the end
             calculate_window_borders();
             create_new_ui_window(true);
             //create_new_pv_window( true ); // currently at first launch doing only unneeded clearing, so it got commented, but in future it can change
-            ui_status[UI_Status::kPlayerViewWindow] = true;
+            ui_status.set(UI_Status::kPlayerViewWindow);
         }
 
         ~TurnBasedGame() {
@@ -51,7 +66,7 @@ namespace tbs { // there are nested namespace in the end
 
         void start() {
             using namespace u_input;
-            const std::vector<UserInputButton> allowed_user_input{ // unoptimized because will hold allowed input for main_menu when there is currently battle in proccess
+            const std::vector<UserInputButton> allowed_user_input{ // unoptimized because will hold allowed input for main_menu even when there is currently battle in proccess, can be possibly optimised (but still overhead) by changing to bitset
                 UserInputButton::kExit
             };
 
@@ -75,12 +90,12 @@ namespace tbs { // there are nested namespace in the end
                     ui_input_help_switch(allowed_user_input);
                     new_frame = true;
                     break;
-                case UserInputButton::kStartBattle: // should start another switch with another input switch to prevent improper input
-                    ui_status[UI_Status::kUI_InputHelp] = false;
+                case UserInputButton::kStartBattle:
+                    ui_status.reset(UI_Status::kUI_InputHelp);
                     start_new_battle();
                     battle_process();
                     battle_map_clear();
-                    set_ui_status_flags_to_default();
+                    ui_status.reset();
                     create_new_ui_window();
                     create_new_pv_window();
                     break;
@@ -102,26 +117,11 @@ namespace tbs { // there are nested namespace in the end
         friend void tbs::global::add_string_to_ui_log(const std::string str);
 
     private:
-        enum UI_Status { // idk how to resolve unreadability UIStatus without '_'
-            kUI_StatusMin,
-            kPlayerViewWindow = kUI_StatusMin,
-            kUI_Window,
-            kUI_WindowLog,
-            kUI_InputHelp,
-            kBattleMap,
-            kBattleMapTileNumeration,
-            kCreatureStats,
-            kCreatureSelected, // for situations when something will be shown over creature_ptr stats
-            // kCreatureInteracted, // for future, example when interaction creates new "windows"
-            kCreatureOwnership,
-            kUI_StatusMax,
-        };
 
         void create_new_main_game_window();
         void create_new_ui_window(bool called_on_free_space = 0);
         void create_new_pv_window();
 
-        void set_ui_status_flags_to_default();
         void calculate_window_borders();
         void frame_clear_string(std::string::iterator frame_coordinate_x_iter, std::string::iterator frame_coordinate_x_iter_end);
 
@@ -208,7 +208,8 @@ namespace tbs { // there are nested namespace in the end
         static constexpr int kUserInterfaceLogWindowHeight_{ 14 };
         int ui_log_window_height_current_{ 1 };
 
-        std::array<bool, UI_Status::kUI_StatusMax> ui_status{ false }; // represent opened windows/interfaces
+        std::bitset<UI_Status::kUI_StatusMax> ui_status{};
+        //std::array<bool, UI_Status::kUI_StatusMax> ui_status{ false }; // represent opened windows/interfaces
 
         std::unique_ptr<std::vector<std::vector<terrain::battle_tile::BattleTile>>> battle_map_info_ = nullptr; // used vector not array, cause for possibility in future to make dynamic map sizes (change it at generation or maybe even growing in started battle)
         // (*battle_map_info_)[y][x]
