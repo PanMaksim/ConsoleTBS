@@ -32,13 +32,6 @@
 
 namespace tbs { // there are nested namespace in the end
 
-    enum GameWindow {
-        kGameWindowMin,
-        kMainMenu,
-        kBattleMapMain,
-        kGameWindowMax
-    };
-
     enum UI_Status { // idk how to resolve unreadability UIStatus without '_'
         kUI_StatusMin = 1, // used in bitset that starts from 1
         kPlayerViewWindow = kUI_StatusMin,
