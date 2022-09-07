@@ -166,7 +166,7 @@ namespace tbs { // there are nested namespace in the end
         bool player_coordinate_selection_move_by_coordinate_input();
         std::shared_ptr<std::vector<u_input::UserInputButton>> player_coordinate_selection_move_by_direction_input();
 
-        std::shared_ptr<army::Army> get_army_ptr_via_id(int army_id_);
+        std::shared_ptr<army::Army> get_army_ptr_via_army_id(int army_id_);
 
         bool interact_with_creature();
         bool calculate_moved_distance(std::shared_ptr<std::vector<u_input::UserInputButton>> direction_log, creature::Creature* creature_on_old_coordinate_ptr);

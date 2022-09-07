@@ -330,7 +330,7 @@ std::shared_ptr<std::vector<u_input::UserInputButton>> tbs::TurnBasedGame::playe
 }
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!TMP
-std::shared_ptr<army::Army> tbs::TurnBasedGame::get_army_ptr_via_id(int army_id_) {
+std::shared_ptr<army::Army> tbs::TurnBasedGame::get_army_ptr_via_army_id(int army_id_) {
     if (army_id_ == player_army_->get_army_id()) {
         return player_army_;
     }
@@ -354,7 +354,7 @@ void tbs::TurnBasedGame::check_possible_kill(std::shared_ptr<creature::Creature>
             ' ' + '(' + std::to_string(creature_battle_map_coordinate.y + 1) + ',' + ' ' + std::to_string(creature_battle_map_coordinate.x + 1) + ") died.");
 
         battle_map_kill_creature(creature_battle_map_coordinate);
-        get_army_ptr_via_id(creature_ptr->get_army_id())->kill_creature(creature_ptr->get_creature_id());
+        get_army_ptr_via_army_id(creature_ptr->get_army_id())->kill_creature(creature_ptr);
     }
 }
 

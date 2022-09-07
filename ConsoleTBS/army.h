@@ -31,7 +31,7 @@ namespace army {
 		std::shared_ptr<std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>> get_army_shared_ptr();
 
 		creature::stat::ComplexID generate_creature_complex_id();
-		void kill_creature(size_t creature_id_);
+		void kill_creature(std::shared_ptr<creature::Creature> creature);
 
 		void clear();
 

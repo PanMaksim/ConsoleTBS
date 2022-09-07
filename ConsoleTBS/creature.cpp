@@ -19,7 +19,7 @@
 using namespace creature;
 
 std::function<bool(const std::shared_ptr<Creature>&, const std::shared_ptr<Creature>&)> creature::compare_shared_ptrs_to_creature = [](const std::shared_ptr<Creature>& left_creature, const std::shared_ptr<Creature>& right_creature) -> bool {
-	return left_creature->get_creature_id() < right_creature->get_creature_id();
+	return left_creature->get_creature_id() < right_creature->get_creature_id(); // creature_id is unique when in scope of one army, for comparing in different armies must be used complex_id
 };
 
 std::unique_ptr<std::vector<std::string>> creature_first_name_database;

@@ -10,6 +10,7 @@
 #include "file_database.h"
 #include "random.h"
 #include "creature.h"
+#include "logger.h"
 
 #include <chrono>
 
@@ -54,7 +55,7 @@ army::Army army::generate_random_army() {
 	creature::load_database_into_memory(ID::kCreatureNameDatabase);
 	creature::load_database_into_memory(ID::kCreatureTemplateDatabase);
 
-	std::generate_n(std::inserter(*army.army_, army.army_->begin()), army_size_max_, [&army]() { return std::make_shared<Creature>(creature::get_ptr_to_creature_template_from_database(static_cast<creature::CreatureTemplateID>((
+	std::generate_n(std::inserter(*army.army_, army.army_->begin()), army_size_max_, [&army]() { return std::make_shared<Creature>(creature::get_ptr_to_creature_template_from_database(static_cast<creature::CreatureTemplateID>(( // taking ref to army for complex_id
 		random::get_random_number(static_cast<int>(creature::CreatureTemplateID::kHumanSpearman), static_cast<int>(creature::CreatureTemplateID::kCreatureTemplateMax) - 1)))), army.generate_creature_complex_id());});
 
 	creature::unload_database_from_memory(ID::kCreatureNameDatabase);
@@ -63,9 +64,13 @@ army::Army army::generate_random_army() {
 	return army;
 }
 
-void army::Army::kill_creature(size_t dead_creature_id){
-	auto dead_creature_iter = std::find_if(std::execution::par_unseq, army_->begin(), army_->end(), [dead_creature_id](std::shared_ptr<Creature> creature) { return creature->get_creature_id() == dead_creature_id; }); // there are unique creature_id_ for every creature, so there can be par_unsec execution
+void army::Army::kill_creature(std::shared_ptr<creature::Creature> creature){
+	std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>::iterator dead_creature_iter{ army_->find(creature) };
+	//auto dead_creature_iter = std::find_if(std::execution::par_unseq, army_->begin(), army_->end(), [dead_creature_id](std::shared_ptr<Creature> creature) { return creature->get_creature_id() == dead_creature_id; }); // there are unique creature_id_ for every creature, so there can be par_unsec execution
 	if (dead_creature_iter != army_->end()) {
 		army_->erase(dead_creature_iter);
+	}
+	else {
+		runtime_logger::log_in_file("Error, killed creature not found in army.", true);
 	}
 }
