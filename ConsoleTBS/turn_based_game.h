@@ -66,7 +66,7 @@ namespace tbs { // there are nested namespace in the end
 
         void start() {
             using namespace u_input;
-            const std::vector<UserInputButton> allowed_user_input{ // unoptimized because will hold allowed input for main_menu even when there is currently battle in proccess, can be possibly optimised (but still overhead) by changing to bitset
+            const std::vector<UserInputButton> allowed_user_input{ // unoptimized because will hold allowed input for main_menu even when there is currently battle in proccess, can be possibly optimised by changing to bitset that loads from database
                 UserInputButton::kExit
             };
 

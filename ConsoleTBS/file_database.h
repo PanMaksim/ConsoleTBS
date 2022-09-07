@@ -7,7 +7,7 @@ namespace file_database {
 	enum class ID {
 		kCreatureTemplateDatabase,
 		kCreatureNameDatabase,
-		kUserInputDescription,
+		kUserInputKeyDescription,
 		ID_Max
 	};
 
