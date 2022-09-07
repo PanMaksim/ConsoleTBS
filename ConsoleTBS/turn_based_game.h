@@ -66,9 +66,8 @@ namespace tbs { // there are nested namespace in the end
 
         void start() {
             using namespace u_input;
-            const std::vector<UserInputButton> allowed_user_input{ // unoptimized because will hold allowed input for main_menu even when there is currently battle in proccess, can be possibly optimised by changing to bitset that loads from database
-                UserInputButton::kExit
-            };
+            int allowed_user_input_for_this_window{ 0b100000000001 };
+            current_allowed_user_input = allowed_user_input_for_this_window;
 
             std::string ask_user_input_str((kWindowWidth_ / 2) - 6, ' ');
             ask_user_input_str += " User input: ";
@@ -87,7 +86,7 @@ namespace tbs { // there are nested namespace in the end
                 player_coordinate_selection_old_ = player_coordinate_selection_;
                 switch (user_input) {
                 case UserInputButton::kShowInputHelp:
-                    ui_input_help_switch(allowed_user_input);
+                    ui_input_help_switch();
                     new_frame = true;
                     break;
                 case UserInputButton::kStartBattle:
@@ -98,6 +97,8 @@ namespace tbs { // there are nested namespace in the end
                     ui_status.reset();
                     create_new_ui_window();
                     create_new_pv_window();
+
+                    current_allowed_user_input = allowed_user_input_for_this_window; // change after battle_process
                     break;
                 case UserInputButton::kExit:
                     return;
@@ -131,9 +132,9 @@ namespace tbs { // there are nested namespace in the end
         std::string::iterator add_string_to_ui(coord::FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent);
         std::string::iterator add_string_to_ui(coord::FrameCoordinate frame_coordinate, const u_input::UserInputDescription* user_input_description_ptr);
         void add_creature_stat_string_to_ui(coord::FrameCoordinate frame_coordinate, creature::stat::StatId creature_stat_id, int stat_value_current, int stat_value_max);
-        void ui_input_help_switch(const std::vector<u_input::UserInputButton>& allowed_user_input);
-        void ui_input_help_turn_on(const std::vector<u_input::UserInputButton>& allowed_user_input);
-        void ui_input_help_turn_off(size_t allowed_user_input_size);
+        void ui_input_help_switch();
+        void ui_input_help_turn_on();
+        void ui_input_help_turn_off();
         void clear_ui_log();
 
         void start_new_battle();
@@ -208,8 +209,8 @@ namespace tbs { // there are nested namespace in the end
         static constexpr int kUserInterfaceLogWindowHeight_{ 14 };
         int ui_log_window_height_current_{ 1 };
 
+        std::bitset<u_input::UserInputButton::kUserInputButtonMax> current_allowed_user_input{}; // when setting it directly (0b101...) set it from end (first number after b is last button) ,this bitset used only for showing "available input" in UI
         std::bitset<UI_Status::kUI_StatusMax> ui_status{};
-        //std::array<bool, UI_Status::kUI_StatusMax> ui_status{ false }; // represent opened windows/interfaces
 
         std::unique_ptr<std::vector<std::vector<terrain::battle_tile::BattleTile>>> battle_map_info_ = nullptr; // used vector not array, cause for possibility in future to make dynamic map sizes (change it at generation or maybe even growing in started battle)
         // (*battle_map_info_)[y][x]

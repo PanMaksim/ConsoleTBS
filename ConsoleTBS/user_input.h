@@ -9,7 +9,6 @@ namespace u_input {
 
     enum UserInputButton {
         kExit = '~', // kUserInputMin
-        kShowInputHelp = '`', // not key binding, because it shows only available input
         kMoveUp = 'w',
         kMoveDown = 's',
         kMoveLeft = 'a',
@@ -19,7 +18,9 @@ namespace u_input {
         kMoveSelectionByCoordinate = 'Q',
         kStartBattle = 'b',
         kTileNumerationSwitch = 'z',
-        kCreatureOwnershipSwitch = 'x'
+        kCreatureOwnershipSwitch = 'x',
+        kShowInputHelp = '`',
+        kUserInputButtonMax = 12
     };
 
     struct UserInputDescription {
@@ -34,6 +35,7 @@ namespace u_input {
 
     int get_user_input(int min, int max);
     const UserInputDescription* user_input_database_get_main_description(UserInputButton user_input_symbol);
+    const UserInputDescription* user_input_database_get_main_description(int button_number);
     const std::vector<UserInputDescription>* user_input_database_get_all_description();
 
     void load_user_input_database(file_database::ID database_id);

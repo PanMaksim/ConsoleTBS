@@ -89,8 +89,6 @@ const UserInputDescription* u_input::user_input_database_get_main_description(Us
 	}
 
 	switch (user_input_symbol) {
-	case UserInputButton::kShowInputHelp:
-		return &description_to_show_input_help_button;
 	case UserInputButton::kExit:
 		return &(*user_input_database_key_description)[0];
 	case UserInputButton::kMoveUp:
@@ -113,9 +111,15 @@ const UserInputDescription* u_input::user_input_database_get_main_description(Us
 		return &(*user_input_database_key_description)[9];
 	case UserInputButton::kCreatureOwnershipSwitch:
 		return &(*user_input_database_key_description)[10];
+	case UserInputButton::kShowInputHelp:
+		return &description_to_show_input_help_button;
 	default:
 		return &(*user_input_database_key_description)[0];
 	}
+}
+
+const UserInputDescription* u_input::user_input_database_get_main_description(int button_number) {
+	return &(*user_input_database_key_description)[button_number];
 }
 
 const std::vector<UserInputDescription>* u_input::user_input_database_get_all_description() {

@@ -628,17 +628,21 @@ std::string::iterator tbs::TurnBasedGame::add_string_to_ui(FrameCoordinate frame
     return frame_coordinate_x_ptr;
 }
 
-void tbs::TurnBasedGame::ui_input_help_turn_on(const std::vector<u_input::UserInputButton>& allowed_user_input) {
+void tbs::TurnBasedGame::ui_input_help_turn_on() {
     if (ui_status.test(UI_Status::kCreatureStats)) { create_new_ui_window(); } // clear from ui stats, can be changed to more optimized variant
 
     u_input::load_user_input_database(file_database::ID::kUserInputKeyDescription);
 
     FrameCoordinate coordinate{ ui_window_width_start_ + ui_visual_indent_width, ui_window_height_start_ + ui_visual_indent_height };
-    std::for_each(std::execution::seq, allowed_user_input.begin(), allowed_user_input.end(),
-        [=, &coordinate](const u_input::UserInputButton allowed_user_input_description) {
-            add_string_to_ui(coordinate, u_input::user_input_database_get_main_description(allowed_user_input_description));
+    add_string_to_ui(coordinate, u_input::user_input_database_get_main_description(u_input::kShowInputHelp));
+    ++coordinate.y;
+
+    for (int current_bit_number{}, last_bit_number{ u_input::UserInputButton::kUserInputButtonMax - 1 }; current_bit_number != last_bit_number; ++current_bit_number) { // - 1 because of kShowInputHelp that always holded in memory
+        if (current_allowed_user_input.test(current_bit_number)) {
+            add_string_to_ui(coordinate, u_input::user_input_database_get_main_description(current_bit_number));
             ++coordinate.y;
-        });
+        }
+    }
 
     u_input::unload_user_input_database(file_database::ID::kUserInputKeyDescription);
 
@@ -646,9 +650,10 @@ void tbs::TurnBasedGame::ui_input_help_turn_on(const std::vector<u_input::UserIn
     ui_status.set(UI_Status::kUI_InputHelp);
 }
 
-void tbs::TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) {
+void tbs::TurnBasedGame::ui_input_help_turn_off() {
+    size_t number_of_strings_to_clear{ current_allowed_user_input.count()};
     std::array<std::string, kWindowHeight_>::iterator ui_begin_iter{ frame_.begin() + ui_window_height_start_ + 2 };
-    std::for_each(std::execution::par_unseq, ui_begin_iter, ui_begin_iter + allowed_user_input_size, // +2 because of visual indent
+    std::for_each(std::execution::par_unseq, ui_begin_iter, ui_begin_iter + number_of_strings_to_clear, // +2 because of visual indent
         [=](std::string& str) {
             std::fill(std::execution::par_unseq, str.begin() + ui_window_width_start_ + 3, str.begin() + ui_window_width_end_, ' '); // +1 because of VerticalSymbol and +2 because of visual indent
         });
@@ -665,8 +670,8 @@ void tbs::TurnBasedGame::ui_input_help_turn_off(size_t allowed_user_input_size) 
     }
 }
 
-void tbs::TurnBasedGame::ui_input_help_switch(const std::vector<u_input::UserInputButton>& allowed_user_input) {
-    (!ui_status.test(UI_Status::kUI_InputHelp)) ? ui_input_help_turn_on(allowed_user_input) : ui_input_help_turn_off(allowed_user_input.size());
+void tbs::TurnBasedGame::ui_input_help_switch() {
+    (!ui_status.test(UI_Status::kUI_InputHelp)) ? ui_input_help_turn_on() : ui_input_help_turn_off();
 }
 
 void tbs::TurnBasedGame::add_creature_stat_string_to_ui(FrameCoordinate frame_coordinate,

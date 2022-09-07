@@ -1,7 +1,7 @@
 11
 ~ return
 w move up
-d move down
+s move down
 a move left
 d move right
 e interact
