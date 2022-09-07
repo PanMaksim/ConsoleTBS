@@ -3,7 +3,6 @@
 #include <vector>
 #include <set>
 #include <memory>
-#include <functional>
 
 #include "creature.h"
 
@@ -43,7 +42,7 @@ namespace army {
 
 	private:
 		short army_id_;
-		std::shared_ptr<std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>> army_; // owned by Army AND BattleTile
+		std::shared_ptr<std::set<std::shared_ptr<creature::Creature>, decltype(creature::compare_shared_ptrs_to_creature)>> army_; // creatures owned by Army AND BattleTile, they can't live only in army or only in battle_tile
 
 		int creature_id_counter_{};
 	};
