@@ -90,6 +90,9 @@
     <ClCompile Include="logger.cpp">
       <Filter>Файлы ресурсов\only functions</Filter>
     </ClCompile>
+    <ClCompile Include="turn_based_game_main.cpp">
+      <Filter>Файлы ресурсов\main game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="army.h">

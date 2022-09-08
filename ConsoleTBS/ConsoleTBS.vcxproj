@@ -32,6 +32,7 @@
     <ClCompile Include="terrain.cpp" />
     <ClCompile Include="TurnBasedGame.cpp" />
     <ClCompile Include="turn_based_game_battle.cpp" />
+    <ClCompile Include="turn_based_game_main.cpp" />
     <ClCompile Include="turn_based_game_windows.cpp" />
     <ClCompile Include="user_input.cpp" />
   </ItemGroup>
