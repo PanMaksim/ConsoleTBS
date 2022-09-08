@@ -244,6 +244,10 @@ namespace tbs { // there are nested namespace in the end
             kCreaturePlayerHeadSymbol_{ '0' },
             kCreatureEnemyHeadSymbol_{ 'X' };
 
+        static constexpr char kCreatureOwnershipPlayerSymbol{ 'p' },
+            kCreatureOwnershipEnemySymbol{ 'e' },
+            kCreatureOwnershipDefaultSymbol{ 'o' };
+
         coord::BattleMapCoordinate player_coordinate_selection_{ 0, 0 },
             player_coordinate_selection_old_{ 0, 0 };
 

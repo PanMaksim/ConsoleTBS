@@ -399,13 +399,13 @@ bool tbs::TurnBasedGame::battle_map_creature_ownership_turn_on() {
             if (battle_map_iter_x->creature_ != nullptr) {
                 switch (battle_map_iter_x->creature_->get_army_id()) { // must be changed to faction id in future (if factions will be added)
                 case 0: // !!!!!!!!!!!!!!! tmp, owned by player
-                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'p';
+                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = kCreatureOwnershipPlayerSymbol;
                     break;
                 case 1: // !!!!!!!!!!!!!!! tmp, not player
-                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'e';
+                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = kCreatureOwnershipEnemySymbol;
                     break;
                 default:
-                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = 'o';
+                    frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = kCreatureOwnershipDefaultSymbol;
                     break;
                 }
             }
@@ -812,5 +812,9 @@ void tbs::TurnBasedGame::battle_map_clear_tile_from_creature_image(BattleMapCoor
     *(frame_coordinate_x_ptr - 1) = ' ';
     *frame_coordinate_x_ptr = ' ';
     *(frame_coordinate_x_ptr + 1) = ' ';
+
+    if (ui_status.test(UI_Status::kCreatureOwnership)) {
+        frame_[tile_center_coordinate.y - 2][tile_center_coordinate.x + 4] = ' ';
+    }
 }
 
