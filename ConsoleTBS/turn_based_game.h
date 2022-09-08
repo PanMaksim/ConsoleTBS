@@ -33,7 +33,7 @@
 namespace tbs { // there are nested namespace in the end
 
     enum UI_Status { // idk how to resolve unreadability UIStatus without '_'
-        kUI_StatusMin = 1, // used in bitset that starts from 1
+        kUI_StatusMin = 1, // starting from 1 because it is used only in bitsets
         kPlayerViewWindow = kUI_StatusMin,
         kUI_Window,
         kUI_WindowLog,
@@ -111,7 +111,7 @@ namespace tbs { // there are nested namespace in the end
         void battle_map_clear_tile_from_creature_image(coord::BattleMapCoordinate creature_battle_map_coordinate);
         void battle_map_kill_creature(coord::BattleMapCoordinate killed_creature_battle_map_coordinate);
 
-        coord::FrameCoordinate battle_map_find_tile_center_frame_coordinate(coord::BattleMapCoordinate battle_map_coordinate); // returns frame_[y,x] where creature_middle_symbol would be
+        coord::FrameCoordinate battle_map_find_tile_center_frame_coordinate(coord::BattleMapCoordinate battle_map_coordinate); // returns frame_[y][x] where creature_middle_symbol would be
 
         void battle_map_update_player_selection();
         void battle_map_clear_old_player_selection();
@@ -143,7 +143,7 @@ namespace tbs { // there are nested namespace in the end
         static constexpr char kGameWindowVerticalSymbol_{ '|' },
             kGameWindowHorizontalSymbol_{ '_' };
 
-        int pv_window_height_start_, // they are used for navigation through std::array frame, not showing actual interface window height/width
+        int pv_window_height_start_, // they are used for navigation through std::array frame_, not showing actual interface window height/width
             pv_window_height_end_,
             pv_window_width_start_,
             pv_window_width_end_;
@@ -156,7 +156,7 @@ namespace tbs { // there are nested namespace in the end
 
         int ui_log_window_height_start_;
 
-        int ui_window_input_help_coordinate_height; // calculates once, but used by every add_string_to_ui()
+        int ui_window_input_help_coordinate_height; // calculated once, but used by every add_string_to_ui()
 
         static constexpr int kUserInterfaceLogWindowHeight_{ 14 };
         int ui_log_window_height_current_{ 1 };
@@ -205,13 +205,10 @@ namespace tbs { // there are nested namespace in the end
 
         static constexpr int kPlayerSelectionVisualHeight_{ 4 }, // must % 2 == 0
             kPlayerSelectionVisualWidth_{ 5 }; // must % 2 == 1 for 1 symbol at level of creature_middle_symbol
-
-// if map will be bigger than player_view
-//std::vector<std::vector<char>>* battle_map_visual;
     };
 
 
-    namespace global {
+    namespace global { // for logging
 
         void initialize_global_ptr_to_game_object(tbs::TurnBasedGame* game_ptr_tmp);
 
