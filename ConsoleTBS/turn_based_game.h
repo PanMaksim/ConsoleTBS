@@ -62,8 +62,6 @@ namespace tbs { // there are nested namespace in the end
             battle_map_info_.reset();
         }
 
-        void print_frame();
-
         void start() {
             using namespace u_input;
             int allowed_user_input_for_this_window{ 0b100000000001 };
@@ -118,6 +116,8 @@ namespace tbs { // there are nested namespace in the end
         friend void tbs::global::add_string_to_ui_log(const std::string str);
 
     private:
+
+        void print_frame();
 
         void create_new_main_game_window();
         void create_new_ui_window(bool called_on_free_space = 0);
