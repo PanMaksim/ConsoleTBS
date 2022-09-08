@@ -23,6 +23,23 @@ namespace u_input {
         kUserInputButtonMax = 12
     };
 
+    enum UserInputButtonID { // only for user_input_help in bitsets
+        // order MUST be same as in UserInputButton!!!
+        kExitID = 1 << 0, // kUserInputMin
+        kMoveUpID = 1 << 1,
+        kMoveDownID = 1 << 2,
+        kMoveLeftID = 1 << 3,
+        kMoveRightID = 1 << 4,
+        kInteractID = 1 << 5,
+        kMoveSelectionByDirectionID = 1 << 6,
+        kMoveSelectionByCoordinateID = 1 << 7,
+        kStartBattleID = 1 << 8,
+        kTileNumerationSwitchID = 1 << 9,
+        kCreatureOwnershipSwitchID = 1 << 10,
+        kShowInputHelpID = 1 << 11,
+        kUserInputButtonIDMax = 12
+    };
+
     struct UserInputDescription {
         UserInputButton button_;
         std::string description_;

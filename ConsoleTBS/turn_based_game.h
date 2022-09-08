@@ -84,9 +84,9 @@ namespace tbs { // there are nested namespace in the end
         std::string::iterator add_string_to_ui(coord::FrameCoordinate frame_coordinate, const std::string_view* str_view_ptr, int indent);
         std::string::iterator add_string_to_ui(coord::FrameCoordinate frame_coordinate, const u_input::UserInputDescription* user_input_description_ptr);
         void add_creature_stat_string_to_ui(coord::FrameCoordinate frame_coordinate, creature::stat::StatId creature_stat_id, int stat_value_current, int stat_value_max);
-        void ui_input_help_switch();
-        void ui_input_help_turn_on();
-        void ui_input_help_turn_off();
+        void ui_input_help_switch(const std::bitset<u_input::kUserInputButtonMax>& allowed_user_input);
+        void ui_input_help_turn_on(const std::bitset<u_input::kUserInputButtonMax>& allowed_user_input);
+        void ui_input_help_turn_off(size_t number_of_allowed_buttons);
         void clear_ui_log();
 
         void start_new_battle();
@@ -161,7 +161,6 @@ namespace tbs { // there are nested namespace in the end
         static constexpr int kUserInterfaceLogWindowHeight_{ 14 };
         int ui_log_window_height_current_{ 1 };
 
-        std::bitset<u_input::UserInputButton::kUserInputButtonMax> current_allowed_user_input{}; // when setting it directly (0b101...) set it from end (first number after b is last button) ,this bitset used only for showing "available input" in UI
         std::bitset<UI_Status::kUI_StatusMax> ui_status{};
 
         std::unique_ptr<std::vector<std::vector<terrain::battle_tile::BattleTile>>> battle_map_info_ = nullptr; // used vector not array, cause for possibility in future to make dynamic map sizes (change it at generation or maybe even growing in started battle)

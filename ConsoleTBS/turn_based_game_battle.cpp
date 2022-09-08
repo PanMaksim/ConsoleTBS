@@ -28,7 +28,6 @@ void tbs::TurnBasedGame::battle_process() {
     using namespace u_input;
 
     int allowed_user_input_for_this_window{ 0b111011100001 };
-    current_allowed_user_input = allowed_user_input_for_this_window;
 
     bool new_frame{ true };
     char user_input{};
@@ -58,7 +57,7 @@ void tbs::TurnBasedGame::battle_process() {
         std::cout << "\t\t\t\t\t\t\t\t\t\t\t\t";
         switch (user_input) {
         case UserInputButton::kShowInputHelp:
-            ui_input_help_switch();
+            ui_input_help_switch(allowed_user_input_for_this_window);
             new_frame = true;
             break;
         case UserInputButton::kMoveSelectionByCoordinate:
