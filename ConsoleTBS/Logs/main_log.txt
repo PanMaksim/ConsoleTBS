@@ -1,3 +1,0 @@
-14:53:9 -  UI size = 50
-14:53:12 -  Execution time: 348ms.
-14:53:12 -  Close game
